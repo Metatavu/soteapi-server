@@ -98,7 +98,9 @@ public class PageApiImpl implements PagesApi {
   @Override
   public Response listPages(Long parentId, String path, Long firstResult, Long maxResults) throws Exception {
     // TODO: filter by path and parentId
-    List<Page> pageEntities = pageController.listPages(firstResult.intValue(), maxResults.intValue());
+    Integer from = firstResult == null ? null : firstResult.intValue();
+    Integer to = maxResults == null ? null : maxResults.intValue();
+    List<Page> pageEntities = pageController.listPages(from, to);
     List<List<PageTitle>> pageTitleEntities = new ArrayList<>(pageEntities.size());
     for (Page pageEntity : pageEntities) {
       pageTitleEntities.add(pageController.listPageTitlesByPage(pageEntity));

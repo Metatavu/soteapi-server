@@ -97,7 +97,7 @@
       </column>
     </createTable>
 
-    <createIndex tableName="TaskQueue" indexName="I-PAGEIMAGEDATA-PAGEIMAGEMETA-ID" unique="true">
+    <createIndex tableName="pageimagedata" indexName="I-PAGEIMAGEDATA-PAGEIMAGEMETA-ID" unique="true">
       <column name="pageimagemeta_id"/>
     </createIndex>
 
