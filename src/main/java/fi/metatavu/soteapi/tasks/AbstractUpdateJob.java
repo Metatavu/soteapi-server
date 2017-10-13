@@ -28,10 +28,10 @@ public abstract class AbstractUpdateJob implements Runnable {
     try {
       userTransaction.begin();
       
-      doJob();
+      execute();
       
       userTransaction.commit();
-    } catch (Exception ex) {
+    } catch (Throwable ex) {
       logger.error("Timer throw an exception", ex);
       try {
         if (userTransaction != null) {
@@ -43,6 +43,6 @@ public abstract class AbstractUpdateJob implements Runnable {
     }
   }
   
-  protected abstract void doJob();
+  protected abstract void execute();
   
 }

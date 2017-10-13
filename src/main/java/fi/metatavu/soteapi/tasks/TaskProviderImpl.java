@@ -34,11 +34,4 @@ public class TaskProviderImpl implements TaskProvider {
   public <T extends Task> T findTask(String queueName, String uniqueId) {
     return taskController.findTask(queueName, uniqueId);
   }
-
-  @Override
-  public <T extends Task> T prioritizeTask(String queueId, T task) {
-    taskController.prioritizeTask(queueId, task.getUniqueId());
-    return task;
-  }
-
 }

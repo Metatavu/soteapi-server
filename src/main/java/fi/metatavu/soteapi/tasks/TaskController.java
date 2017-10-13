@@ -42,7 +42,7 @@ public class TaskController {
    * @param task task data
    * @return created task entity
    */
-  public <T extends Task> TaskModel createTask(String queueName, T task) {
+  public <T extends Task> T createTask(String queueName, T task) {
     TaskQueue taskQueue = taskQueueDAO.findByName(queueName);
     if (taskQueue == null) {
       taskQueue = taskQueueDAO.create(queueName, "UNKNOWN");
@@ -55,11 +55,22 @@ public class TaskController {
 	      if (task.getPriority()) {
 	        logger.info(String.format("Added priority task to the queue %s", queueName));
 	      }
-	      return createTask(queueName, task.getPriority(), taskQueue, data, uniqueId);
+
+	      TaskModel newTask = createTask(queueName, task.getPriority(), taskQueue, data, uniqueId);
+	      if (newTask != null) {
+	        return task;
+	      }
+
+	      logger.warn(String.format("Failed to add task %s to queue %s. Skipped", uniqueId, queueName));
 	    }
     } else {
       if (task.getPriority()) {
-        return prioritizeTask(queueName, uniqueId);
+        TaskModel prioritizedTask = prioritizeTask(queueName, uniqueId);
+        if (prioritizedTask != null) {
+          return task;
+        }
+
+        logger.warn(String.format("Failed to prioritize task %s in queue %s. Skipped", uniqueId, queueName));
       } else {
         logger.warn(String.format("Task %s already found from queue %s. Skipped", uniqueId, queueName));
       }
@@ -153,15 +164,6 @@ public class TaskController {
     return taskQueue != null;
   }
 
-  public TaskModel findTaskModel(String queueName, String uniqueId) {
-    TaskQueue taskQueue = taskQueueDAO.findByName(queueName);
-    if (taskQueue == null) {
-      return null;
-    }
-
-    return taskModelDAO.findByQueueAndUniqueId(taskQueue, uniqueId);
-  }
-
   public <T extends Task> T findTask(String queueName, String uniqueId) {
     TaskModel taskModel = findTaskModel(queueName, uniqueId);
     if (taskModel == null) {
@@ -171,7 +173,16 @@ public class TaskController {
     return unserialize(taskModel.getData());
   }
   
-  public TaskModel prioritizeTask(String queueName, String uniqueId) {
+  private TaskModel findTaskModel(String queueName, String uniqueId) {
+    TaskQueue taskQueue = taskQueueDAO.findByName(queueName);
+    if (taskQueue == null) {
+      return null;
+    }
+
+    return taskModelDAO.findByQueueAndUniqueId(taskQueue, uniqueId);
+  }
+  
+  private TaskModel prioritizeTask(String queueName, String uniqueId) {
     TaskModel taskModel = findTaskModel(queueName, uniqueId);
     if (taskModel != null && !taskModel.getPriority()) {
       return taskModelDAO.updatePriority(taskModel, true);

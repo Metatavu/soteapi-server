@@ -6,7 +6,7 @@ public class PageTaskQueue extends AbstractTaskQueue<PageTask> {
 
   @Override
   public String getName() {
-    return "FINVOICE-TASKS";
+    return "MANAGEMENT-PAGE-TASKS";
   }
 
 }

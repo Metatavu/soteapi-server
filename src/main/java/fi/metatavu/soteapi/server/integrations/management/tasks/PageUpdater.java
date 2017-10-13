@@ -8,7 +8,6 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 @Singleton
@@ -17,7 +16,7 @@ import javax.inject.Inject;
 public class PageUpdater {
 
   @Inject
-  private Instance<PageUpdateJob> finvoiceUpdateJob;
+  private PageUpdateJob pageUpdateJob;
   
   @Resource
   private ManagedScheduledExecutorService managedScheduledExecutorService;
@@ -28,7 +27,7 @@ public class PageUpdater {
   }
   
   private void startTimer(long warmup, long delay) {
-    managedScheduledExecutorService.scheduleWithFixedDelay(finvoiceUpdateJob.get(), warmup, delay, TimeUnit.MILLISECONDS);
+    managedScheduledExecutorService.scheduleWithFixedDelay(pageUpdateJob, warmup, delay, TimeUnit.MILLISECONDS);
   }
 
 }
