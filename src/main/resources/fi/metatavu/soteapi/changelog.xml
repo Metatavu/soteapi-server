@@ -1,0 +1,148 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+  <changeSet author="Heikki Kurhinen" id="20171013-pages-initial-database">
+    <createTable tableName="page">
+      <column autoIncrement="true" name="id" type="BIGINT">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="originId" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="slug" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createIndex indexName="I-PAGE-SLUG" tableName="page">
+      <column name="slug"/>
+    </createIndex>
+
+    <createIndex indexName="I-PAGE-ORIGIN-ID" tableName="page">
+      <column name="originId"/>
+    </createIndex>
+
+    <createTable tableName="pagetitle">
+      <column autoIncrement="true" name="id" type="BIGINT">
+          <constraints primaryKey="true"/>
+      </column>
+      <column name="page_id" type="BIGINT">
+          <constraints nullable="false"/>
+      </column>
+      <column name="language" type="VARCHAR(255)">
+          <constraints nullable="false"/>
+      </column>
+      <column name="value" type="LONGTEXT">
+          <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createIndex indexName="I-PAGETITLE-PAGEID" tableName="pagetitle">
+      <column name="page_id"/>
+    </createIndex>
+
+    <addForeignKeyConstraint baseColumnNames="page_id" baseTableName="pagetitle" constraintName="FK-PAGETITLE-PAGE-ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="page"/>
+
+    <createTable tableName="pagecontent">
+      <column autoIncrement="true" name="id" type="BIGINT">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="page_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="language" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="value" type="LONGTEXT">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createIndex indexName="I-PAGECONTENT-PAGEID" tableName="pagecontent">
+      <column name="page_id"/>
+    </createIndex>
+
+    <addForeignKeyConstraint baseColumnNames="page_id" baseTableName="pagecontent" constraintName="FK-PAGECONTENT-PAGE-ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="page"/>
+
+    <createTable tableName="pageimagemeta">
+      <column name="id" type="bigint(20)" autoIncrement="true">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="page_id" type="BIGINT">
+          <constraints nullable="false"/>
+      </column>
+      <column name="name" type="varchar(255)" />
+      <column name="type" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="contentType" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createIndex indexName="I-PAGEIMAGE-PAGEID" tableName="pageimagemeta">
+      <column name="page_id"/>
+    </createIndex>
+
+    <addForeignKeyConstraint baseColumnNames="page_id" baseTableName="pageimagemeta" constraintName="FK-PAGEIMAGE-PAGE-ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="page"/>
+
+    <createTable tableName="pageimagedata">
+      <column name="id" type="bigint(20)" autoIncrement="true">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="pageimagemeta_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="data" type="longblob">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createIndex tableName="TaskQueue" indexName="I-PAGEIMAGEDATA-PAGEIMAGEMETA-ID" unique="true">
+      <column name="pageimagemeta_id"/>
+    </createIndex>
+
+    <addForeignKeyConstraint baseColumnNames="pageimagemeta_id" baseTableName="pageimagedata" constraintName="FK-PAGEIMAGEDATA-PAGEIMAGEMETA-ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="pageimagemeta"/>
+
+  </changeSet>
+  
+  <changeSet author="Heikki Kurhinen" id="20171013-taskmodel-taskqueue">
+    <createTable tableName="taskmodel">
+	    <column autoIncrement="true" name="id" type="BIGINT">
+	       <constraints primaryKey="true"/>
+	    </column>
+	    <column name="created" type="datetime(6)">
+	       <constraints nullable="false"/>
+	    </column>
+	    <column name="data" type="LONGBLOB">
+	       <constraints nullable="false"/>
+	    </column>
+	    <column name="priority" type="BIT(1)">
+	       <constraints nullable="false"/>
+	    </column>
+	    <column name="uniqueId" type="VARCHAR(255)">
+	       <constraints nullable="false"/>
+	    </column>
+	    <column name="queue_id" type="BIGINT"/>
+    </createTable>
+
+    <createTable tableName="taskqueue">
+      <column autoIncrement="true" name="id" type="BIGINT">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="lastTaskReturned" type="datetime(6)"/>
+      <column name="name" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="responsibleNode" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <addForeignKeyConstraint baseColumnNames="queue_id" baseTableName="taskmodel" constraintName="FK-TASKMODEL-TASKQUEUE-ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="taskqueue"/>
+    
+  </changeSet>
+  
+</databaseChangeLog>
+
+
+
