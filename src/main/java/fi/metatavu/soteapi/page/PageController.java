@@ -40,6 +40,84 @@ public class PageController {
   private PageImageDataDAO pageImageDataDAO;
   
   /**
+   * Creates new page
+   * 
+   * @param originId origin id
+   * @param slug slug
+   * @return created page
+   */
+  public Page createPage(String originId, String slug) {
+    return pageDAO.create(originId, slug);
+  }
+  
+  /**
+   * Creates new page title
+   * 
+   * @param language title language
+   * @param value title value
+   * @param page page that title is found from
+   * @return create page title
+   */
+  public PageTitle createPageTitle(String language, String value, Page page) {
+    return pageTitleDAO.create(language, value, page);
+  }
+  
+  /**
+   * Creates new page content
+   * 
+   * @param language content language
+   * @param value content value
+   * @param page page that content is found from
+   * @return created page content
+   */
+  public PageContent createPageContent(String language, String value, Page page ) {
+    return pageContentDAO.create(language, value, page);
+  }
+
+  /**
+   * Update page
+   *
+   * @param originId originId
+   * @param slug slug
+   * @return updated page
+   */
+  public Page updatePage(Page page, String originId, String slug) {
+    pageDAO.updateOriginId(page, originId);
+    pageDAO.updateSlug(page, slug);
+    return page;
+  }
+
+  /**
+   * Update pageTitle
+   *
+   * @param language language
+   * @param value value
+   * @param page page
+   * @return updated pageTitle
+   */
+  public PageTitle updatePageTitle(PageTitle pageTitle, String language, String value, Page page) {
+    pageTitleDAO.updateLanguage(pageTitle, language);
+    pageTitleDAO.updateValue(pageTitle, value);
+    pageTitleDAO.updatePage(pageTitle, page);
+    return pageTitle;
+  }
+  
+  /**
+   * Update pageContent
+   *
+   * @param language language
+   * @param value value
+   * @param page page
+   * @return updated pageContent
+   */
+  public PageContent updatePageContent(PageContent pageContent, String language, String value, Page page) {
+    pageContentDAO.updateLanguage(pageContent, language);
+    pageContentDAO.updateValue(pageContent, value);
+    pageContentDAO.updatePage(pageContent, page);
+    return pageContent;
+  }
+  
+  /**
    * Finds page with pageId
    * 
    * @param pageId Pages id
@@ -47,6 +125,16 @@ public class PageController {
    */
   public Page findPageById(Long pageId) {
     return pageDAO.findById(pageId);
+  }
+  
+  /**
+   * Finds page with origin id
+   * 
+   * @param originId Pages origin id
+   * @return Page
+   */
+  public List<Page> listPagesByOriginId(String originId) {
+    return pageDAO.listByOriginId(originId);
   }
   
   /**

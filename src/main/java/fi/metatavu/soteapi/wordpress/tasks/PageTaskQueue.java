@@ -1,4 +1,4 @@
-package fi.metatavu.soteapi.server.integrations.management.tasks;
+package fi.metatavu.soteapi.wordpress.tasks;
 
 import fi.metatavu.metaflow.tasks.AbstractTaskQueue;
 

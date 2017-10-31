@@ -72,6 +72,9 @@
     
     <metaflow.version>0.0.1-SNAPSHOT</metaflow.version>
     
+    <!-- wp-api-v2-client.version -->
+    
+    <wp-api-v2-client.version>4.8.3</wp-api-v2-client.version>
     <!-- Test -->
     
     <deltaspike.version>1.7.2</deltaspike.version>
@@ -265,6 +268,14 @@
       <groupId>org.liquibase</groupId>
       <artifactId>liquibase-cdi</artifactId>
       <version>${liquibase.version}</version>
+    </dependency>
+    
+    <!-- WP-API -->
+    
+    <dependency>
+      <groupId>com.afrozaar.wordpress</groupId>
+      <artifactId>wp-api-v2-client-java</artifactId>
+      <version>${wp-api-v2-client.version}</version>
     </dependency>
     
     <!-- Test -->

@@ -21,6 +21,23 @@ import fi.metatavu.soteapi.persistence.model.PageContent_;
 @ApplicationScoped
 public class PageContentDAO extends AbstractDAO<PageContent> {
 
+  
+  /**
+   * Creates new page content
+   *  
+   * @param language content language
+   * @param value content value
+   * @param page page that content is linked to
+   * @return created page content
+   */
+  public PageContent create(String language, String value, Page page) {
+    PageContent pageContent = new PageContent();
+    pageContent.setLanguage(language);
+    pageContent.setPage(page);
+    pageContent.setValue(value);
+    return persist(pageContent);
+  }
+  
   /**
    * Lists all page contents for single page
    * 
@@ -43,5 +60,38 @@ public class PageContentDAO extends AbstractDAO<PageContent> {
     
     return query.getResultList();
   }
+  
+  /**
+   * Updates language
+   *
+   * @param language language
+   * @return updated pageContent
+   */
+   public PageContent updateLanguage(PageContent pageContent, String language) {
+     pageContent.setLanguage(language);
+     return persist(pageContent);
+   }
+
+  /**
+   * Updates value
+   *
+   * @param value value
+   * @return updated pageContent
+   */
+   public PageContent updateValue(PageContent pageContent, String value) {
+     pageContent.setValue(value);
+     return persist(pageContent);
+   }
+
+  /**
+   * Updates page
+   *
+   * @param page page
+   * @return updated pageContent
+   */
+   public PageContent updatePage(PageContent pageContent, Page page) {
+     pageContent.setPage(page);
+     return persist(pageContent);
+   }
   
 }
