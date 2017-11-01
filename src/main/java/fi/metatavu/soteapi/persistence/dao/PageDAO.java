@@ -1,7 +1,5 @@
 package fi.metatavu.soteapi.persistence.dao;
 
-import java.util.List;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -41,7 +39,7 @@ public class PageDAO extends AbstractDAO<Page> {
    * @param originId origin id
    * @return Page or null if not found
    */
-  public List<Page> listByOriginId(String originId) {
+  public Page findByOriginId(String originId) {
     EntityManager entityManager = getEntityManager();
 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -55,7 +53,7 @@ public class PageDAO extends AbstractDAO<Page> {
     
     TypedQuery<Page> query = entityManager.createQuery(criteria);
     
-    return query.getResultList();
+    return getSingleResult(query);
   }
   
   /**

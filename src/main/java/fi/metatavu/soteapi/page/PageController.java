@@ -133,8 +133,8 @@ public class PageController {
    * @param originId Pages origin id
    * @return Page
    */
-  public List<Page> listPagesByOriginId(String originId) {
-    return pageDAO.listByOriginId(originId);
+  public Page findPageByOriginId(String originId) {
+    return pageDAO.findByOriginId(originId);
   }
   
   /**

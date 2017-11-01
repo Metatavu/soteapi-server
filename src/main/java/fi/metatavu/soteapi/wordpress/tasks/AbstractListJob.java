@@ -21,7 +21,7 @@ import fi.metatavu.soteapi.wordpress.WordpressConsts;
  * 
  * @param <T> Wordpress post type
  */
-public abstract class AbstractWordpressUpdateJob<T> extends AbstractUpdateJob {
+public abstract class AbstractListJob<T> extends AbstractUpdateJob {
   
   @Inject
   private Wordpress wordpressClient;

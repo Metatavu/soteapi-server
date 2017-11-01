@@ -2,11 +2,11 @@ package fi.metatavu.soteapi.wordpress.tasks;
 
 import fi.metatavu.metaflow.tasks.AbstractTaskQueue;
 
-public class PageTaskQueue extends AbstractTaskQueue<PageTask> {
+public class PageUpdateQueue extends AbstractTaskQueue<PageUpdateTask> {
 
   @Override
   public String getName() {
-    return "MANAGEMENT-PAGE-TASKS";
+    return "WORDPRESS-PAGE-UPDATES";
   }
 
 }

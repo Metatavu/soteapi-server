@@ -1,66 +1,60 @@
 package fi.metatavu.soteapi.wordpress.tasks;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.afrozaar.wordpress.wpapi.v2.model.Page;
-
 import fi.metatavu.soteapi.page.PageController;
+import fi.metatavu.soteapi.persistence.model.Page;
 import fi.metatavu.soteapi.persistence.model.PageContent;
 import fi.metatavu.soteapi.persistence.model.PageTitle;
-import fi.metatavu.soteapi.tasks.TaskController;
+import fi.metatavu.soteapi.tasks.AbstractUpdateJob;
 import fi.metatavu.soteapi.wordpress.WordpressConsts;
 
-public class PageUpdateJob extends AbstractWordpressUpdateJob<Page> {
+public class PageUpdateJob extends AbstractUpdateJob {
   
   @Inject
-  private TaskController taskController;
-  
-  @Inject
-  private PageTaskQueue pageTaskQueue;
+  private PageUpdateQueue pageUpdateQueue;
   
   @Inject
   private PageController pageController;
   
   @Override
   protected void execute() {
-    PageTask pageTask = pageTaskQueue.next();
-    if (pageTask != null) {
-      performTask(pageTask);
-    } else if (taskController.isEmptyAndLocalNodeResponsible(pageTaskQueue.getName())) {
-      fillQueue();
+    PageUpdateTask pageUpdateTask = pageUpdateQueue.next();
+    if (pageUpdateTask != null) {
+      performTask(pageUpdateTask);
     }
   }
   
-  private void performTask(PageTask task) {
-    getDataFromPage(Page.class, task.getPage()).forEach(this::processPage);
-  }
-  
-  private void processPage(Page pageData) {
-    String originId = pageData.getId().toString();
-    List<fi.metatavu.soteapi.persistence.model.Page> pageEntities = pageController.listPagesByOriginId(originId);
+  private void performTask(PageUpdateTask task) {
+    PageUpdateTaskModel pageUpdateModel = task.getPageModel();
+
+    if (pageUpdateModel == null) {
+      return;
+    }
+
+    String originId = pageUpdateModel.getOriginId();
+    Page pageEntity = pageController.findPageByOriginId(originId);
     
-    if (pageEntities != null && !pageEntities.isEmpty()) {
-      updateExistingPage(pageEntities.get(0), pageData);
+    if (pageEntity != null) {
+      updateExistingPage(pageEntity, pageUpdateModel);
       return;
     }
     
-    createNewPage(pageData);
+    createNewPage(pageUpdateModel);
   }
   
-  private void createNewPage(Page pageData) {
-    if (pageData == null) {
+  private void createNewPage(PageUpdateTaskModel pageUpdateModel) {
+    if (pageUpdateModel == null) {
       return;
     } 
     
-    String originId = pageData.getId().toString();
-    String slug = pageData.getSlug();
-    String pageTitle = pageData.getTitle().getRendered();
-    String pageContent = pageData.getContent().getRendered();
-    fi.metatavu.soteapi.persistence.model.Page pageEntity = pageController.createPage(originId, slug);
+    String originId = pageUpdateModel.getOriginId();
+    String slug = pageUpdateModel.getSlug();
+    String pageTitle = pageUpdateModel.getTitle();
+    String pageContent = pageUpdateModel.getContent();
+    Page pageEntity = pageController.createPage(originId, slug);
     
     if (StringUtils.isNotEmpty(pageTitle)) {
       pageController.createPageTitle(WordpressConsts.DEFAULT_LANGUAGE, pageTitle, pageEntity);
@@ -71,10 +65,10 @@ public class PageUpdateJob extends AbstractWordpressUpdateJob<Page> {
     }
   }
   
-  private void updateExistingPage(fi.metatavu.soteapi.persistence.model.Page pageEntity, Page pageData) {
-    pageController.updatePage(pageEntity, pageData.getId().toString(), pageData.getSlug());
-    String pageTitleContent = pageData.getTitle().getRendered();
-    String pageContent = pageData.getContent().getRendered();
+  private void updateExistingPage(Page pageEntity, PageUpdateTaskModel pageUpdateModel) {
+    pageController.updatePage(pageEntity, pageUpdateModel.getOriginId(), pageUpdateModel.getSlug());
+    String pageTitleContent = pageUpdateModel.getTitle();
+    String pageContent = pageUpdateModel.getContent();
 
     if (StringUtils.isNotEmpty(pageTitleContent)) {
       PageTitle pageTitleEntity = pageController.listPageTitlesByPage(pageEntity)
@@ -104,17 +98,4 @@ public class PageUpdateJob extends AbstractWordpressUpdateJob<Page> {
       } 
     }
   }
-  
-  private void fillQueue() {
-    int numberOfPages = getNumberOfPages(Page.class);
-    for (int i = 1; i <= numberOfPages; i++) {
-      PageTask newTask = new PageTask();
-      newTask.setPriority(Boolean.FALSE);
-      newTask.setUniqueId(String.format("wp-page-%d", i));
-      newTask.setPage(i);
-      pageTaskQueue.enqueueTask(newTask);
-    }
-    
-  }
-  
 }
