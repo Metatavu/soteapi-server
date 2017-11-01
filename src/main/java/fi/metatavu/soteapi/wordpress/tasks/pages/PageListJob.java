@@ -4,9 +4,10 @@ import javax.inject.Inject;
 
 import com.afrozaar.wordpress.wpapi.v2.model.Page;
 
+import fi.metatavu.soteapi.tasks.AbstractSoteApiTaskQueue;
 import fi.metatavu.soteapi.wordpress.tasks.AbstractListJob;
 
-public class PageListJob extends AbstractListJob<Page> {
+public class PageListJob extends AbstractListJob<Page, PageListTask> {
   
   @Inject
   private PageListQueue pageListQueue;
@@ -15,20 +16,21 @@ public class PageListJob extends AbstractListJob<Page> {
   private PageUpdateQueue pageUpdateQueue;
   
   @Override
-  protected void execute() {
-    PageListTask pageListTask = pageListQueue.next();
-    if (pageListTask != null) {
-      performTask(pageListTask);
-    } else if (pageListQueue.isEmptyAndLocalNodeResponsible()) {
-      fillQueue();
-    }
+  protected AbstractSoteApiTaskQueue<PageListTask> getQueue() {
+    return pageListQueue;
   }
   
-  private void performTask(PageListTask task) {
-    getDataFromPage(Page.class, task.getPage()).forEach(this::processPage);
+  @Override
+  protected PageListTask createTask(int page) {
+    PageListTask newTask = new PageListTask();
+    newTask.setPriority(Boolean.FALSE);
+    newTask.setUniqueId(String.format("wp-page-list-%d", page));
+    newTask.setPage(page);
+    return newTask;
   }
   
-  private void processPage(Page pageData) {
+  @Override
+  protected void process(Page pageData) {
     if (pageData == null) {
       return;
     }
@@ -40,22 +42,10 @@ public class PageListJob extends AbstractListJob<Page> {
     pageModel.setContent(pageData.getContent().getRendered());
     
     PageUpdateTask pageEntityTask = new PageUpdateTask();
-    pageEntityTask.setPageModel(pageModel);
+    pageEntityTask.setPostUpdateModel(pageModel);
     pageEntityTask.setPriority(Boolean.FALSE);
     pageEntityTask.setUniqueId(String.format("wp-page-update-%d", pageData.getId()));
     pageUpdateQueue.enqueueTask(pageEntityTask);
   }
-  
-  private void fillQueue() {
-    int numberOfPages = getNumberOfPages(Page.class);
-    for (int i = 1; i <= numberOfPages; i++) {
-      PageListTask newTask = new PageListTask();
-      newTask.setPriority(Boolean.FALSE);
-      newTask.setUniqueId(String.format("wp-page-list-%d", i));
-      newTask.setPage(i);
-      pageListQueue.enqueueTask(newTask);
-    }
     
-  }
-  
 }

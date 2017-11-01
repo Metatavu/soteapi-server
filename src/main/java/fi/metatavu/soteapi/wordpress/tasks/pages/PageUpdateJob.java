@@ -28,7 +28,7 @@ public class PageUpdateJob extends AbstractUpdateJob {
   }
   
   private void performTask(PageUpdateTask task) {
-    PageUpdateTaskModel pageUpdateModel = task.getPageModel();
+    PageUpdateTaskModel pageUpdateModel = task.getPostUpdateModel();
 
     if (pageUpdateModel == null) {
       return;

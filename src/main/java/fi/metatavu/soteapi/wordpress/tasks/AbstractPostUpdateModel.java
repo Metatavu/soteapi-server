@@ -2,7 +2,7 @@ package fi.metatavu.soteapi.wordpress.tasks;
 
 import java.io.Serializable;
 
-public class AbstractPostUpdateModel implements Serializable{
+public abstract class AbstractPostUpdateModel implements Serializable{
 
   private static final long serialVersionUID = -2477426626722322434L;
 

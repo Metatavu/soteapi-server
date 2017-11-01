@@ -1,6 +1,8 @@
 package fi.metatavu.soteapi.wordpress.tasks;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -11,6 +13,8 @@ import com.afrozaar.wordpress.wpapi.v2.Wordpress;
 import com.afrozaar.wordpress.wpapi.v2.request.SearchRequest;
 import com.afrozaar.wordpress.wpapi.v2.response.PagedResponse;
 
+import fi.metatavu.soteapi.persistence.dao.AbstractDAO;
+import fi.metatavu.soteapi.tasks.AbstractSoteApiTaskQueue;
 import fi.metatavu.soteapi.tasks.AbstractUpdateJob;
 import fi.metatavu.soteapi.wordpress.WordpressConsts;
 
@@ -19,12 +23,75 @@ import fi.metatavu.soteapi.wordpress.WordpressConsts;
  * 
  * @author Heikki Kurhinen
  * 
- * @param <T> Wordpress post type
+ * @param <W> Wordpress post type
  */
-public abstract class AbstractListJob<T> extends AbstractUpdateJob {
+public abstract class AbstractListJob<W, T extends AbstractListTask> extends AbstractUpdateJob {
   
   @Inject
   private Wordpress wordpressClient;
+  
+  @Override
+  protected void execute() {
+    T task = getQueue().next();
+    if (task != null) {
+      performTask(task);
+    } else if (getQueue().isEmptyAndLocalNodeResponsible()) {
+      fillQueue();
+    }
+  }
+  
+  /**
+   * Processes the post
+   * 
+   * @param post post to be processed
+   */
+  protected abstract void process(W post);
+
+  /**
+   * Get data from page
+   * 
+   * @param postType Type of wordpress post
+   * @param page Page to extract the data from
+   * @return list of posts
+   */
+  protected List<W> getDataFromPage(int page) {
+    @SuppressWarnings("unchecked")
+    PagedResponse<W> searchResponse = (PagedResponse<W>) wordpressClient.search(SearchRequest.Builder
+        .aSearchRequest(getWordpressTypeClass())
+        .withPagination(WordpressConsts.PAGE_SIZE, page)
+        .build());
+    
+    return searchResponse.getList();
+  }
+  
+  /**
+   * Creates new task based on the page index
+   * 
+   * @param page page index
+   * @return created task
+   */
+  protected abstract T createTask(int page);
+  
+  /**
+   * Returns queue
+   * 
+   * @return queue
+   */
+  protected abstract AbstractSoteApiTaskQueue<T> getQueue();
+  
+  private void performTask(T task) {
+    getDataFromPage(task.getPage()).forEach(this::process);
+  }
+  
+  /**
+   * Fills the queue
+   */
+  private void fillQueue() {
+    int numberOfPages = getNumberOfPages();
+    for (int i = 1; i <= numberOfPages; i++) {
+      getQueue().enqueueTask(createTask(i));
+    }
+  }
   
   /**
    * Get total number of pages
@@ -32,9 +99,9 @@ public abstract class AbstractListJob<T> extends AbstractUpdateJob {
    * @param postType type of wordpress post
    * @return total number of pages for post type
    */
-  protected int getNumberOfPages(Class<T> postType) {
-    PagedResponse<T> searchResponse = wordpressClient.search(SearchRequest.Builder
-        .aSearchRequest(postType)
+  private int getNumberOfPages() {
+    PagedResponse<?> searchResponse = wordpressClient.search(SearchRequest.Builder
+        .aSearchRequest(getWordpressTypeClass())
         .withPagination(WordpressConsts.PAGE_SIZE, 1)
         .build());
 
@@ -43,20 +110,23 @@ public abstract class AbstractListJob<T> extends AbstractUpdateJob {
     return (int) ReflectionUtils.getField(pagesField, searchResponse);
   }
   
-  /**
-   * Get data from page
-   * 
-   * @param postType Type of wordpress post
-   * @param page Page to extract the data from
-   * @return list of posts
-   */
-  protected List<T> getDataFromPage(Class<T> postType, int page) {
-    PagedResponse<T> searchResponse = wordpressClient.search(SearchRequest.Builder
-        .aSearchRequest(postType)
-        .withPagination(WordpressConsts.PAGE_SIZE, page)
-        .build());
-    
-    return searchResponse.getList();
+  @SuppressWarnings("unchecked")
+  private Class<? extends W> getWordpressTypeClass() {
+    Type genericSuperclass = getClass().getGenericSuperclass();
+
+    if (genericSuperclass instanceof ParameterizedType) {
+      return (Class<? extends W>) getTypeArgument((ParameterizedType) genericSuperclass, 0);
+    } else {
+      if ((genericSuperclass instanceof Class<?>) && (AbstractDAO.class.isAssignableFrom((Class<?>) genericSuperclass))) {
+        return (Class<? extends W>) getTypeArgument((ParameterizedType) ((Class<?>) genericSuperclass).getGenericSuperclass(), 0);
+      }
+    }
+
+    return null;
+  }
+
+  private Class<?> getTypeArgument(ParameterizedType parameterizedType, int index) {
+    return (Class<?>) parameterizedType.getActualTypeArguments()[index];
   }
 
 }
