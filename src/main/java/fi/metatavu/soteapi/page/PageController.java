@@ -70,7 +70,7 @@ public class PageController {
    * @param page page that content is found from
    * @return created page content
    */
-  public PageContent createPageContent(String language, String value, Page page ) {
+  public PageContent createPageContent(String language, String value, Page page) {
     return pageContentDAO.create(language, value, page);
   }
 
