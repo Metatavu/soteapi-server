@@ -1,8 +1,11 @@
 package fi.metatavu.soteapi.wordpress.tasks;
 
-import fi.metatavu.metaflow.tasks.AbstractTaskQueue;
+import javax.enterprise.context.ApplicationScoped;
 
-public class PageListQueue extends AbstractTaskQueue<PageListTask> {
+import fi.metatavu.soteapi.tasks.AbstractSoteApiTaskQueue;
+
+@ApplicationScoped
+public class PageListQueue extends AbstractSoteApiTaskQueue<PageListTask> {
 
   @Override
   public String getName() {

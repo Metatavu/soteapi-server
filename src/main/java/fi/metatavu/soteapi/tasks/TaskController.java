@@ -49,7 +49,7 @@ public class TaskController {
   public <T extends Task> T createTask(String queueName, T task) {
     TaskQueue taskQueue = taskQueueDAO.findByName(queueName);
     if (taskQueue == null) {
-      taskQueue = taskQueueDAO.create(queueName, "UNKNOWN");
+      return null;
     }
 
     String uniqueId = task.getUniqueId();
