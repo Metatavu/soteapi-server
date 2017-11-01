@@ -27,12 +27,14 @@ public class TaskModelDAO extends AbstractDAO<TaskModel> {
    * @param queue queue the task belongs to
    * @param priority whether the task is a priority task or not
    * @param data serialized task data
+   * @param uniqueId unique id for task
    * @param created creation time
    * @return created task
    */
-  public TaskModel create(TaskQueue queue, Boolean priority, byte[] data, OffsetDateTime created) {
+  public TaskModel create(TaskQueue queue, Boolean priority, byte[] data, String uniqueId, OffsetDateTime created) {
     TaskModel taskModel = new TaskModel();
     taskModel.setCreated(created);
+    taskModel.setUniqueId(uniqueId);
     taskModel.setData(data);
     taskModel.setPriority(priority);
     taskModel.setQueue(queue);

@@ -17,6 +17,7 @@ import org.hibernate.JDBCException;
 import org.slf4j.Logger;
 
 import fi.metatavu.metaflow.tasks.Task;
+import fi.metatavu.soteapi.cluster.ClusterController;
 import fi.metatavu.soteapi.persistence.dao.TaskModelDAO;
 import fi.metatavu.soteapi.persistence.dao.TaskQueueDAO;
 import fi.metatavu.soteapi.persistence.model.TaskModel;
@@ -33,6 +34,9 @@ public class TaskController {
 
   @Inject
   private TaskModelDAO taskModelDAO;
+  
+  @Inject
+  private ClusterController clusterController;
 
   /**
    * Creates new task
@@ -45,7 +49,7 @@ public class TaskController {
   public <T extends Task> T createTask(String queueName, T task) {
     TaskQueue taskQueue = taskQueueDAO.findByName(queueName);
     if (taskQueue == null) {
-      taskQueue = taskQueueDAO.create(queueName, "UNKNOWN");
+      return null;
     }
 
     String uniqueId = task.getUniqueId();
@@ -138,6 +142,16 @@ public class TaskController {
   }
   
   /**
+   * Returns true if current queue is empty and local node is responsible from the queue
+   * 
+   * @param queueName Name of the queue
+   * @return true if current queue is empty and local node is responsible from the queue
+   */
+  public boolean isEmptyAndLocalNodeResponsible(String queueName) {
+    return isQueueEmpty(queueName) && isNodeResponsibleFromQueue(queueName, clusterController.getLocalNodeName());
+  }
+  
+  /**
    * Return whether queue is empty
    * 
    * @param queueName queue name
@@ -173,6 +187,34 @@ public class TaskController {
     return unserialize(taskModel.getData());
   }
   
+  /**
+   * Creates new task queue
+   * 
+   * @param name queue name
+   * @return created queue
+   */
+  public TaskQueue createTaskQueue(String name) {
+    return taskQueueDAO.create(name, "UNKNOWN");
+  }
+  
+  /**
+   * Returns count of task queue
+   * 
+   * @return count of task queue
+   */
+  public Long countTaskQueues() {
+    return taskQueueDAO.count();
+  }
+  
+  /**
+   * Returns task queue by index. List is ordered by id
+   * 
+   * @return task queue by index
+   */
+  public TaskQueue findTaskQueueByIndex(int index) {
+    return taskQueueDAO.findTaskQueueByIndex(index);
+  }
+  
   private TaskModel findTaskModel(String queueName, String uniqueId) {
     TaskQueue taskQueue = taskQueueDAO.findByName(queueName);
     if (taskQueue == null) {
@@ -193,7 +235,7 @@ public class TaskController {
   
   private TaskModel createTask(String queueName, Boolean priority, TaskQueue taskQueue, byte[] data, String uniqueId) {
     try {
-      return taskModelDAO.create(taskQueue, priority, data, OffsetDateTime.now());
+      return taskModelDAO.create(taskQueue, priority, data, uniqueId, OffsetDateTime.now());
     } catch (PersistenceException e) {
       handleCreateTaskErrorPersistence(queueName, uniqueId, e);
     } catch (JDBCException e) {

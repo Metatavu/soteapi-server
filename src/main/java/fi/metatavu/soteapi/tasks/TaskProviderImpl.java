@@ -34,4 +34,11 @@ public class TaskProviderImpl implements TaskProvider {
   public <T extends Task> T findTask(String queueName, String uniqueId) {
     return taskController.findTask(queueName, uniqueId);
   }
+
+  @Override
+  public void prepareQueue(String queueName) {
+    if (!taskController.isQueueExisting(queueName)) {
+      taskController.createTaskQueue(queueName);
+    }
+  }
 }

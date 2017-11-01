@@ -60,4 +60,37 @@ public class PageTitleDAO extends AbstractDAO<PageTitle> {
     return query.getResultList();
   }
   
+  /**
+   * Updates language
+   *
+   * @param language language
+   * @return updated pageTitle
+   */
+   public PageTitle updateLanguage(PageTitle pageTitle, String language) {
+     pageTitle.setLanguage(language);
+     return persist(pageTitle);
+   }
+
+  /**
+   * Updates value
+   *
+   * @param value value
+   * @return updated pageTitle
+   */
+   public PageTitle updateValue(PageTitle pageTitle, String value) {
+     pageTitle.setValue(value);
+     return persist(pageTitle);
+   }
+
+  /**
+   * Updates page
+   *
+   * @param page page
+   * @return updated pageTitle
+   */
+   public PageTitle updatePage(PageTitle pageTitle, Page page) {
+     pageTitle.setPage(page);
+     return persist(pageTitle);
+   }
+  
 }
