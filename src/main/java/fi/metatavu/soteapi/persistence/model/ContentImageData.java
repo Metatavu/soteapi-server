@@ -10,7 +10,7 @@ import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
 @Entity
-public class PageImageData {
+public class ContentImageData {
   
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +22,7 @@ public class PageImageData {
   private byte[] data;
   
   @OneToOne
-  private PageImageMeta pageImageMeta;
+  private ContentImageMeta contentImageMeta;
   
   public Long getId() {
     return id;
@@ -40,12 +40,12 @@ public class PageImageData {
     this.data = data;
   }
 
-  public PageImageMeta getPageImageMeta() {
-    return pageImageMeta;
+  public ContentImageMeta getContentImageMeta() {
+    return contentImageMeta;
   }
 
-  public void setPageImageMeta(PageImageMeta pageImageMeta) {
-    this.pageImageMeta = pageImageMeta;
+  public void setContentImageMeta(ContentImageMeta contentImageMeta) {
+    this.contentImageMeta = contentImageMeta;
   }
 
 }

@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
-public class PageImageMeta {
+public class ContentImageMeta {
   
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +31,7 @@ public class PageImageMeta {
   private String contentType;
   
   @ManyToOne
-  private Page page;
+  private Content content;
   
   public Long getId() {
     return id;
@@ -41,12 +41,12 @@ public class PageImageMeta {
     this.id = id;
   }
 
-  public Page getPage() {
-    return page;
+  public Content getContent() {
+    return content;
   }
 
-  public void setPage(Page page) {
-    this.page = page;
+  public void setContent(Content content) {
+    this.content = content;
   }
 
   public String getName() {

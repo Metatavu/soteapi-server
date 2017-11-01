@@ -2,15 +2,18 @@ package fi.metatavu.soteapi.persistence.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
-public class Page {
+public class Content {
   
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +28,13 @@ public class Page {
   @NotNull
   @NotEmpty
   private String slug;
+  
+  @Enumerated (EnumType.STRING)
+  @Column(nullable = false)
+  private ContentType contentType;
+
+  @ManyToOne(optional = true)
+  private Content parent;
   
   public Long getId() {
     return id;
@@ -48,6 +58,22 @@ public class Page {
 
   public void setSlug(String slug) {
     this.slug = slug;
+  }
+  
+  public Content getParent() {
+    return parent;
+  }
+  
+  public void setParent(Content parent) {
+    this.parent = parent;
+  }
+  
+  public ContentType getContentType() {
+    return contentType;
+  }
+  
+  public void setContentType(ContentType contentType) {
+    this.contentType = contentType;
   }
   
 }
