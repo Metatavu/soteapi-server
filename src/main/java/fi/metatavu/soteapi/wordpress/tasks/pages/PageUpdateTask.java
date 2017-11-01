@@ -1,20 +1,20 @@
-package fi.metatavu.soteapi.wordpress.tasks;
+package fi.metatavu.soteapi.wordpress.tasks.pages;
 
 import fi.metatavu.metaflow.tasks.Task;
 
-public class PageListTask implements Task {
+public class PageUpdateTask implements Task {
 
   private static final long serialVersionUID = 8471408662465136413L;
 
   private String uniqueId;
   private boolean priority;
-  private int page;
+  private PageUpdateTaskModel pageModel;
   
-  public PageListTask() {
+  public PageUpdateTask() {
     super();
   }
   
-  public PageListTask(String uniqueId, boolean priority) {
+  public PageUpdateTask(String uniqueId, boolean priority) {
     super();
     this.uniqueId = uniqueId;
     this.priority = priority;
@@ -30,12 +30,12 @@ public class PageListTask implements Task {
     return priority;
   }
   
-  public int getPage() {
-    return page;
+  public PageUpdateTaskModel getPageModel() {
+    return pageModel;
   }
   
-  public void setPage(int page) {
-    this.page = page;
+  public void setPageModel(PageUpdateTaskModel pageModel) {
+    this.pageModel = pageModel;
   }
   
   public void setUniqueId(String uniqueId) {

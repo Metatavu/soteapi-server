@@ -1,8 +1,10 @@
-package fi.metatavu.soteapi.wordpress.tasks;
+package fi.metatavu.soteapi.wordpress.tasks.pages;
 
 import javax.inject.Inject;
 
 import com.afrozaar.wordpress.wpapi.v2.model.Page;
+
+import fi.metatavu.soteapi.wordpress.tasks.AbstractListJob;
 
 public class PageListJob extends AbstractListJob<Page> {
   

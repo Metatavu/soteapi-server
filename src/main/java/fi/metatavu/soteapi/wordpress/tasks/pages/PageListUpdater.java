@@ -1,4 +1,4 @@
-package fi.metatavu.soteapi.wordpress.tasks;
+package fi.metatavu.soteapi.wordpress.tasks.pages;
 
 import java.util.concurrent.TimeUnit;
 

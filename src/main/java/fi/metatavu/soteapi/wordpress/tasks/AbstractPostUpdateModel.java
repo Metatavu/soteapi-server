@@ -2,16 +2,16 @@ package fi.metatavu.soteapi.wordpress.tasks;
 
 import java.io.Serializable;
 
-public class PageUpdateTaskModel implements Serializable{
-  
-  private static final long serialVersionUID = -2309431277184013627L;
+public class AbstractPostUpdateModel implements Serializable{
+
+  private static final long serialVersionUID = -2477426626722322434L;
 
   private String title;
   private String content;
   private String slug;
   private String originId;
   
-  public PageUpdateTaskModel() {
+  public AbstractPostUpdateModel() {
   }
   
   public String getTitle() {
