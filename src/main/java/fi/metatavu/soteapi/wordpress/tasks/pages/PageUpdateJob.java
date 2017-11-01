@@ -4,10 +4,11 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 
-import fi.metatavu.soteapi.page.PageController;
-import fi.metatavu.soteapi.persistence.model.Page;
-import fi.metatavu.soteapi.persistence.model.PageContent;
-import fi.metatavu.soteapi.persistence.model.PageTitle;
+import fi.metatavu.soteapi.content.ContentController;
+import fi.metatavu.soteapi.persistence.model.Content;
+import fi.metatavu.soteapi.persistence.model.ContentData;
+import fi.metatavu.soteapi.persistence.model.ContentTitle;
+import fi.metatavu.soteapi.persistence.model.ContentType;
 import fi.metatavu.soteapi.tasks.AbstractUpdateJob;
 import fi.metatavu.soteapi.wordpress.WordpressConsts;
 
@@ -17,7 +18,7 @@ public class PageUpdateJob extends AbstractUpdateJob {
   private PageUpdateQueue pageUpdateQueue;
   
   @Inject
-  private PageController pageController;
+  private ContentController contentController;
   
   @Override
   protected void execute() {
@@ -35,67 +36,88 @@ public class PageUpdateJob extends AbstractUpdateJob {
     }
 
     String originId = pageUpdateModel.getOriginId();
-    Page pageEntity = pageController.findPageByOriginId(originId);
+    Content contentEntity = contentController.findContentByOriginId(originId);
     
-    if (pageEntity != null) {
-      updateExistingPage(pageEntity, pageUpdateModel);
+    if (contentEntity != null) {
+      updateExistingPage(contentEntity, pageUpdateModel);
       return;
     }
     
-    createNewPage(pageUpdateModel);
+    createNewContent(pageUpdateModel);
   }
   
-  private void createNewPage(PageUpdateTaskModel pageUpdateModel) {
+  private void createNewContent(PageUpdateTaskModel pageUpdateModel) {
     if (pageUpdateModel == null) {
       return;
     } 
     
     String originId = pageUpdateModel.getOriginId();
     String slug = pageUpdateModel.getSlug();
-    String pageTitle = pageUpdateModel.getTitle();
-    String pageContent = pageUpdateModel.getContent();
-    Page pageEntity = pageController.createPage(originId, slug);
+    String ContentTitle = pageUpdateModel.getTitle();
+    String contentData = pageUpdateModel.getContent();
+    String parentOriginId = pageUpdateModel.getParentOriginId();
+    Content parent = null;
     
-    if (StringUtils.isNotEmpty(pageTitle)) {
-      pageController.createPageTitle(WordpressConsts.DEFAULT_LANGUAGE, pageTitle, pageEntity);
+    if (StringUtils.isNotEmpty(parentOriginId)) {
+      parent = contentController.findContentByOriginId(parentOriginId);
+      if (parent == null) {
+        return;
+      }
+    }
+    
+    Content contentEntity = contentController.createContent(originId, slug, ContentType.PAGE, parent);
+    
+    if (StringUtils.isNotEmpty(ContentTitle)) {
+      contentController.createContentTitle(WordpressConsts.DEFAULT_LANGUAGE, ContentTitle, contentEntity);
     }
 
-    if (StringUtils.isNotEmpty(pageContent)) {
-      pageController.createPageContent(WordpressConsts.DEFAULT_LANGUAGE, pageContent, pageEntity);
+    if (StringUtils.isNotEmpty(contentData)) {
+      contentController.createContentData(WordpressConsts.DEFAULT_LANGUAGE, contentData, contentEntity);
     }
   }
   
-  private void updateExistingPage(Page pageEntity, PageUpdateTaskModel pageUpdateModel) {
-    pageController.updatePage(pageEntity, pageUpdateModel.getOriginId(), pageUpdateModel.getSlug());
-    String pageTitleContent = pageUpdateModel.getTitle();
-    String pageContent = pageUpdateModel.getContent();
+  private void updateExistingPage(Content contentEntity, PageUpdateTaskModel pageUpdateModel) {
+    String parentOriginId = pageUpdateModel.getParentOriginId();
+    Content parent = null;
+    
+    if (StringUtils.isNotEmpty(parentOriginId)) {
+      parent = contentController.findContentByOriginId(parentOriginId);
+      if (parent == null) {
+        return;
+      }
+    }
+    
+    contentController.updateContent(contentEntity, pageUpdateModel.getOriginId(), pageUpdateModel.getSlug(), ContentType.PAGE, parent);
+    String contentTitleContent = pageUpdateModel.getTitle();
+    String contentData = pageUpdateModel.getContent();
 
-    if (StringUtils.isNotEmpty(pageTitleContent)) {
-      PageTitle pageTitleEntity = pageController.listPageTitlesByPage(pageEntity)
+    if (StringUtils.isNotEmpty(contentTitleContent)) {
+      ContentTitle contentTitleEntity = contentController.listContentTitlesByContent(contentEntity)
         .stream()
         .filter(title -> title.getLanguage().equals(WordpressConsts.DEFAULT_LANGUAGE))
         .findAny()
         .orElse(null);
       
-      if (pageTitleEntity != null) {
-        pageController.updatePageTitle(pageTitleEntity, WordpressConsts.DEFAULT_LANGUAGE, pageTitleContent, pageEntity);
+      if (contentTitleEntity != null) {
+        contentController.updateContentTitle(contentTitleEntity, WordpressConsts.DEFAULT_LANGUAGE, contentTitleContent, contentEntity);
       } else {
-        pageController.createPageTitle(WordpressConsts.DEFAULT_LANGUAGE, pageTitleContent, pageEntity);
+        contentController.createContentTitle(WordpressConsts.DEFAULT_LANGUAGE, contentTitleContent, contentEntity);
       }
     }
 
-    if (StringUtils.isNotEmpty(pageContent)) {
-      PageContent pageContentEntity = pageController.listPageContentByPage(pageEntity)
+    if (StringUtils.isNotEmpty(contentData)) {
+      ContentData contentDataEntity = contentController.listContentDataByContent(contentEntity)
         .stream()
         .filter(content -> content.getLanguage().equals(WordpressConsts.DEFAULT_LANGUAGE))
         .findAny()
         .orElse(null);
       
-      if (pageContentEntity != null) {
-        pageController.updatePageContent(pageContentEntity, WordpressConsts.DEFAULT_LANGUAGE, pageContent, pageEntity);
+      if (contentDataEntity != null) {
+        contentController.updateContentData(contentDataEntity, WordpressConsts.DEFAULT_LANGUAGE, contentData, contentEntity);
       } else {
-        pageController.createPageContent(WordpressConsts.DEFAULT_LANGUAGE, pageContent, pageEntity);
+        contentController.createContentData(WordpressConsts.DEFAULT_LANGUAGE, contentData, contentEntity);
       } 
     }
   }
+  
 }

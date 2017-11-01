@@ -1,7 +1,7 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
-  <changeSet author="Heikki Kurhinen" id="20171013-pages-initial-database">
-    <createTable tableName="page">
+  <changeSet author="Heikki Kurhinen" id="20171013-contents-initial-database">
+    <createTable tableName="content">
       <column autoIncrement="true" name="id" type="BIGINT">
         <constraints primaryKey="true"/>
       </column>
@@ -11,21 +11,27 @@
       <column name="slug" type="VARCHAR(255)">
         <constraints nullable="false"/>
       </column>
+      <column name="contentType" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="parent_id" type="BIGINT">
+        <constraints nullable="true"/>
+      </column>
     </createTable>
 
-    <createIndex indexName="I-PAGE-SLUG" tableName="page">
+    <createIndex indexName="I-CONTENT-SLUG" tableName="content">
       <column name="slug"/>
     </createIndex>
 
-    <createIndex indexName="I-PAGE-ORIGIN-ID" tableName="page">
+    <createIndex indexName="I-CONTENT-ORIGIN-ID" tableName="content">
       <column name="originId"/>
     </createIndex>
 
-    <createTable tableName="pagetitle">
+    <createTable tableName="contenttitle">
       <column autoIncrement="true" name="id" type="BIGINT">
           <constraints primaryKey="true"/>
       </column>
-      <column name="page_id" type="BIGINT">
+      <column name="content_id" type="BIGINT">
           <constraints nullable="false"/>
       </column>
       <column name="language" type="VARCHAR(255)">
@@ -36,17 +42,17 @@
       </column>
     </createTable>
 
-    <createIndex indexName="I-PAGETITLE-PAGEID" tableName="pagetitle">
-      <column name="page_id"/>
+    <createIndex indexName="I-CONTENTTITLE-CONTENTID" tableName="contenttitle">
+      <column name="content_id"/>
     </createIndex>
 
-    <addForeignKeyConstraint baseColumnNames="page_id" baseTableName="pagetitle" constraintName="FK-PAGETITLE-PAGE-ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="page"/>
+    <addForeignKeyConstraint baseColumnNames="content_id" baseTableName="contenttitle" constraintName="FK-CONTENTTITLE-CONTENT-ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="content"/>
 
-    <createTable tableName="pagecontent">
+    <createTable tableName="contentdata">
       <column autoIncrement="true" name="id" type="BIGINT">
         <constraints primaryKey="true"/>
       </column>
-      <column name="page_id" type="BIGINT">
+      <column name="content_id" type="BIGINT">
         <constraints nullable="false"/>
       </column>
       <column name="language" type="VARCHAR(255)">
@@ -57,17 +63,17 @@
       </column>
     </createTable>
 
-    <createIndex indexName="I-PAGECONTENT-PAGEID" tableName="pagecontent">
-      <column name="page_id"/>
+    <createIndex indexName="I-CONTENTDATA-CONTENTID" tableName="contentdata">
+      <column name="content_id"/>
     </createIndex>
 
-    <addForeignKeyConstraint baseColumnNames="page_id" baseTableName="pagecontent" constraintName="FK-PAGECONTENT-PAGE-ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="page"/>
+    <addForeignKeyConstraint baseColumnNames="content_id" baseTableName="contentdata" constraintName="FK-CONTENTDATA-CONTENT-ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="content"/>
 
-    <createTable tableName="pageimagemeta">
+    <createTable tableName="contentimagemeta">
       <column name="id" type="bigint(20)" autoIncrement="true">
         <constraints nullable="false" primaryKey="true"/>
       </column>
-      <column name="page_id" type="BIGINT">
+      <column name="content_id" type="BIGINT">
           <constraints nullable="false"/>
       </column>
       <column name="name" type="varchar(255)" />
@@ -79,17 +85,17 @@
       </column>
     </createTable>
 
-    <createIndex indexName="I-PAGEIMAGE-PAGEID" tableName="pageimagemeta">
-      <column name="page_id"/>
+    <createIndex indexName="I-CONTENTIMAGE-CONTENTID" tableName="contentimagemeta">
+      <column name="content_id"/>
     </createIndex>
 
-    <addForeignKeyConstraint baseColumnNames="page_id" baseTableName="pageimagemeta" constraintName="FK-PAGEIMAGE-PAGE-ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="page"/>
+    <addForeignKeyConstraint baseColumnNames="content_id" baseTableName="contentimagemeta" constraintName="FK-CONTENTIMAGE-CONTENT-ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="content"/>
 
-    <createTable tableName="pageimagedata">
+    <createTable tableName="contentimagedata">
       <column name="id" type="bigint(20)" autoIncrement="true">
         <constraints nullable="false" primaryKey="true"/>
       </column>
-      <column name="pageimagemeta_id" type="BIGINT">
+      <column name="contentimagemeta_id" type="BIGINT">
         <constraints nullable="false"/>
       </column>
       <column name="data" type="longblob">
@@ -97,11 +103,11 @@
       </column>
     </createTable>
 
-    <createIndex tableName="pageimagedata" indexName="I-PAGEIMAGEDATA-PAGEIMAGEMETA-ID" unique="true">
-      <column name="pageimagemeta_id"/>
+    <createIndex tableName="contentimagedata" indexName="I-CONTENTIMAGEDATA-CONTENTIMAGEMETA-ID" unique="true">
+      <column name="contentimagemeta_id"/>
     </createIndex>
 
-    <addForeignKeyConstraint baseColumnNames="pageimagemeta_id" baseTableName="pageimagedata" constraintName="FK-PAGEIMAGEDATA-PAGEIMAGEMETA-ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="pageimagemeta"/>
+    <addForeignKeyConstraint baseColumnNames="contentimagemeta_id" baseTableName="contentimagedata" constraintName="FK-CONTENTIMAGEDATA-CONTENTIMAGEMETA-ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="contentimagemeta"/>
 
   </changeSet>
   

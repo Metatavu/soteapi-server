@@ -3,13 +3,14 @@ package fi.metatavu.soteapi.wordpress.tasks;
 import java.io.Serializable;
 
 public abstract class AbstractPostUpdateModel implements Serializable{
-
-  private static final long serialVersionUID = -2477426626722322434L;
+  
+  private static final long serialVersionUID = -5258379017640768560L;
 
   private String title;
   private String content;
   private String slug;
   private String originId;
+  private String parentOriginId;
   
   public AbstractPostUpdateModel() {
   }
@@ -44,5 +45,13 @@ public abstract class AbstractPostUpdateModel implements Serializable{
 
   public void setOriginId(String originId) {
     this.originId = originId;
+  }
+  
+  public String getParentOriginId() {
+    return parentOriginId;
+  }
+  
+  public void setParentOriginId(String parentOriginId) {
+    this.parentOriginId = parentOriginId;
   }
 }

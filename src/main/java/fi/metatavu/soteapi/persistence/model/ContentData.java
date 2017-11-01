@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
-public class PageTitle {
+public class ContentData {
   
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +30,7 @@ public class PageTitle {
   private String value;
   
   @ManyToOne
-  private Page page;
+  private Content content;
   
   public Long getId() {
     return id;
@@ -56,11 +56,11 @@ public class PageTitle {
     this.value = value;
   }
 
-  public Page getPage() {
-    return page;
+  public Content getContent() {
+    return content;
   }
 
-  public void setPage(Page page) {
-    this.page = page;
+  public void setContent(Content content) {
+    this.content = content;
   }
 }
