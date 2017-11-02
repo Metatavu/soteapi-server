@@ -5,13 +5,13 @@
       <column autoIncrement="true" name="id" type="BIGINT">
         <constraints primaryKey="true"/>
       </column>
-      <column name="originId" type="VARCHAR(255)">
+      <column name="originId" type="VARCHAR(191)">
         <constraints nullable="false"/>
       </column>
-      <column name="slug" type="VARCHAR(255)">
+      <column name="slug" type="VARCHAR(191)">
         <constraints nullable="false"/>
       </column>
-      <column name="contentType" type="VARCHAR(255)">
+      <column name="contentType" type="VARCHAR(191)">
         <constraints nullable="false"/>
       </column>
       <column name="parent_id" type="BIGINT">
@@ -34,7 +34,7 @@
       <column name="content_id" type="BIGINT">
           <constraints nullable="false"/>
       </column>
-      <column name="language" type="VARCHAR(255)">
+      <column name="language" type="VARCHAR(191)">
           <constraints nullable="false"/>
       </column>
       <column name="value" type="LONGTEXT">
@@ -55,7 +55,7 @@
       <column name="content_id" type="BIGINT">
         <constraints nullable="false"/>
       </column>
-      <column name="language" type="VARCHAR(255)">
+      <column name="language" type="VARCHAR(191)">
         <constraints nullable="false"/>
       </column>
       <column name="value" type="LONGTEXT">
@@ -76,11 +76,11 @@
       <column name="content_id" type="BIGINT">
           <constraints nullable="false"/>
       </column>
-      <column name="name" type="varchar(255)" />
-      <column name="type" type="varchar(255)">
+      <column name="name" type="varchar(191)" />
+      <column name="type" type="varchar(191)">
         <constraints nullable="false"/>
       </column>
-      <column name="contentType" type="varchar(255)">
+      <column name="contentType" type="varchar(191)">
         <constraints nullable="false"/>
       </column>
     </createTable>
@@ -125,7 +125,7 @@
 	    <column name="priority" type="BIT(1)">
 	       <constraints nullable="false"/>
 	    </column>
-	    <column name="uniqueId" type="VARCHAR(255)">
+	    <column name="uniqueId" type="VARCHAR(191)">
 	       <constraints nullable="false"/>
 	    </column>
 	    <column name="queue_id" type="BIGINT"/>
@@ -136,10 +136,10 @@
         <constraints primaryKey="true"/>
       </column>
       <column name="lastTaskReturned" type="datetime(6)"/>
-      <column name="name" type="VARCHAR(255)">
+      <column name="name" type="VARCHAR(191)">
         <constraints nullable="false"/>
       </column>
-      <column name="responsibleNode" type="VARCHAR(255)">
+      <column name="responsibleNode" type="VARCHAR(191)">
         <constraints nullable="false"/>
       </column>
     </createTable>
@@ -154,7 +154,7 @@
   
   <changeSet id="content-add-category" author="Heikki Kurhinen">
 	  <addColumn tableName="content">
-	    <column name="category" type="VARCHAR(255)" />
+	    <column name="category" type="VARCHAR(191)" />
 	  </addColumn>
   </changeSet>
   
@@ -163,10 +163,10 @@
       <column autoIncrement="true" name="id" type="BIGINT">
         <constraints primaryKey="true"/>
       </column>
-      <column name="originId" type="VARCHAR(255)">
+      <column name="originId" type="VARCHAR(191)">
         <constraints nullable="false"/>
       </column>
-      <column name="slug" type="VARCHAR(255)">
+      <column name="slug" type="VARCHAR(191)">
         <constraints nullable="false"/>
       </column>
     </createTable>
@@ -186,7 +186,7 @@
       <column name="category_id" type="BIGINT">
           <constraints nullable="false"/>
       </column>
-      <column name="language" type="VARCHAR(255)">
+      <column name="language" type="VARCHAR(191)">
           <constraints nullable="false"/>
       </column>
       <column name="value" type="LONGTEXT">
