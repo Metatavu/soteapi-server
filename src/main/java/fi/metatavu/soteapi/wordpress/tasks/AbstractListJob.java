@@ -55,12 +55,14 @@ public abstract class AbstractListJob<W, T extends AbstractListTask> extends Abs
    * @return list of posts
    */
   protected List<W> getDataFromPage(int page) {
+
     @SuppressWarnings("unchecked")
     PagedResponse<W> searchResponse = (PagedResponse<W>) wordpressClient.search(SearchRequest.Builder
         .aSearchRequest(getWordpressTypeClass())
         .withPagination(WordpressConsts.PAGE_SIZE, page)
+        .withUri(getEndPointUri())
         .build());
-    
+
     return searchResponse.getList();
   }
   
@@ -78,6 +80,13 @@ public abstract class AbstractListJob<W, T extends AbstractListTask> extends Abs
    * @return queue
    */
   protected abstract AbstractSoteApiTaskQueue<T> getQueue();
+  
+  /**
+   * Returns uri for search endpoint
+   * 
+   * @return uri of search endpoint
+   */
+  protected abstract String getEndPointUri();
   
   private void performTask(T task) {
     getDataFromPage(task.getPage()).forEach(this::process);
@@ -103,6 +112,7 @@ public abstract class AbstractListJob<W, T extends AbstractListTask> extends Abs
     PagedResponse<?> searchResponse = wordpressClient.search(SearchRequest.Builder
         .aSearchRequest(getWordpressTypeClass())
         .withPagination(WordpressConsts.PAGE_SIZE, 1)
+        .withUri(getEndPointUri())
         .build());
 
     Field pagesField = ReflectionUtils.findField(PagedResponse.class, "pages");

@@ -55,17 +55,8 @@ public class PostUpdateJob extends AbstractUpdateJob {
     String slug = postUpdateModel.getSlug();
     String contentTitle = postUpdateModel.getTitle();
     String contentData = postUpdateModel.getContent();
-    String parentOriginId = postUpdateModel.getParentOriginId();
-    Content parent = null;
-    
-    if (StringUtils.isNotEmpty(parentOriginId)) {
-      parent = contentController.findContentByOriginId(parentOriginId);
-      if (parent == null) {
-        return;
-      }
-    }
-    
-    Content contentEntity = contentController.createContent(originId, slug, ContentType.NEWS, parent);
+
+    Content contentEntity = contentController.createContent(originId, slug, ContentType.NEWS, null);
     
     if (StringUtils.isNotEmpty(contentTitle)) {
       contentController.createContentTitle(WordpressConsts.DEFAULT_LANGUAGE, contentTitle, contentEntity);
@@ -77,17 +68,8 @@ public class PostUpdateJob extends AbstractUpdateJob {
   }
   
   private void updateExistingPage(Content contentEntity, PostUpdateTaskModel postUpdateModel) {
-    String parentOriginId = postUpdateModel.getParentOriginId();
-    Content parent = null;
-    
-    if (StringUtils.isNotEmpty(parentOriginId)) {
-      parent = contentController.findContentByOriginId(parentOriginId);
-      if (parent == null) {
-        return;
-      }
-    }
-    
-    contentController.updateContent(contentEntity, postUpdateModel.getOriginId(), postUpdateModel.getSlug(), ContentType.NEWS, parent);
+
+    contentController.updateContent(contentEntity, postUpdateModel.getOriginId(), postUpdateModel.getSlug(), ContentType.NEWS, null);
     String contentTitleContent = postUpdateModel.getTitle();
     String contentData = postUpdateModel.getContent();
 

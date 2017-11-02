@@ -3,6 +3,7 @@ package fi.metatavu.soteapi.wordpress.tasks.posts;
 import javax.inject.Inject;
 
 import com.afrozaar.wordpress.wpapi.v2.model.Post;
+import com.afrozaar.wordpress.wpapi.v2.request.Request;
 
 import fi.metatavu.soteapi.tasks.AbstractSoteApiTaskQueue;
 import fi.metatavu.soteapi.wordpress.tasks.AbstractListJob;
@@ -10,14 +11,14 @@ import fi.metatavu.soteapi.wordpress.tasks.AbstractListJob;
 public class PostListJob extends AbstractListJob<Post, PostListTask> {
   
   @Inject
-  private PostListQueue pageListQueue;
+  private PostListQueue postListQueue;
   
   @Inject
-  private PostUpdateQueue pageUpdateQueue;
+  private PostUpdateQueue postUpdateQueue;
   
   @Override
   protected AbstractSoteApiTaskQueue<PostListTask> getQueue() {
-    return pageListQueue;
+    return postListQueue;
   }
   
   @Override
@@ -35,17 +36,22 @@ public class PostListJob extends AbstractListJob<Post, PostListTask> {
       return;
     }
     
-    PostUpdateTaskModel pageModel = new PostUpdateTaskModel();
-    pageModel.setOriginId(postData.getId().toString());
-    pageModel.setSlug(postData.getSlug());
-    pageModel.setTitle(postData.getTitle().getRendered());
-    pageModel.setContent(postData.getContent().getRendered());
+    PostUpdateTaskModel postModel = new PostUpdateTaskModel();
+    postModel.setOriginId(postData.getId().toString());
+    postModel.setSlug(postData.getSlug());
+    postModel.setTitle(postData.getTitle().getRendered());
+    postModel.setContent(postData.getContent().getRendered());
     
-    PostUpdateTask pageEntityTask = new PostUpdateTask();
-    pageEntityTask.setPostUpdateModel(pageModel);
-    pageEntityTask.setPriority(Boolean.FALSE);
-    pageEntityTask.setUniqueId(String.format("wp-post-update-%d", postData.getId()));
-    pageUpdateQueue.enqueueTask(pageEntityTask);
+    PostUpdateTask postUpdateTask = new PostUpdateTask();
+    postUpdateTask.setPostUpdateModel(postModel);
+    postUpdateTask.setPriority(Boolean.FALSE);
+    postUpdateTask.setUniqueId(String.format("wp-post-update-%d", postData.getId()));
+    postUpdateQueue.enqueueTask(postUpdateTask);
+  }
+
+  @Override
+  protected String getEndPointUri() {
+    return Request.POSTS;
   }
     
 }

@@ -8,12 +8,15 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.EnumUtils;
+
 import fi.metatavu.soteapi.content.ContentController;
 import fi.metatavu.soteapi.persistence.model.Content;
 import fi.metatavu.soteapi.persistence.model.ContentData;
 import fi.metatavu.soteapi.persistence.model.ContentImageData;
 import fi.metatavu.soteapi.persistence.model.ContentImageMeta;
 import fi.metatavu.soteapi.persistence.model.ContentTitle;
+import fi.metatavu.soteapi.persistence.model.ContentType;
 import fi.metatavu.soteapi.rest.translate.ContentTranslator;
 
 @RequestScoped
@@ -96,11 +99,26 @@ public class ContentApiImpl implements ContentsApi {
   }
 
   @Override
-  public Response listContents(Long parentId, String path, Long firstResult, Long maxResults) throws Exception {
-    // TODO: filter by path and parentId
+  public Response listContents(Long parentId, String type, Long firstResult, Long maxResults) throws Exception {
+    ContentType contentType = null;
+    if (type != null) {
+      contentType = EnumUtils.getEnum(ContentType.class, type);
+      if (contentType == null) {
+        return responseController.respondBadRequest("Invalid type filter");
+      }
+    }
+    
+    Content parent = null;
+    if (parentId != null) {
+      parent = contentController.findContentById(parentId);
+      if (parent == null) {
+        return responseController.respondBadRequest("Invalid parent id");
+      }
+    }
+    
     Integer from = firstResult == null ? null : firstResult.intValue();
     Integer to = maxResults == null ? null : maxResults.intValue();
-    List<Content> contentEntities = contentController.listContents(from, to);
+    List<Content> contentEntities = contentController.listContents(parent, contentType, from, to);
     List<List<ContentTitle>> contentTitleEntities = new ArrayList<>(contentEntities.size());
     for (Content contentEntity : contentEntities) {
       contentTitleEntities.add(contentController.listContentTitlesByContent(contentEntity));
