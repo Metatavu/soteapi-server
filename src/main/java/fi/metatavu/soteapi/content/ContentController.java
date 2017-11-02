@@ -154,7 +154,8 @@ public class ContentController {
    * @param maxResults max results
    * @return list of contents
    */
-  public List<Content> listContents(Integer firstResult, Integer maxResults) {
+  public List<Content> listContents(/*ContentType type, */Integer firstResult, Integer maxResults) {
+    
     return contentDAO.listAll(firstResult, maxResults);
   }
   

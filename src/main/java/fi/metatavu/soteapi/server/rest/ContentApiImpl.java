@@ -6,7 +6,10 @@ import java.util.List;
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.persistence.EnumType;
 import javax.ws.rs.core.Response;
+
+import org.apache.commons.lang3.EnumUtils;
 
 import fi.metatavu.soteapi.content.ContentController;
 import fi.metatavu.soteapi.persistence.model.Content;
@@ -14,6 +17,7 @@ import fi.metatavu.soteapi.persistence.model.ContentData;
 import fi.metatavu.soteapi.persistence.model.ContentImageData;
 import fi.metatavu.soteapi.persistence.model.ContentImageMeta;
 import fi.metatavu.soteapi.persistence.model.ContentTitle;
+import fi.metatavu.soteapi.persistence.model.ContentType;
 import fi.metatavu.soteapi.rest.translate.ContentTranslator;
 
 @RequestScoped
@@ -96,8 +100,15 @@ public class ContentApiImpl implements ContentsApi {
   }
 
   @Override
-  public Response listContents(Long parentId, String path, Long firstResult, Long maxResults) throws Exception {
-    // TODO: filter by path and parentId
+  public Response listContents(Long parentId, String type, Long firstResult, Long maxResults) throws Exception {
+    /*ContentType contentType = null;
+    if (type != null) {
+      contentType = EnumUtils.getEnum(ContentType.class, type);
+      if (contentType == null) {
+        return responseController.respondBadRequest("Invalid type filter");
+      }
+    }*/
+    
     Integer from = firstResult == null ? null : firstResult.intValue();
     Integer to = maxResults == null ? null : maxResults.intValue();
     List<Content> contentEntities = contentController.listContents(from, to);
