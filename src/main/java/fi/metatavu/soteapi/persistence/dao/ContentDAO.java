@@ -28,17 +28,18 @@ public class ContentDAO extends AbstractDAO<Content> {
    * @param slug Contents slug
    * @param contentType content type
    * @param parent parent content
+   * @param category category slug
    * @return created content
    */
-  public Content create(String originId, String slug, ContentType contentType, Content parent) {
+  public Content create(String originId, String slug, ContentType contentType, Content parent, String category) {
     Content content = new Content();
     content.setOriginId(originId);
     content.setSlug(slug);
     content.setContentType(contentType);
     content.setParent(parent);
+    content.setCategory(category);
     return persist(content);
   }
-
 
   /**
    * List content by type, optionally filtered by first result and max results
@@ -91,6 +92,74 @@ public class ContentDAO extends AbstractDAO<Content> {
     criteria.select(root);
     criteria.where(
       criteriaBuilder.equal(root.get(Content_.parent), parent)
+    );
+    
+    TypedQuery<Content> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+    
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+
+    return query.getResultList();
+  }
+  
+  /**
+   * Lists root contents optionally filtered by first result and max results
+   * 
+   * @param firstResult first result
+   * @param maxResults max results
+   * @return list of contents
+   */
+  public List<Content> listRootContents(Integer firstResult, Integer maxResults) {
+    EntityManager entityManager = getEntityManager();
+
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Content> criteria = criteriaBuilder.createQuery(Content.class);
+    Root<Content> root = criteria.from(Content.class);
+
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.isNull(root.get(Content_.parent))
+    );
+    
+    TypedQuery<Content> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+    
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+
+    return query.getResultList();
+  }
+  
+  /**
+   * Lists root contents by type optionally filtered by first result and max results
+   * 
+   * @param type content type
+   * @param firstResult first result
+   * @param maxResults max results
+   * @return list of contents
+   */
+  public List<Content> listRootContentsByType(ContentType type, Integer firstResult, Integer maxResults) {
+    EntityManager entityManager = getEntityManager();
+
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Content> criteria = criteriaBuilder.createQuery(Content.class);
+    Root<Content> root = criteria.from(Content.class);
+
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.isNull(root.get(Content_.parent)),
+        criteriaBuilder.equal(root.get(Content_.contentType), type)
+      )
     );
     
     TypedQuery<Content> query = entityManager.createQuery(criteria);
@@ -214,4 +283,15 @@ public class ContentDAO extends AbstractDAO<Content> {
      return persist(content);
    }
   
+   /**
+    * Updates category
+    *
+    * @param content content to update
+    * @param category category
+    * @return updated content
+    */
+    public Content updateCategory(Content content, String category) {
+      content.setCategory(category);
+      return persist(content);
+    }
 }

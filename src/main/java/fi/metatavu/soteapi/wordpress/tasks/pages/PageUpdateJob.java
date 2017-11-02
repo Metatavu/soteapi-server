@@ -4,15 +4,17 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.afrozaar.wordpress.wpapi.v2.model.Term;
+
 import fi.metatavu.soteapi.content.ContentController;
 import fi.metatavu.soteapi.persistence.model.Content;
 import fi.metatavu.soteapi.persistence.model.ContentData;
 import fi.metatavu.soteapi.persistence.model.ContentTitle;
 import fi.metatavu.soteapi.persistence.model.ContentType;
-import fi.metatavu.soteapi.tasks.AbstractUpdateJob;
 import fi.metatavu.soteapi.wordpress.WordpressConsts;
+import fi.metatavu.soteapi.wordpress.tasks.AbstractWordpressJob;
 
-public class PageUpdateJob extends AbstractUpdateJob {
+public class PageUpdateJob extends AbstractWordpressJob {
   
   @Inject
   private PageUpdateQueue pageUpdateQueue;
@@ -56,6 +58,7 @@ public class PageUpdateJob extends AbstractUpdateJob {
     String contentTitle = pageUpdateModel.getTitle();
     String contentData = pageUpdateModel.getContent();
     String parentOriginId = pageUpdateModel.getParentOriginId();
+    
     Content parent = null;
     
     if (StringUtils.isNotEmpty(parentOriginId)) {
@@ -65,7 +68,16 @@ public class PageUpdateJob extends AbstractUpdateJob {
       }
     }
     
-    Content contentEntity = contentController.createContent(originId, slug, ContentType.PAGE, parent);
+    Long categoryId = pageUpdateModel.getCategoryId();
+    String categorySlug = null;
+    if (categoryId != null) {
+      Term category = findCategoryById(categoryId);
+      if (category != null) {
+        categorySlug = category.getSlug();
+      }
+    }
+    
+    Content contentEntity = contentController.createContent(originId, slug, ContentType.PAGE, parent, categorySlug);
     
     if (StringUtils.isNotEmpty(contentTitle)) {
       contentController.createContentTitle(WordpressConsts.DEFAULT_LANGUAGE, contentTitle, contentEntity);
@@ -87,7 +99,16 @@ public class PageUpdateJob extends AbstractUpdateJob {
       }
     }
     
-    contentController.updateContent(contentEntity, pageUpdateModel.getOriginId(), pageUpdateModel.getSlug(), ContentType.PAGE, parent);
+    Long categoryId = pageUpdateModel.getCategoryId();
+    String categorySlug = null;
+    if (categoryId != null) {
+      Term category = findCategoryById(categoryId);
+      if (category != null) {
+        categorySlug = category.getSlug();
+      }
+    }
+    
+    contentController.updateContent(contentEntity, pageUpdateModel.getOriginId(), pageUpdateModel.getSlug(), ContentType.PAGE, parent, categorySlug);
     String contentTitleContent = pageUpdateModel.getTitle();
     String contentData = pageUpdateModel.getContent();
 

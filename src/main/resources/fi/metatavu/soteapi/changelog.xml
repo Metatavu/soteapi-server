@@ -152,6 +152,12 @@
     <addUniqueConstraint columnNames="name" tableName="taskqueue" constraintName="UN-TASKQUEUE-NAME"/>
   </changeSet>
   
+  <changeSet id="content-add-category" author="Heikki Kurhinen">
+	  <addColumn tableName="content">
+	    <column name="category" type="VARCHAR(255)" />
+	  </addColumn>
+  </changeSet>
+  
 </databaseChangeLog>
 
 

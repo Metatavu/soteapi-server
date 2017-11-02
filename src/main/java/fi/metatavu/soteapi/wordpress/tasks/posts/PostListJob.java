@@ -1,5 +1,7 @@
 package fi.metatavu.soteapi.wordpress.tasks.posts;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import com.afrozaar.wordpress.wpapi.v2.model.Post;
@@ -37,6 +39,12 @@ public class PostListJob extends AbstractListJob<Post, PostListTask> {
     }
     
     PostUpdateTaskModel postModel = new PostUpdateTaskModel();
+    
+    List<Long> categoryIds = postData.getCategoryIds();
+    if (!categoryIds.isEmpty()) {
+      postModel.setCategoryId(categoryIds.get(0));
+    }
+    
     postModel.setOriginId(postData.getId().toString());
     postModel.setSlug(postData.getSlug());
     postModel.setTitle(postData.getTitle().getRendered());

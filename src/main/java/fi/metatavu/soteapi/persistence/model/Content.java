@@ -29,6 +29,9 @@ public class Content {
   @NotEmpty
   private String slug;
   
+  @Column(nullable = true)
+  private String category;
+  
   @Enumerated (EnumType.STRING)
   @Column(nullable = false)
   private ContentType contentType;
@@ -74,6 +77,14 @@ public class Content {
   
   public void setContentType(ContentType contentType) {
     this.contentType = contentType;
+  }
+  
+  public String getCategory() {
+    return category;
+  }
+  
+  public void setCategory(String category) {
+    this.category = category;
   }
   
 }

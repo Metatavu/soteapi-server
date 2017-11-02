@@ -47,10 +47,11 @@ public class ContentController {
    * @param slug slug
    * @param contentType content type
    * @param parent parent content
+   * @param category category slug
    * @return created content
    */
-  public Content createContent(String originId, String slug, ContentType contentType, Content parent) {
-    return contentDAO.create(originId, slug, contentType, parent);
+  public Content createContent(String originId, String slug, ContentType contentType, Content parent, String category) {
+    return contentDAO.create(originId, slug, contentType, parent, category);
   }
   
   /**
@@ -85,13 +86,16 @@ public class ContentController {
    * @param slug slug
    * @param contentType content type
    * @param parent content parent
+   * @param category category slug
    * @return updated content
    */
-  public Content updateContent(Content content, String originId, String slug, ContentType contentType, Content parent) {
+  public Content updateContent(Content content, String originId, String slug, ContentType contentType, Content parent, String category) {
     contentDAO.updateOriginId(content, originId);
     contentDAO.updateSlug(content, slug);
     contentDAO.updateContentType(content, contentType);
     contentDAO.updateParent(content, parent);
+    contentDAO.updateCategory(content, category);
+
     return content;
   }
 
@@ -170,6 +174,22 @@ public class ContentController {
     }
     
     return contentDAO.listAll(firstResult, maxResults);
+  }
+  
+  /**
+   * List root contents, optionally filtered by type, first result and max results
+   * 
+   * @param type content type
+   * @param firstResult first result
+   * @param maxResults max results
+   * @return list of contents
+   */
+  public List<Content> listRootContents(ContentType type, Integer firstResult, Integer maxResults) { 
+    if (type != null) {
+      return contentDAO.listRootContentsByType(type, firstResult, maxResults);
+    }
+
+    return contentDAO.listRootContents(firstResult, maxResults);
   }
   
   /**

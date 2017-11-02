@@ -99,7 +99,7 @@ public class ContentApiImpl implements ContentsApi {
   }
 
   @Override
-  public Response listContents(Long parentId, String type, Long firstResult, Long maxResults) throws Exception {
+  public Response listContents(String parentId, String type, Long firstResult, Long maxResults) throws Exception {
     ContentType contentType = null;
     if (type != null) {
       contentType = EnumUtils.getEnum(ContentType.class, type);
@@ -109,8 +109,8 @@ public class ContentApiImpl implements ContentsApi {
     }
     
     Content parent = null;
-    if (parentId != null) {
-      parent = contentController.findContentById(parentId);
+    if (parentId != null && !"ROOT".equals(parentId)) {
+      parent = contentController.findContentById(Long.parseLong(parentId));
       if (parent == null) {
         return responseController.respondBadRequest("Invalid parent id");
       }
@@ -118,7 +118,7 @@ public class ContentApiImpl implements ContentsApi {
     
     Integer from = firstResult == null ? null : firstResult.intValue();
     Integer to = maxResults == null ? null : maxResults.intValue();
-    List<Content> contentEntities = contentController.listContents(parent, contentType, from, to);
+    List<Content> contentEntities = "ROOT".equals(parentId) ? contentController.listRootContents(contentType, from, to) : contentController.listContents(parent, contentType, from, to);
     List<List<ContentTitle>> contentTitleEntities = new ArrayList<>(contentEntities.size());
     for (Content contentEntity : contentEntities) {
       contentTitleEntities.add(contentController.listContentTitlesByContent(contentEntity));
