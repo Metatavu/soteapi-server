@@ -1,4 +1,4 @@
-package fi.metatavu.soteapi.wordpress.tasks.pages;
+package fi.metatavu.soteapi.wordpress.tasks.posts;
 
 import javax.inject.Inject;
 
@@ -12,50 +12,50 @@ import fi.metatavu.soteapi.persistence.model.ContentType;
 import fi.metatavu.soteapi.tasks.AbstractUpdateJob;
 import fi.metatavu.soteapi.wordpress.WordpressConsts;
 
-public class PageUpdateJob extends AbstractUpdateJob {
+public class PostUpdateJob extends AbstractUpdateJob {
   
   @Inject
-  private PageUpdateQueue pageUpdateQueue;
+  private PostUpdateQueue postUpdateQueue;
   
   @Inject
   private ContentController contentController;
   
   @Override
   protected void execute() {
-    PageUpdateTask pageUpdateTask = pageUpdateQueue.next();
-    if (pageUpdateTask != null) {
-      performTask(pageUpdateTask);
+    PostUpdateTask postUpdateTask = postUpdateQueue.next();
+    if (postUpdateTask != null) {
+      performTask(postUpdateTask);
     }
   }
   
-  private void performTask(PageUpdateTask task) {
-    PageUpdateTaskModel pageUpdateModel = task.getPostUpdateModel();
+  private void performTask(PostUpdateTask task) {
+    PostUpdateTaskModel postUpdateModel = task.getPostUpdateModel();
 
-    if (pageUpdateModel == null) {
+    if (postUpdateModel == null) {
       return;
     }
 
-    String originId = pageUpdateModel.getOriginId();
+    String originId = postUpdateModel.getOriginId();
     Content contentEntity = contentController.findContentByOriginId(originId);
     
     if (contentEntity != null) {
-      updateExistingPage(contentEntity, pageUpdateModel);
+      updateExistingPage(contentEntity, postUpdateModel);
       return;
     }
     
-    createNewContent(pageUpdateModel);
+    createNewContent(postUpdateModel);
   }
   
-  private void createNewContent(PageUpdateTaskModel pageUpdateModel) {
-    if (pageUpdateModel == null) {
+  private void createNewContent(PostUpdateTaskModel postUpdateModel) {
+    if (postUpdateModel == null) {
       return;
     } 
     
-    String originId = pageUpdateModel.getOriginId();
-    String slug = pageUpdateModel.getSlug();
-    String contentTitle = pageUpdateModel.getTitle();
-    String contentData = pageUpdateModel.getContent();
-    String parentOriginId = pageUpdateModel.getParentOriginId();
+    String originId = postUpdateModel.getOriginId();
+    String slug = postUpdateModel.getSlug();
+    String contentTitle = postUpdateModel.getTitle();
+    String contentData = postUpdateModel.getContent();
+    String parentOriginId = postUpdateModel.getParentOriginId();
     Content parent = null;
     
     if (StringUtils.isNotEmpty(parentOriginId)) {
@@ -65,7 +65,7 @@ public class PageUpdateJob extends AbstractUpdateJob {
       }
     }
     
-    Content contentEntity = contentController.createContent(originId, slug, ContentType.PAGE, parent);
+    Content contentEntity = contentController.createContent(originId, slug, ContentType.NEWS, parent);
     
     if (StringUtils.isNotEmpty(contentTitle)) {
       contentController.createContentTitle(WordpressConsts.DEFAULT_LANGUAGE, contentTitle, contentEntity);
@@ -76,8 +76,8 @@ public class PageUpdateJob extends AbstractUpdateJob {
     }
   }
   
-  private void updateExistingPage(Content contentEntity, PageUpdateTaskModel pageUpdateModel) {
-    String parentOriginId = pageUpdateModel.getParentOriginId();
+  private void updateExistingPage(Content contentEntity, PostUpdateTaskModel postUpdateModel) {
+    String parentOriginId = postUpdateModel.getParentOriginId();
     Content parent = null;
     
     if (StringUtils.isNotEmpty(parentOriginId)) {
@@ -87,9 +87,9 @@ public class PageUpdateJob extends AbstractUpdateJob {
       }
     }
     
-    contentController.updateContent(contentEntity, pageUpdateModel.getOriginId(), pageUpdateModel.getSlug(), ContentType.PAGE, parent);
-    String contentTitleContent = pageUpdateModel.getTitle();
-    String contentData = pageUpdateModel.getContent();
+    contentController.updateContent(contentEntity, postUpdateModel.getOriginId(), postUpdateModel.getSlug(), ContentType.NEWS, parent);
+    String contentTitleContent = postUpdateModel.getTitle();
+    String contentData = postUpdateModel.getContent();
 
     if (StringUtils.isNotEmpty(contentTitleContent)) {
       ContentTitle contentTitleEntity = contentController.listContentTitlesByContent(contentEntity)
