@@ -53,7 +53,7 @@ public class PostUpdateJob extends AbstractUpdateJob {
     
     String originId = postUpdateModel.getOriginId();
     String slug = postUpdateModel.getSlug();
-    String ContentTitle = postUpdateModel.getTitle();
+    String contentTitle = postUpdateModel.getTitle();
     String contentData = postUpdateModel.getContent();
     String parentOriginId = postUpdateModel.getParentOriginId();
     Content parent = null;
@@ -67,8 +67,8 @@ public class PostUpdateJob extends AbstractUpdateJob {
     
     Content contentEntity = contentController.createContent(originId, slug, ContentType.NEWS, parent);
     
-    if (StringUtils.isNotEmpty(ContentTitle)) {
-      contentController.createContentTitle(WordpressConsts.DEFAULT_LANGUAGE, ContentTitle, contentEntity);
+    if (StringUtils.isNotEmpty(contentTitle)) {
+      contentController.createContentTitle(WordpressConsts.DEFAULT_LANGUAGE, contentTitle, contentEntity);
     }
 
     if (StringUtils.isNotEmpty(contentData)) {
