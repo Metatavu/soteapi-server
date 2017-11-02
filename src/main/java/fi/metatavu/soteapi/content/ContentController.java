@@ -1,12 +1,13 @@
 package fi.metatavu.soteapi.content;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import fi.metatavu.soteapi.persistence.dao.ContentDataDAO;
 import fi.metatavu.soteapi.persistence.dao.ContentDAO;
+import fi.metatavu.soteapi.persistence.dao.ContentDataDAO;
 import fi.metatavu.soteapi.persistence.dao.ContentImageDataDAO;
 import fi.metatavu.soteapi.persistence.dao.ContentImageMetaDAO;
 import fi.metatavu.soteapi.persistence.dao.ContentTitleDAO;
@@ -155,18 +156,18 @@ public class ContentController {
    * List contents optionally filtered by parent, type, firsresults and/or max results 
    * 
    * @param parent parent content
-   * @param type content type
+   * @param types content types
    * @param firstResult first result
    * @param maxResults max results
    * @return list of contents
    */
-  public List<Content> listContents(Content parent, ContentType type, Integer firstResult, Integer maxResults) {
-    if (parent != null && type != null) {
-      return contentDAO.listByParentAndType(parent, type, firstResult, maxResults);
+  public List<Content> listContents(Content parent, List<ContentType> types, Integer firstResult, Integer maxResults) {
+    if (parent != null && types != null) {
+      return contentDAO.listByParentAndType(parent, types, firstResult, maxResults);
     }
     
-    if (type != null) {
-      return contentDAO.listByType(type, firstResult, maxResults);
+    if (types != null) {
+      return contentDAO.listByTypes(types, firstResult, maxResults);
     }
     
     if (parent != null) {
@@ -179,17 +180,31 @@ public class ContentController {
   /**
    * List root contents, optionally filtered by type, first result and max results
    * 
-   * @param type content type
+   * @param types content types
    * @param firstResult first result
    * @param maxResults max results
    * @return list of contents
    */
-  public List<Content> listRootContents(ContentType type, Integer firstResult, Integer maxResults) { 
-    if (type != null) {
-      return contentDAO.listRootContentsByType(type, firstResult, maxResults);
+  public List<Content> listRootContents(List<ContentType> types, Integer firstResult, Integer maxResults) { 
+    if (types != null) {
+      return contentDAO.listRootContentsByType(types, firstResult, maxResults);
     }
 
     return contentDAO.listRootContents(firstResult, maxResults);
+  }
+  
+  /**
+   * Filters content by category slug
+   * 
+   * @param contents content list to filter
+   * @param categorySlug category slug
+   * @return list of contents
+   */
+  public List<Content> filterByCategorySlug(List<Content> contents, String categorySlug) {
+    return contents
+        .stream()
+        .filter(content -> content.getCategory().equals(categorySlug))
+        .collect(Collectors.toList());
   }
   
   /**

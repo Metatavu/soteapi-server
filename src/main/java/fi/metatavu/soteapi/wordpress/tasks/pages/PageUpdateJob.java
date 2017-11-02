@@ -3,6 +3,11 @@ package fi.metatavu.soteapi.wordpress.tasks.pages;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.parser.Tag;
+import org.jsoup.select.Elements;
 
 import com.afrozaar.wordpress.wpapi.v2.model.Term;
 
@@ -77,7 +82,17 @@ public class PageUpdateJob extends AbstractWordpressJob {
       }
     }
     
-    Content contentEntity = contentController.createContent(originId, slug, ContentType.PAGE, parent, categorySlug);
+    ContentType contentType = ContentType.PAGE;
+    
+    if (StringUtils.isNotEmpty(contentData)) {
+      String pageLink = getPageLink(contentData);
+      if (pageLink != null) {
+        contentData = pageLink;
+        contentType = ContentType.LINK;
+      }
+    }
+    
+    Content contentEntity = contentController.createContent(originId, slug, contentType, parent, categorySlug);
     
     if (StringUtils.isNotEmpty(contentTitle)) {
       contentController.createContentTitle(WordpressConsts.DEFAULT_LANGUAGE, contentTitle, contentEntity);
@@ -108,10 +123,32 @@ public class PageUpdateJob extends AbstractWordpressJob {
       }
     }
     
-    contentController.updateContent(contentEntity, pageUpdateModel.getOriginId(), pageUpdateModel.getSlug(), ContentType.PAGE, parent, categorySlug);
     String contentTitleContent = pageUpdateModel.getTitle();
     String contentData = pageUpdateModel.getContent();
+    ContentType contentType = ContentType.PAGE;
+    
+    if (StringUtils.isNotEmpty(contentData)) {
+      String pageLink = getPageLink(contentData);
+      if (pageLink != null) {
+        contentData = pageLink;
+        contentType = ContentType.LINK;
+      }
+      
+      ContentData contentDataEntity = contentController.listContentDataByContent(contentEntity)
+        .stream()
+        .filter(content -> content.getLanguage().equals(WordpressConsts.DEFAULT_LANGUAGE))
+        .findAny()
+        .orElse(null);
+      
+      
+      if (contentDataEntity != null) {
+        contentController.updateContentData(contentDataEntity, WordpressConsts.DEFAULT_LANGUAGE, contentData, contentEntity);
+      } else {
+        contentController.createContentData(WordpressConsts.DEFAULT_LANGUAGE, contentData, contentEntity);
+      }
 
+    }
+    
     if (StringUtils.isNotEmpty(contentTitleContent)) {
       ContentTitle contentTitleEntity = contentController.listContentTitlesByContent(contentEntity)
         .stream()
@@ -125,20 +162,32 @@ public class PageUpdateJob extends AbstractWordpressJob {
         contentController.createContentTitle(WordpressConsts.DEFAULT_LANGUAGE, contentTitleContent, contentEntity);
       }
     }
+    
+    contentController.updateContent(contentEntity, pageUpdateModel.getOriginId(), pageUpdateModel.getSlug(), contentType, parent, categorySlug);
+  }
+  
+  private String getPageLink(String contentData) {
+    Document document = Jsoup.parse(contentData);
+    Elements children = document.body().children();
+    if (children.size() == 1) {
+      Element child = children.get(0);
+      Tag tag = child.tag();
+      String tagName = tag.getName();
+      if ("a".equals(tagName)) {
+        return child.attr("href");
+      }
 
-    if (StringUtils.isNotEmpty(contentData)) {
-      ContentData contentDataEntity = contentController.listContentDataByContent(contentEntity)
-        .stream()
-        .filter(content -> content.getLanguage().equals(WordpressConsts.DEFAULT_LANGUAGE))
-        .findAny()
-        .orElse(null);
-      
-      if (contentDataEntity != null) {
-        contentController.updateContentData(contentDataEntity, WordpressConsts.DEFAULT_LANGUAGE, contentData, contentEntity);
-      } else {
-        contentController.createContentData(WordpressConsts.DEFAULT_LANGUAGE, contentData, contentEntity);
-      } 
+      if ("p".equals(tagName)) {
+        if (child.children().size() == 1) {
+          Element childOfChild = child.children().get(0);
+          if ("a".equals(childOfChild.tag().getName())) {
+            return childOfChild.attr("href");
+          }
+        }
+      }
     }
+
+    return null;
   }
   
 }

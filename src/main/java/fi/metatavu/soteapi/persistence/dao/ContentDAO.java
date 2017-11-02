@@ -1,5 +1,6 @@
 package fi.metatavu.soteapi.persistence.dao;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -44,12 +45,16 @@ public class ContentDAO extends AbstractDAO<Content> {
   /**
    * List content by type, optionally filtered by first result and max results
    * 
-   * @param type content type
+   * @param types content type
    * @param firstResult first result
    * @param maxResults max results
    * @return list of contents
    */
-  public List<Content> listByType(ContentType type, Integer firstResult, Integer maxResults) {
+  public List<Content> listByTypes(List<ContentType> types, Integer firstResult, Integer maxResults) {
+    if (types == null || types.isEmpty()) {
+      return Collections.emptyList();
+    }
+    
     EntityManager entityManager = getEntityManager();
 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -58,7 +63,7 @@ public class ContentDAO extends AbstractDAO<Content> {
 
     criteria.select(root);
     criteria.where(
-      criteriaBuilder.equal(root.get(Content_.contentType), type)
+        root.get(Content_.contentType).in(types)
     );
     
     TypedQuery<Content> query = entityManager.createQuery(criteria);
@@ -142,12 +147,16 @@ public class ContentDAO extends AbstractDAO<Content> {
   /**
    * Lists root contents by type optionally filtered by first result and max results
    * 
-   * @param type content type
+   * @param types content types
    * @param firstResult first result
    * @param maxResults max results
    * @return list of contents
    */
-  public List<Content> listRootContentsByType(ContentType type, Integer firstResult, Integer maxResults) {
+  public List<Content> listRootContentsByType(List<ContentType> types, Integer firstResult, Integer maxResults) {
+    if (types == null || types.isEmpty()) {
+      return Collections.emptyList();
+    }
+    
     EntityManager entityManager = getEntityManager();
 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -158,7 +167,7 @@ public class ContentDAO extends AbstractDAO<Content> {
     criteria.where(
       criteriaBuilder.and(
         criteriaBuilder.isNull(root.get(Content_.parent)),
-        criteriaBuilder.equal(root.get(Content_.contentType), type)
+        root.get(Content_.contentType).in(types)
       )
     );
     
@@ -179,12 +188,16 @@ public class ContentDAO extends AbstractDAO<Content> {
    * Lists contents by type and parent, optionally filtered by first result and max results
    * 
    * @param parent parent content
-   * @param type content type
+   * @param types content types
    * @param firstResult first result
    * @param maxResults max results
    * @return list of contents
    */
-  public List<Content> listByParentAndType(Content parent, ContentType type, Integer firstResult, Integer maxResults) {
+  public List<Content> listByParentAndType(Content parent, List<ContentType> types, Integer firstResult, Integer maxResults) {
+    if (types == null || types.isEmpty()) {
+      return Collections.emptyList();
+    }
+    
     EntityManager entityManager = getEntityManager();
 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -194,7 +207,7 @@ public class ContentDAO extends AbstractDAO<Content> {
     criteria.select(root);
     criteria.where(
       criteriaBuilder.and(
-        criteriaBuilder.equal(root.get(Content_.contentType), type),
+        root.get(Content_.contentType).in(types),
         criteriaBuilder.equal(root.get(Content_.parent), parent)
       )
     );

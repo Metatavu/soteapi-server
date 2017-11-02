@@ -158,6 +158,49 @@
 	  </addColumn>
   </changeSet>
   
+  <changeSet id="category-categorytitle-create" author="Heikki Kurhinen">
+    <createTable tableName="category">
+      <column autoIncrement="true" name="id" type="BIGINT">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="originId" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="slug" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createIndex indexName="I-CATEGORY-SLUG" tableName="category">
+      <column name="slug"/>
+    </createIndex>
+
+    <createIndex indexName="I-CATEGORY-ORIGIN-ID" tableName="category">
+      <column name="originId"/>
+    </createIndex>
+
+    <createTable tableName="categorytitle">
+      <column autoIncrement="true" name="id" type="BIGINT">
+          <constraints primaryKey="true"/>
+      </column>
+      <column name="category_id" type="BIGINT">
+          <constraints nullable="false"/>
+      </column>
+      <column name="language" type="VARCHAR(255)">
+          <constraints nullable="false"/>
+      </column>
+      <column name="value" type="LONGTEXT">
+          <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createIndex indexName="I-CATEGORYTITLE-CATEGORYID" tableName="categorytitle">
+      <column name="category_id"/>
+    </createIndex>
+
+    <addForeignKeyConstraint baseColumnNames="category_id" baseTableName="categorytitle" constraintName="FK-CATEGORYTITLE-CATEGORY-ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="category"/>
+  </changeSet>
+  
 </databaseChangeLog>
 
 
