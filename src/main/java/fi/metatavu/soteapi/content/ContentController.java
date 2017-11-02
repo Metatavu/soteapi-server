@@ -146,15 +146,28 @@ public class ContentController {
   public Content findContentByOriginId(String originId) {
     return contentDAO.findByOriginId(originId);
   }
-  
+
   /**
-   * Lists contents
+   * List contents optionally filtered by parent, type, firsresults and/or max results 
    * 
+   * @param parent parent content
+   * @param type content type
    * @param firstResult first result
    * @param maxResults max results
    * @return list of contents
    */
-  public List<Content> listContents(/*ContentType type, */Integer firstResult, Integer maxResults) {
+  public List<Content> listContents(Content parent, ContentType type, Integer firstResult, Integer maxResults) {
+    if (parent != null && type != null) {
+      return contentDAO.listByParentAndType(parent, type, firstResult, maxResults);
+    }
+    
+    if (type != null) {
+      return contentDAO.listByType(type, firstResult, maxResults);
+    }
+    
+    if (parent != null) {
+      return contentDAO.listByParent(parent, firstResult, maxResults);
+    }
     
     return contentDAO.listAll(firstResult, maxResults);
   }

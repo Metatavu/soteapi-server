@@ -6,7 +6,6 @@ import java.util.List;
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.persistence.EnumType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.EnumUtils;
@@ -101,17 +100,25 @@ public class ContentApiImpl implements ContentsApi {
 
   @Override
   public Response listContents(Long parentId, String type, Long firstResult, Long maxResults) throws Exception {
-    /*ContentType contentType = null;
+    ContentType contentType = null;
     if (type != null) {
       contentType = EnumUtils.getEnum(ContentType.class, type);
       if (contentType == null) {
         return responseController.respondBadRequest("Invalid type filter");
       }
-    }*/
+    }
+    
+    Content parent = null;
+    if (parentId != null) {
+      parent = contentController.findContentById(parentId);
+      if (parent == null) {
+        return responseController.respondBadRequest("Invalid parent id");
+      }
+    }
     
     Integer from = firstResult == null ? null : firstResult.intValue();
     Integer to = maxResults == null ? null : maxResults.intValue();
-    List<Content> contentEntities = contentController.listContents(from, to);
+    List<Content> contentEntities = contentController.listContents(parent, contentType, from, to);
     List<List<ContentTitle>> contentTitleEntities = new ArrayList<>(contentEntities.size());
     for (Content contentEntity : contentEntities) {
       contentTitleEntities.add(contentController.listContentTitlesByContent(contentEntity));

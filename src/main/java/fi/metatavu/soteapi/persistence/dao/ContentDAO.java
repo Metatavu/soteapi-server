@@ -1,5 +1,7 @@
 package fi.metatavu.soteapi.persistence.dao;
 
+import java.util.List;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -36,7 +38,110 @@ public class ContentDAO extends AbstractDAO<Content> {
     content.setParent(parent);
     return persist(content);
   }
+
+
+  /**
+   * List content by type, optionally filtered by first result and max results
+   * 
+   * @param type content type
+   * @param firstResult first result
+   * @param maxResults max results
+   * @return list of contents
+   */
+  public List<Content> listByType(ContentType type, Integer firstResult, Integer maxResults) {
+    EntityManager entityManager = getEntityManager();
+
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Content> criteria = criteriaBuilder.createQuery(Content.class);
+    Root<Content> root = criteria.from(Content.class);
+
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.equal(root.get(Content_.contentType), type)
+    );
+    
+    TypedQuery<Content> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+    
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+
+    return query.getResultList();
+  }
   
+  /**
+   * Lists contents by parent, optionally filtered by first result and max results
+   * 
+   * @param parent parent content
+   * @param firstResult first result
+   * @param maxResults max results
+   * @return list of contents
+   */
+  public List<Content> listByParent(Content parent, Integer firstResult, Integer maxResults) {
+    EntityManager entityManager = getEntityManager();
+
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Content> criteria = criteriaBuilder.createQuery(Content.class);
+    Root<Content> root = criteria.from(Content.class);
+
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.equal(root.get(Content_.parent), parent)
+    );
+    
+    TypedQuery<Content> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+    
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+
+    return query.getResultList();
+  }
+
+  /**
+   * Lists contents by type and parent, optionally filtered by first result and max results
+   * 
+   * @param parent parent content
+   * @param type content type
+   * @param firstResult first result
+   * @param maxResults max results
+   * @return list of contents
+   */
+  public List<Content> listByParentAndType(Content parent, ContentType type, Integer firstResult, Integer maxResults) {
+    EntityManager entityManager = getEntityManager();
+
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Content> criteria = criteriaBuilder.createQuery(Content.class);
+    Root<Content> root = criteria.from(Content.class);
+
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(Content_.contentType), type),
+        criteriaBuilder.equal(root.get(Content_.parent), parent)
+      )
+    );
+    
+    TypedQuery<Content> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+    
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+
+    return query.getResultList();
+  }
 
   /**
    * Finds content by origin id
