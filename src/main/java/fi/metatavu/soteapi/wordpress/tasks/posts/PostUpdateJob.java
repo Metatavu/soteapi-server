@@ -4,15 +4,17 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.afrozaar.wordpress.wpapi.v2.model.Term;
+
 import fi.metatavu.soteapi.content.ContentController;
 import fi.metatavu.soteapi.persistence.model.Content;
 import fi.metatavu.soteapi.persistence.model.ContentData;
 import fi.metatavu.soteapi.persistence.model.ContentTitle;
 import fi.metatavu.soteapi.persistence.model.ContentType;
-import fi.metatavu.soteapi.tasks.AbstractUpdateJob;
 import fi.metatavu.soteapi.wordpress.WordpressConsts;
+import fi.metatavu.soteapi.wordpress.tasks.AbstractWordpressJob;
 
-public class PostUpdateJob extends AbstractUpdateJob {
+public class PostUpdateJob extends AbstractWordpressJob {
   
   @Inject
   private PostUpdateQueue postUpdateQueue;
@@ -55,8 +57,17 @@ public class PostUpdateJob extends AbstractUpdateJob {
     String slug = postUpdateModel.getSlug();
     String contentTitle = postUpdateModel.getTitle();
     String contentData = postUpdateModel.getContent();
-
-    Content contentEntity = contentController.createContent(originId, slug, ContentType.NEWS, null);
+    Long categoryId = postUpdateModel.getCategoryId();
+    String categorySlug = null;
+    
+    if (categoryId != null) {
+      Term category = findCategoryById(categoryId);
+      if (category != null) {
+        categorySlug = category.getSlug();
+      }
+    } 
+    
+    Content contentEntity = contentController.createContent(originId, slug, ContentType.NEWS, null, categorySlug);
     
     if (StringUtils.isNotEmpty(contentTitle)) {
       contentController.createContentTitle(WordpressConsts.DEFAULT_LANGUAGE, contentTitle, contentEntity);
@@ -65,11 +76,21 @@ public class PostUpdateJob extends AbstractUpdateJob {
     if (StringUtils.isNotEmpty(contentData)) {
       contentController.createContentData(WordpressConsts.DEFAULT_LANGUAGE, contentData, contentEntity);
     }
+    
   }
   
   private void updateExistingPage(Content contentEntity, PostUpdateTaskModel postUpdateModel) {
 
-    contentController.updateContent(contentEntity, postUpdateModel.getOriginId(), postUpdateModel.getSlug(), ContentType.NEWS, null);
+    Long categoryId = postUpdateModel.getCategoryId();
+    String categorySlug = null;
+    if (categoryId != null) {
+      Term category = findCategoryById(categoryId);
+      if (category != null) {
+        categorySlug = category.getSlug();
+      }
+    }
+    
+    contentController.updateContent(contentEntity, postUpdateModel.getOriginId(), postUpdateModel.getSlug(), ContentType.NEWS, null, categorySlug);
     String contentTitleContent = postUpdateModel.getTitle();
     String contentData = postUpdateModel.getContent();
 

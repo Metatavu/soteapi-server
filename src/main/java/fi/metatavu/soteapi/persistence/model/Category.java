@@ -2,18 +2,15 @@ package fi.metatavu.soteapi.persistence.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
-public class Content {
+public class Category {
   
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,17 +25,7 @@ public class Content {
   @NotNull
   @NotEmpty
   private String slug;
-  
-  @Column(nullable = true)
-  private String category;
-  
-  @Enumerated (EnumType.STRING)
-  @Column(nullable = false)
-  private ContentType contentType;
 
-  @ManyToOne(optional = true)
-  private Content parent;
-  
   public Long getId() {
     return id;
   }
@@ -62,29 +49,5 @@ public class Content {
   public void setSlug(String slug) {
     this.slug = slug;
   }
-  
-  public Content getParent() {
-    return parent;
-  }
-  
-  public void setParent(Content parent) {
-    this.parent = parent;
-  }
-  
-  public ContentType getContentType() {
-    return contentType;
-  }
-  
-  public void setContentType(ContentType contentType) {
-    this.contentType = contentType;
-  }
-  
-  public String getCategory() {
-    return category;
-  }
-  
-  public void setCategory(String category) {
-    this.category = category;
-  }
-  
+
 }

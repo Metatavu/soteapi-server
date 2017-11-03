@@ -9,9 +9,9 @@ import javax.enterprise.context.ApplicationScoped;
 import fi.metatavu.soteapi.persistence.model.ContentData;
 import fi.metatavu.soteapi.persistence.model.ContentImageMeta;
 import fi.metatavu.soteapi.persistence.model.ContentTitle;
-import fi.metatavu.soteapi.server.rest.model.LocalizedValue;
 import fi.metatavu.soteapi.server.rest.model.Content;
 import fi.metatavu.soteapi.server.rest.model.ContentImage;
+import fi.metatavu.soteapi.server.rest.model.LocalizedValue;
 
 /**
  * Translator for content related translations
@@ -41,6 +41,9 @@ public class ContentTranslator extends AbstractTranslator {
     content.setTitle(translateContentTitles(contentTitleEntities));
     content.setType(translateEnum(Content.TypeEnum.class, contentEntity.getContentType()));
     content.setParentId(parentId);
+    content.setCategory(contentEntity.getCategory());
+    content.setLevel(getContentLevel(contentEntity));
+
     return content;
   }
   
@@ -122,6 +125,15 @@ public class ContentTranslator extends AbstractTranslator {
     localizedValue.setLanguage(contentTitleEntity.getLanguage());
     localizedValue.setValue(contentTitleEntity.getValue());
     return localizedValue;
+  }
+  
+  private int getContentLevel(fi.metatavu.soteapi.persistence.model.Content contentEntity) {
+    int level = 0;
+    while(contentEntity.getParent() != null) {
+      level++;
+      contentEntity = contentEntity.getParent();
+    }
+    return level;
   }
   
   private List<LocalizedValue> translateContentTitles(List<ContentTitle> contentTitleEntities) {

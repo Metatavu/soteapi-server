@@ -49,7 +49,7 @@
     
     <!-- Spec -->
     
-    <soteapi-spec.version>0.0.6</soteapi-spec.version>
+    <soteapi-spec.version>0.0.12</soteapi-spec.version>
        
     <!-- Maven -->
 
@@ -327,6 +327,12 @@
       <version>${rest-assured.version}</version>
       <scope>test</scope>
     </dependency>
+    
+    <dependency>
+     <groupId>org.jsoup</groupId>
+     <artifactId>jsoup</artifactId>
+     <scope>provided</scope>
+   </dependency>
     
   </dependencies>
   

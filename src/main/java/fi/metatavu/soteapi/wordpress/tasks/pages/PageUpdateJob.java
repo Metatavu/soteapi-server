@@ -3,16 +3,23 @@ package fi.metatavu.soteapi.wordpress.tasks.pages;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.parser.Tag;
+import org.jsoup.select.Elements;
+
+import com.afrozaar.wordpress.wpapi.v2.model.Term;
 
 import fi.metatavu.soteapi.content.ContentController;
 import fi.metatavu.soteapi.persistence.model.Content;
 import fi.metatavu.soteapi.persistence.model.ContentData;
 import fi.metatavu.soteapi.persistence.model.ContentTitle;
 import fi.metatavu.soteapi.persistence.model.ContentType;
-import fi.metatavu.soteapi.tasks.AbstractUpdateJob;
 import fi.metatavu.soteapi.wordpress.WordpressConsts;
+import fi.metatavu.soteapi.wordpress.tasks.AbstractWordpressJob;
 
-public class PageUpdateJob extends AbstractUpdateJob {
+public class PageUpdateJob extends AbstractWordpressJob {
   
   @Inject
   private PageUpdateQueue pageUpdateQueue;
@@ -56,6 +63,7 @@ public class PageUpdateJob extends AbstractUpdateJob {
     String contentTitle = pageUpdateModel.getTitle();
     String contentData = pageUpdateModel.getContent();
     String parentOriginId = pageUpdateModel.getParentOriginId();
+    
     Content parent = null;
     
     if (StringUtils.isNotEmpty(parentOriginId)) {
@@ -65,7 +73,26 @@ public class PageUpdateJob extends AbstractUpdateJob {
       }
     }
     
-    Content contentEntity = contentController.createContent(originId, slug, ContentType.PAGE, parent);
+    Long categoryId = pageUpdateModel.getCategoryId();
+    String categorySlug = null;
+    if (categoryId != null) {
+      Term category = findCategoryById(categoryId);
+      if (category != null) {
+        categorySlug = category.getSlug();
+      }
+    }
+    
+    ContentType contentType = ContentType.PAGE;
+    
+    if (StringUtils.isNotEmpty(contentData)) {
+      String pageLink = getPageLink(contentData);
+      if (pageLink != null) {
+        contentData = pageLink;
+        contentType = ContentType.LINK;
+      }
+    }
+    
+    Content contentEntity = contentController.createContent(originId, slug, contentType, parent, categorySlug);
     
     if (StringUtils.isNotEmpty(contentTitle)) {
       contentController.createContentTitle(WordpressConsts.DEFAULT_LANGUAGE, contentTitle, contentEntity);
@@ -87,10 +114,41 @@ public class PageUpdateJob extends AbstractUpdateJob {
       }
     }
     
-    contentController.updateContent(contentEntity, pageUpdateModel.getOriginId(), pageUpdateModel.getSlug(), ContentType.PAGE, parent);
+    Long categoryId = pageUpdateModel.getCategoryId();
+    String categorySlug = null;
+    if (categoryId != null) {
+      Term category = findCategoryById(categoryId);
+      if (category != null) {
+        categorySlug = category.getSlug();
+      }
+    }
+    
     String contentTitleContent = pageUpdateModel.getTitle();
     String contentData = pageUpdateModel.getContent();
+    ContentType contentType = ContentType.PAGE;
+    
+    if (StringUtils.isNotEmpty(contentData)) {
+      String pageLink = getPageLink(contentData);
+      if (pageLink != null) {
+        contentData = pageLink;
+        contentType = ContentType.LINK;
+      }
+      
+      ContentData contentDataEntity = contentController.listContentDataByContent(contentEntity)
+        .stream()
+        .filter(content -> content.getLanguage().equals(WordpressConsts.DEFAULT_LANGUAGE))
+        .findAny()
+        .orElse(null);
+      
+      
+      if (contentDataEntity != null) {
+        contentController.updateContentData(contentDataEntity, WordpressConsts.DEFAULT_LANGUAGE, contentData, contentEntity);
+      } else {
+        contentController.createContentData(WordpressConsts.DEFAULT_LANGUAGE, contentData, contentEntity);
+      }
 
+    }
+    
     if (StringUtils.isNotEmpty(contentTitleContent)) {
       ContentTitle contentTitleEntity = contentController.listContentTitlesByContent(contentEntity)
         .stream()
@@ -104,20 +162,32 @@ public class PageUpdateJob extends AbstractUpdateJob {
         contentController.createContentTitle(WordpressConsts.DEFAULT_LANGUAGE, contentTitleContent, contentEntity);
       }
     }
+    
+    contentController.updateContent(contentEntity, pageUpdateModel.getOriginId(), pageUpdateModel.getSlug(), contentType, parent, categorySlug);
+  }
+  
+  private String getPageLink(String contentData) {
+    Document document = Jsoup.parse(contentData);
+    Elements children = document.body().children();
+    if (children.size() == 1) {
+      Element child = children.get(0);
+      Tag tag = child.tag();
+      String tagName = tag.getName();
+      if ("a".equals(tagName)) {
+        return child.attr("href");
+      }
 
-    if (StringUtils.isNotEmpty(contentData)) {
-      ContentData contentDataEntity = contentController.listContentDataByContent(contentEntity)
-        .stream()
-        .filter(content -> content.getLanguage().equals(WordpressConsts.DEFAULT_LANGUAGE))
-        .findAny()
-        .orElse(null);
-      
-      if (contentDataEntity != null) {
-        contentController.updateContentData(contentDataEntity, WordpressConsts.DEFAULT_LANGUAGE, contentData, contentEntity);
-      } else {
-        contentController.createContentData(WordpressConsts.DEFAULT_LANGUAGE, contentData, contentEntity);
-      } 
+      if ("p".equals(tagName)) {
+        if (child.children().size() == 1) {
+          Element childOfChild = child.children().get(0);
+          if ("a".equals(childOfChild.tag().getName())) {
+            return childOfChild.attr("href");
+          }
+        }
+      }
     }
+
+    return null;
   }
   
 }

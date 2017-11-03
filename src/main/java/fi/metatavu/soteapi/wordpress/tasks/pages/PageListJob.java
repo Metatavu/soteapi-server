@@ -1,5 +1,7 @@
 package fi.metatavu.soteapi.wordpress.tasks.pages;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import com.afrozaar.wordpress.wpapi.v2.model.Page;
@@ -30,18 +32,36 @@ public class PageListJob extends AbstractListJob<Page, PageListTask> {
     return newTask;
   }
   
+  @SuppressWarnings("unchecked")
   @Override
   protected void process(Page pageData) {
     if (pageData == null) {
       return;
     }
-    
+
+    Object categoriesObject = null;
     PageUpdateTaskModel pageModel = new PageUpdateTaskModel();
+    
+    
+    if (pageData.getAdditionalProperties().containsKey("categories")) {
+      categoriesObject = pageData.getAdditionalProperties().get("categories");
+    }
+    
+    if (categoriesObject != null && categoriesObject instanceof List) {
+      List<Integer> categoriesList = (List<Integer>) categoriesObject;
+      if (!categoriesList.isEmpty()) {
+        Long categoryId = categoriesList.get(0).longValue();
+        pageModel.setCategoryId(categoryId);
+      }
+    }
+    
+    String parentOriginId = pageData.getParent() != null && pageData.getParent() > 0 ? pageData.getParent().toString() : null;
+    
     pageModel.setOriginId(pageData.getId().toString());
     pageModel.setSlug(pageData.getSlug());
     pageModel.setTitle(pageData.getTitle().getRendered());
     pageModel.setContent(pageData.getContent().getRendered());
-    pageModel.setParentOriginId(pageData.getParent().toString());
+    pageModel.setParentOriginId(parentOriginId);
     
     PageUpdateTask pageEntityTask = new PageUpdateTask();
     pageEntityTask.setPostUpdateModel(pageModel);

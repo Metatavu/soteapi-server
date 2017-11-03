@@ -1,6 +1,8 @@
 package fi.metatavu.soteapi.server.rest;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.ejb.Stateful;
@@ -9,6 +11,7 @@ import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import fi.metatavu.soteapi.content.ContentController;
 import fi.metatavu.soteapi.persistence.model.Content;
@@ -99,18 +102,23 @@ public class ContentApiImpl implements ContentsApi {
   }
 
   @Override
-  public Response listContents(Long parentId, String type, Long firstResult, Long maxResults) throws Exception {
-    ContentType contentType = null;
-    if (type != null) {
-      contentType = EnumUtils.getEnum(ContentType.class, type);
-      if (contentType == null) {
-        return responseController.respondBadRequest("Invalid type filter");
+  public Response listContents(String parentId, List<String> types, String categorySlug, Long firstResult, Long maxResults) throws Exception {
+    List<ContentType> contentTypes = null;
+    if (types != null && !types.isEmpty()) {
+      contentTypes = new ArrayList<>();
+      
+      for (String type : processListParam(types)) {
+        ContentType contentType = EnumUtils.getEnum(ContentType.class, type);
+        if (contentType == null) {
+          return responseController.respondBadRequest("Invalid type filter");
+        }
+        contentTypes.add(contentType);
       }
     }
     
     Content parent = null;
-    if (parentId != null) {
-      parent = contentController.findContentById(parentId);
+    if (parentId != null && !"ROOT".equals(parentId)) {
+      parent = contentController.findContentById(Long.parseLong(parentId));
       if (parent == null) {
         return responseController.respondBadRequest("Invalid parent id");
       }
@@ -118,12 +126,29 @@ public class ContentApiImpl implements ContentsApi {
     
     Integer from = firstResult == null ? null : firstResult.intValue();
     Integer to = maxResults == null ? null : maxResults.intValue();
-    List<Content> contentEntities = contentController.listContents(parent, contentType, from, to);
+    List<Content> contentEntities = "ROOT".equals(parentId) ? contentController.listRootContents(contentTypes, from, to) : contentController.listContents(parent, contentTypes, from, to);
+    
+    if (categorySlug != null) {
+      contentEntities = contentController.filterByCategorySlug(contentEntities, categorySlug);
+    }
+    
     List<List<ContentTitle>> contentTitleEntities = new ArrayList<>(contentEntities.size());
     for (Content contentEntity : contentEntities) {
       contentTitleEntities.add(contentController.listContentTitlesByContent(contentEntity));
     }
 
     return responseController.respondOk(contentTranslator.translateContents(contentEntities, contentTitleEntities));
+  }
+
+  private List<String> processListParam(List<String> types) {
+    if (types == null || types.isEmpty()) {
+      return Collections.emptyList();
+    }
+    
+    if (types.size() == 1) {
+      return Arrays.asList(StringUtils.split(types.get(0), ",")); 
+    }
+    
+    return types;
   }
 }
