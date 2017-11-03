@@ -43,18 +43,9 @@ public class ContentApiImpl implements ContentsApi {
     }
     
     List<ContentTitle> contentTitles = contentController.listContentTitlesByContent(content);
-    return responseController.respondOk(contentTranslator.translateContent(content, contentTitles));
-  }
-
-  @Override
-  public Response findContentData(Long contentId) throws Exception {
-    Content content = contentController.findContentById(contentId);
-    if (content == null) {
-      return responseController.respondNotFound();
-    }
-    
     List<ContentData> contentDatas = contentController.listContentDataByContent(content);
-    return responseController.respondOk(contentTranslator.translateContentDatas(contentDatas));
+
+    return responseController.respondOk(contentTranslator.translateContent(content, contentTitles, contentDatas));
   }
 
   @Override
@@ -133,11 +124,13 @@ public class ContentApiImpl implements ContentsApi {
     }
     
     List<List<ContentTitle>> contentTitleEntities = new ArrayList<>(contentEntities.size());
+    List<List<ContentData>> contentDataEntities = new ArrayList<>(contentEntities.size());
     for (Content contentEntity : contentEntities) {
       contentTitleEntities.add(contentController.listContentTitlesByContent(contentEntity));
+      contentDataEntities.add(contentController.listContentDataByContent(contentEntity));
     }
 
-    return responseController.respondOk(contentTranslator.translateContents(contentEntities, contentTitleEntities));
+    return responseController.respondOk(contentTranslator.translateContents(contentEntities, contentTitleEntities, contentDataEntities));
   }
 
   private List<String> processListParam(List<String> types) {
