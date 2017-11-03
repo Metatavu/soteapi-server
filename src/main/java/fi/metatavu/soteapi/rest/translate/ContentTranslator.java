@@ -28,7 +28,7 @@ public class ContentTranslator extends AbstractTranslator {
    * @param contentTitleEntities Database entities for titles related to the content
    * @return Content translated to the REST content
    */
-  public Content translateContent(fi.metatavu.soteapi.persistence.model.Content contentEntity, List<ContentTitle> contentTitleEntities) {
+  public Content translateContent(fi.metatavu.soteapi.persistence.model.Content contentEntity, List<ContentTitle> contentTitleEntities, List<ContentData> contentDataEntities) {
     if (contentEntity == null) {
       return null;
     }
@@ -39,6 +39,7 @@ public class ContentTranslator extends AbstractTranslator {
     content.setId(contentEntity.getId());
     content.setSlug(contentEntity.getSlug());
     content.setTitle(translateContentTitles(contentTitleEntities));
+    content.setContent(translateContentDatas(contentDataEntities));
     content.setType(translateEnum(Content.TypeEnum.class, contentEntity.getContentType()));
     content.setParentId(parentId);
     content.setCategory(contentEntity.getCategory());
@@ -54,12 +55,13 @@ public class ContentTranslator extends AbstractTranslator {
    * @param contentTitleEntities List of list of content title entities
    * @return List of translated content entities
    */
-  public List<Content> translateContents(List<fi.metatavu.soteapi.persistence.model.Content> contentEntities, List<List<ContentTitle>> contentTitleEntities) {
+  public List<Content> translateContents(List<fi.metatavu.soteapi.persistence.model.Content> contentEntities, List<List<ContentTitle>> contentTitleEntities, List<List<ContentData>> contentDataEntities) {
     List<Content> results = new ArrayList<>(contentEntities.size());
     Iterator<fi.metatavu.soteapi.persistence.model.Content> contentEntityIterator = contentEntities.iterator();
     Iterator<List<ContentTitle>> contentTitleEntitiesIterator = contentTitleEntities.iterator();
+    Iterator<List<ContentData>> contentDataEntitiesIterator = contentDataEntities.iterator();
     while (contentEntityIterator.hasNext() && contentTitleEntitiesIterator.hasNext()) {
-      results.add(translateContent(contentEntityIterator.next(), contentTitleEntitiesIterator.next()));
+      results.add(translateContent(contentEntityIterator.next(), contentTitleEntitiesIterator.next(), contentDataEntitiesIterator.next()));
     }
     
     return results;
