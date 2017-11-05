@@ -190,6 +190,18 @@
       <artifactId>commons-logging</artifactId>
       <version>1.1.1</version>
     </dependency>
+        
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -298,7 +310,7 @@
       <artifactId>wp-api-v2-client-java</artifactId>
       <version>${wp-api-v2-client.version}</version>
     </dependency>
-    
+
     <!-- Test -->
 
     <dependency>
