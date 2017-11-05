@@ -259,7 +259,10 @@ public class TaskController {
     if (e.getCause() instanceof SQLException) {
       SQLException sqlException = (SQLException) e.getCause();
       if (sqlException.getErrorCode() == 1062) {
-        logger.warn(String.format("Task %s insterted twice into queue %s. Skipped", uniqueId, queueName));
+        if (logger.isWarnEnabled()) {
+          logger.warn(String.format("Task %s insterted twice into queue %s. Skipped", uniqueId, queueName));
+        }
+        
         return;
       }
     }

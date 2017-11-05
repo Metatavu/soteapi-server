@@ -35,6 +35,11 @@ public class PageUpdateJob extends AbstractWordpressJob {
     }
   }
   
+  @Override
+  protected String getEnabledSetting() {
+    return WordpressConsts.PAGES_SYNC_ENABLED;
+  }
+  
   private void performTask(PageUpdateTask task) {
     PageUpdateTaskModel pageUpdateModel = task.getPostUpdateModel();
 

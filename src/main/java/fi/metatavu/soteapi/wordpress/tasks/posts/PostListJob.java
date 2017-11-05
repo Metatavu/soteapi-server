@@ -8,6 +8,7 @@ import com.afrozaar.wordpress.wpapi.v2.model.Post;
 import com.afrozaar.wordpress.wpapi.v2.request.Request;
 
 import fi.metatavu.soteapi.tasks.AbstractSoteApiTaskQueue;
+import fi.metatavu.soteapi.wordpress.WordpressConsts;
 import fi.metatavu.soteapi.wordpress.tasks.AbstractListJob;
 
 public class PostListJob extends AbstractListJob<Post, PostListTask> {
@@ -21,6 +22,11 @@ public class PostListJob extends AbstractListJob<Post, PostListTask> {
   @Override
   protected AbstractSoteApiTaskQueue<PostListTask> getQueue() {
     return postListQueue;
+  }
+
+  @Override
+  protected String getEnabledSetting() {
+    return WordpressConsts.POSTS_SYNC_ENABLED;
   }
   
   @Override

@@ -26,6 +26,11 @@ public class CategoryUpdateJob extends AbstractWordpressJob {
     }
   }
   
+  @Override
+  protected String getEnabledSetting() {
+    return WordpressConsts.CATEGORIES_SYNC_ENABLED;
+  }
+  
   private void performTask(CategoryUpdateTask task) {
     CategoryUpdateTaskModel categoryUpdateModel = task.getPostUpdateModel();
 
