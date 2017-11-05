@@ -6,6 +6,7 @@ import com.afrozaar.wordpress.wpapi.v2.Wordpress;
 import com.afrozaar.wordpress.wpapi.v2.model.Term;
 
 import fi.metatavu.soteapi.tasks.AbstractUpdateJob;
+import fi.metatavu.soteapi.wordpress.WordpressConsts;
 
 public class CategoryListJob extends AbstractUpdateJob {
   
@@ -23,6 +24,20 @@ public class CategoryListJob extends AbstractUpdateJob {
     newTask.setPriority(Boolean.FALSE);
     newTask.setUniqueId("wp-category-list");
     categoryListQueue.enqueueTask(newTask);
+  }
+
+  @Override
+  protected boolean isEnabled() {
+    if (wordpressClient == null) {
+      return false;
+    }
+    
+    return super.isEnabled();
+  }
+  
+  @Override
+  protected String getEnabledSetting() {
+    return WordpressConsts.CATEGORIES_SYNC_ENABLED;
   }
   
   protected void process(Term categoryData) {

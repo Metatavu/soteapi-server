@@ -29,6 +29,11 @@ public class PostUpdateJob extends AbstractWordpressJob {
       performTask(postUpdateTask);
     }
   }
+
+  @Override
+  protected String getEnabledSetting() {
+    return WordpressConsts.POSTS_SYNC_ENABLED;
+  }
   
   private void performTask(PostUpdateTask task) {
     PostUpdateTaskModel postUpdateModel = task.getPostUpdateModel();

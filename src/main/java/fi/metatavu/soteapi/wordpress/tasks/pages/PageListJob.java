@@ -8,6 +8,7 @@ import com.afrozaar.wordpress.wpapi.v2.model.Page;
 import com.afrozaar.wordpress.wpapi.v2.request.Request;
 
 import fi.metatavu.soteapi.tasks.AbstractSoteApiTaskQueue;
+import fi.metatavu.soteapi.wordpress.WordpressConsts;
 import fi.metatavu.soteapi.wordpress.tasks.AbstractListJob;
 
 public class PageListJob extends AbstractListJob<Page, PageListTask> {
@@ -21,6 +22,11 @@ public class PageListJob extends AbstractListJob<Page, PageListTask> {
   @Override
   protected AbstractSoteApiTaskQueue<PageListTask> getQueue() {
     return pageListQueue;
+  }
+  
+  @Override
+  protected String getEnabledSetting() {
+    return WordpressConsts.PAGES_SYNC_ENABLED;
   }
   
   @Override
