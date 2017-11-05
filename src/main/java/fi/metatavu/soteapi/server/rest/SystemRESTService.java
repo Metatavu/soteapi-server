@@ -31,8 +31,6 @@ public class SystemRESTService {
   @Path ("/ping")
   @Produces (MediaType.TEXT_PLAIN)
   public Response getPing(@Context HttpServletRequest request) {
-    System.out.println( request.getRemoteUser() );
-    
     return Response.ok("pong").build();
   }
   
