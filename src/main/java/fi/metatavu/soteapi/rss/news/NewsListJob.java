@@ -36,7 +36,8 @@ public class NewsListJob extends AbstractUpdateJob {
 
   @Inject
   private NewsUpdateQueue newsUpdateQueue;
-  
+
+  @Inject
   private SystemSettingController systemSettingController;
   
   @Override
