@@ -35,6 +35,11 @@ public class PageUpdateJob extends AbstractWordpressJob {
     }
   }
   
+  @Override
+  protected String getEnabledSetting() {
+    return WordpressConsts.PAGES_SYNC_ENABLED;
+  }
+  
   private void performTask(PageUpdateTask task) {
     PageUpdateTaskModel pageUpdateModel = task.getPostUpdateModel();
 
@@ -140,30 +145,32 @@ public class PageUpdateJob extends AbstractWordpressJob {
         .findAny()
         .orElse(null);
       
-      
       if (contentDataEntity != null) {
         contentController.updateContentData(contentDataEntity, WordpressConsts.DEFAULT_LANGUAGE, contentData, contentEntity);
       } else {
         contentController.createContentData(WordpressConsts.DEFAULT_LANGUAGE, contentData, contentEntity);
       }
-
     }
     
     if (StringUtils.isNotEmpty(contentTitleContent)) {
-      ContentTitle contentTitleEntity = contentController.listContentTitlesByContent(contentEntity)
-        .stream()
-        .filter(title -> title.getLanguage().equals(WordpressConsts.DEFAULT_LANGUAGE))
-        .findAny()
-        .orElse(null);
-      
-      if (contentTitleEntity != null) {
-        contentController.updateContentTitle(contentTitleEntity, WordpressConsts.DEFAULT_LANGUAGE, contentTitleContent, contentEntity);
-      } else {
-        contentController.createContentTitle(WordpressConsts.DEFAULT_LANGUAGE, contentTitleContent, contentEntity);
-      }
+      updateExistingPageTitle(contentEntity, contentTitleContent);
     }
     
     contentController.updateContent(contentEntity, pageUpdateModel.getOriginId(), pageUpdateModel.getSlug(), contentType, parent, categorySlug);
+  }
+
+  private void updateExistingPageTitle(Content contentEntity, String contentTitleContent) {
+    ContentTitle contentTitleEntity = contentController.listContentTitlesByContent(contentEntity)
+      .stream()
+      .filter(title -> title.getLanguage().equals(WordpressConsts.DEFAULT_LANGUAGE))
+      .findAny()
+      .orElse(null);
+    
+    if (contentTitleEntity != null) {
+      contentController.updateContentTitle(contentTitleEntity, WordpressConsts.DEFAULT_LANGUAGE, contentTitleContent, contentEntity);
+    } else {
+      contentController.createContentTitle(WordpressConsts.DEFAULT_LANGUAGE, contentTitleContent, contentEntity);
+    }
   }
   
   private String getPageLink(String contentData) {
@@ -177,12 +184,10 @@ public class PageUpdateJob extends AbstractWordpressJob {
         return child.attr("href");
       }
 
-      if ("p".equals(tagName)) {
-        if (child.children().size() == 1) {
-          Element childOfChild = child.children().get(0);
-          if ("a".equals(childOfChild.tag().getName())) {
-            return childOfChild.attr("href");
-          }
+      if ("p".equals(tagName) && child.children().size() == 1) {
+        Element childOfChild = child.children().get(0);
+        if ("a".equals(childOfChild.tag().getName())) {
+          return childOfChild.attr("href");
         }
       }
     }

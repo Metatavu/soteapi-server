@@ -58,7 +58,7 @@
     
     <!-- Wildfly -->
     
-    <wildfly-spec-api.version>11.0.0.CR1</wildfly-spec-api.version>
+    <wildfly-spec-api.version>11.0.0.Final</wildfly-spec-api.version>
     
     <!--  slf4j-api -->
     
@@ -70,11 +70,20 @@
     
     <!-- Metaflow -->
     
-    <metaflow.version>0.0.1-SNAPSHOT</metaflow.version>
+    <metaflow.version>0.0.1</metaflow.version>
     
     <!-- wp-api-v2-client.version -->
     
     <wp-api-v2-client.version>4.8.3</wp-api-v2-client.version>
+    
+    <!-- Rome -->
+    
+    <rome.version>1.8.0</rome.version>
+    
+    <!-- Slugify -->
+    
+    <slugify.version>2.1.12</slugify.version>
+    
     <!-- Test -->
     
     <deltaspike.version>1.7.2</deltaspike.version>
@@ -181,6 +190,18 @@
       <artifactId>commons-logging</artifactId>
       <version>1.1.1</version>
     </dependency>
+        
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -243,6 +264,18 @@
       <artifactId>jackson-datatype-jsr310</artifactId>
       <scope>provided</scope>
     </dependency>
+    
+    <dependency>
+      <groupId>com.rometools</groupId>
+      <artifactId>rome</artifactId>
+      <version>${rome.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.github.slugify</groupId>
+      <artifactId>slugify</artifactId>
+      <version>${slugify.version}</version>
+    </dependency>
 
     <!-- Persistence -->
 
@@ -277,7 +310,7 @@
       <artifactId>wp-api-v2-client-java</artifactId>
       <version>${wp-api-v2-client.version}</version>
     </dependency>
-    
+
     <!-- Test -->
 
     <dependency>

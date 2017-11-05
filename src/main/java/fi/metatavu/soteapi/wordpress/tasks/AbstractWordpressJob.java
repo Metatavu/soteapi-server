@@ -15,4 +15,13 @@ public abstract class AbstractWordpressJob extends AbstractUpdateJob {
   protected Term findCategoryById(Long categoryId) {
     return wordpressClient.getCategory(categoryId);
   }
+  
+  @Override
+  protected boolean isEnabled() {
+    if (wordpressClient == null) {
+      return false;
+    }
+    
+    return super.isEnabled();
+  }
 }

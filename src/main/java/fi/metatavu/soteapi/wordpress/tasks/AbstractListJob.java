@@ -29,7 +29,7 @@ public abstract class AbstractListJob<W, T extends AbstractListTask> extends Abs
   
   @Inject
   private Wordpress wordpressClient;
-  
+
   @Override
   protected void execute() {
     T task = getQueue().next();
@@ -40,6 +40,15 @@ public abstract class AbstractListJob<W, T extends AbstractListTask> extends Abs
     }
   }
   
+  @Override
+  protected boolean isEnabled() {
+    if (wordpressClient == null) {
+      return false;
+    }
+    
+    return super.isEnabled();
+  }
+
   /**
    * Processes the post
    * 

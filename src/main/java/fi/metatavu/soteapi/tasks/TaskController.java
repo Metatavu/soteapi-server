@@ -56,33 +56,15 @@ public class TaskController {
     if (taskModelDAO.countByQueueAndUniqueId(taskQueue, uniqueId) == 0) {
       byte[] data = serialize(task);
 	    if (data != null) {
-	      if (task.getPriority()) {
-	        logger.info(String.format("Added priority task to the queue %s", queueName));
-	      }
-
-	      TaskModel newTask = createTask(queueName, task.getPriority(), taskQueue, data, uniqueId);
-	      if (newTask != null) {
-	        return task;
-	      }
-
-	      logger.warn(String.format("Failed to add task %s to queue %s. Skipped", uniqueId, queueName));
+	      return handleNewTask(queueName, task, taskQueue, uniqueId, data);
 	    }
     } else {
-      if (task.getPriority()) {
-        TaskModel prioritizedTask = prioritizeTask(queueName, uniqueId);
-        if (prioritizedTask != null) {
-          return task;
-        }
-
-        logger.warn(String.format("Failed to prioritize task %s in queue %s. Skipped", uniqueId, queueName));
-      } else {
-        logger.warn(String.format("Task %s already found from queue %s. Skipped", uniqueId, queueName));
-      }
+      return handleExistingTask(queueName, task, uniqueId);
     }
 
     return null;
   }
-  
+
   /**
    * Returns next tasks in queue
    * 
@@ -214,7 +196,43 @@ public class TaskController {
   public TaskQueue findTaskQueueByIndex(int index) {
     return taskQueueDAO.findTaskQueueByIndex(index);
   }
-  
+
+  private <T extends Task> T handleNewTask(String queueName, T task, TaskQueue taskQueue, String uniqueId, byte[] data) {
+    if (task.getPriority() && logger.isInfoEnabled()) {
+      logger.info(String.format("Added priority task to the queue %s", queueName));
+    }
+
+    TaskModel newTask = createTask(queueName, task.getPriority(), taskQueue, data, uniqueId);
+    if (newTask != null) {
+      return task;
+    }
+
+    if (logger.isWarnEnabled()) {
+      logger.warn(String.format("Failed to add task %s to queue %s. Skipped", uniqueId, queueName));
+    }
+    
+    return null;
+  }
+
+  private <T extends Task> T handleExistingTask(String queueName, T task, String uniqueId) {
+    if (task.getPriority()) {
+      TaskModel prioritizedTask = prioritizeTask(queueName, uniqueId);
+      if (prioritizedTask != null) {
+        return task;
+      }
+
+      if (logger.isWarnEnabled()) {
+        logger.warn(String.format("Failed to prioritize task %s in queue %s. Skipped", uniqueId, queueName));
+      }
+    } else {
+      if (logger.isWarnEnabled()) {
+       logger.warn(String.format("Task %s already found from queue %s. Skipped", uniqueId, queueName));
+      }
+    }
+    
+    return null;
+  }
+
   private TaskModel findTaskModel(String queueName, String uniqueId) {
     TaskQueue taskQueue = taskQueueDAO.findByName(queueName);
     if (taskQueue == null) {
@@ -229,7 +247,11 @@ public class TaskController {
     if (taskModel != null && !taskModel.getPriority()) {
       return taskModelDAO.updatePriority(taskModel, true);
     }
-    logger.warn(String.format("Tried to prioritize already priority task %s from queue %s. Skipped", uniqueId, queueName));
+    
+    if (logger.isWarnEnabled()) {
+     logger.warn(String.format("Tried to prioritize already priority task %s from queue %s. Skipped", uniqueId, queueName));
+    }
+    
     return null;
   }
   
@@ -259,7 +281,10 @@ public class TaskController {
     if (e.getCause() instanceof SQLException) {
       SQLException sqlException = (SQLException) e.getCause();
       if (sqlException.getErrorCode() == 1062) {
-        logger.warn(String.format("Task %s insterted twice into queue %s. Skipped", uniqueId, queueName));
+        if (logger.isWarnEnabled()) {
+          logger.warn(String.format("Task %s insterted twice into queue %s. Skipped", uniqueId, queueName));
+        }
+        
         return;
       }
     }
