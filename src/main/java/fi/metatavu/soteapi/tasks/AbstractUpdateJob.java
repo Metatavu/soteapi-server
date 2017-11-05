@@ -39,12 +39,10 @@ public abstract class AbstractUpdateJob implements Runnable {
       }
       
       userTransaction.commit();
-    } catch (Throwable ex) {
+    } catch (Exception ex) {
       logger.error("Timer throw an exception", ex);
       try {
-        if (userTransaction != null) {
-          userTransaction.rollback();
-        }
+        userTransaction.rollback();
       } catch (SystemException e1) {
         logger.error("Failed to rollback transaction", e1);
       }
