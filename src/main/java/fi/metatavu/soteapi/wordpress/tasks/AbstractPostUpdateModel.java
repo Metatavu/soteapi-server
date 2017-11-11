@@ -2,7 +2,7 @@ package fi.metatavu.soteapi.wordpress.tasks;
 
 import java.io.Serializable;
 
-public abstract class AbstractPostUpdateModel implements Serializable{
+public abstract class AbstractPostUpdateModel implements Serializable {
 
   private static final long serialVersionUID = -94277011788449153L;
 
@@ -12,55 +12,49 @@ public abstract class AbstractPostUpdateModel implements Serializable{
   private String originId;
   private String parentOriginId;
   private Long categoryId;
-  
+  private Long orderIndex;
+
   public AbstractPostUpdateModel() {
   }
-  
-  public String getTitle() {
-    return title;
+
+  public AbstractPostUpdateModel(String title, String content, String slug, String originId, String parentOriginId,
+      Long categoryId, Long orderIndex) {
+    super();
+    this.title = title;
+    this.content = content;
+    this.slug = slug;
+    this.originId = originId;
+    this.parentOriginId = parentOriginId;
+    this.categoryId = categoryId;
+    this.orderIndex = orderIndex;
   }
 
-  public void setTitle(String title) {
-    this.title = title;
+  public String getTitle() {
+    return title;
   }
 
   public String getContent() {
     return content;
   }
 
-  public void setContent(String content) {
-    this.content = content;
-  }
-
   public String getSlug() {
     return slug;
-  }
-
-  public void setSlug(String slug) {
-    this.slug = slug;
   }
 
   public String getOriginId() {
     return originId;
   }
 
-  public void setOriginId(String originId) {
-    this.originId = originId;
-  }
-  
   public String getParentOriginId() {
     return parentOriginId;
   }
-  
-  public void setParentOriginId(String parentOriginId) {
-    this.parentOriginId = parentOriginId;
-  }
-  
+
   public Long getCategoryId() {
     return categoryId;
   }
-  
-  public void setCategoryId(Long categoryId) {
-    this.categoryId = categoryId;
+
+  public Long getOrderIndex() {
+    return orderIndex;
   }
+
 }

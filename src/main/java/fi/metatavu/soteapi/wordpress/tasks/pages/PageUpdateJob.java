@@ -68,6 +68,7 @@ public class PageUpdateJob extends AbstractWordpressJob {
     String contentTitle = pageUpdateModel.getTitle();
     String contentData = pageUpdateModel.getContent();
     String parentOriginId = pageUpdateModel.getParentOriginId();
+    Long orderIndex = pageUpdateModel.getOrderIndex();
     
     Content parent = null;
     
@@ -97,7 +98,7 @@ public class PageUpdateJob extends AbstractWordpressJob {
       }
     }
     
-    Content contentEntity = contentController.createContent(originId, slug, contentType, parent, categorySlug);
+    Content contentEntity = contentController.createContent(originId, slug, contentType, parent, categorySlug, orderIndex);
     
     if (StringUtils.isNotEmpty(contentTitle)) {
       contentController.createContentTitle(WordpressConsts.DEFAULT_LANGUAGE, contentTitle, contentEntity);
@@ -131,6 +132,7 @@ public class PageUpdateJob extends AbstractWordpressJob {
     String contentTitleContent = pageUpdateModel.getTitle();
     String contentData = pageUpdateModel.getContent();
     ContentType contentType = ContentType.PAGE;
+    Long orderIndex = pageUpdateModel.getOrderIndex();
     
     if (StringUtils.isNotEmpty(contentData)) {
       String pageLink = getPageLink(contentData);
@@ -156,7 +158,7 @@ public class PageUpdateJob extends AbstractWordpressJob {
       updateExistingPageTitle(contentEntity, contentTitleContent);
     }
     
-    contentController.updateContent(contentEntity, pageUpdateModel.getOriginId(), pageUpdateModel.getSlug(), contentType, parent, categorySlug);
+    contentController.updateContent(contentEntity, pageUpdateModel.getOriginId(), pageUpdateModel.getSlug(), parent, contentType, categorySlug, orderIndex);
   }
 
   private void updateExistingPageTitle(Content contentEntity, String contentTitleContent) {

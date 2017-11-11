@@ -1,5 +1,6 @@
 package fi.metatavu.soteapi.wordpress.tasks.posts;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -44,18 +45,20 @@ public class PostListJob extends AbstractListJob<Post, PostListTask> {
       return;
     }
     
-    PostUpdateTaskModel postModel = new PostUpdateTaskModel();
-    
+    Long categoryId = null;
     List<Long> categoryIds = postData.getCategoryIds();
     if (!categoryIds.isEmpty()) {
-      postModel.setCategoryId(categoryIds.get(0));
+      categoryId = categoryIds.get(0);
     }
     
-    postModel.setOriginId(postData.getId().toString());
-    postModel.setSlug(postData.getSlug());
-    postModel.setTitle(postData.getTitle().getRendered());
-    postModel.setContent(postData.getContent().getRendered());
+    String parentOriginId = null;
+    String title = postData.getTitle().getRendered();
+    String content = postData.getContent().getRendered();
+    String slug = postData.getSlug();
+    String originId = postData.getId().toString();
+    Long orderIndex = -OffsetDateTime.parse(postData.getDateGmt()).toEpochSecond();
     
+    PostUpdateTaskModel postModel = new PostUpdateTaskModel(title, content, slug, originId, parentOriginId, categoryId, orderIndex);
     PostUpdateTask postUpdateTask = new PostUpdateTask();
     postUpdateTask.setPostUpdateModel(postModel);
     postUpdateTask.setPriority(Boolean.FALSE);
