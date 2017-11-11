@@ -224,6 +224,18 @@
     <sql>DELETE FROM Content WHERE contentType = 'NEWS'</sql>
   </changeSet>
   
+  <changeSet id="content-order-index" author="Antti Leppa">
+    <addColumn tableName="Content">
+      <column name="orderIndex" type="BIGINT" />
+    </addColumn>
+    <sql>UPDATE Content set orderIndex = id</sql>
+    <addNotNullConstraint tableName="Content" columnName="orderIndex" columnDataType="BIGINT"/>
+  </changeSet>
+  
+  <changeSet id="model-change-task-drop" author="Antti Leppa">
+    <delete tableName="TaskModel"></delete>
+  </changeSet>
+  
 </databaseChangeLog>
 
 

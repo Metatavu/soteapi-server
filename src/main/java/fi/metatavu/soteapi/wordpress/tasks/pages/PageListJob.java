@@ -46,8 +46,7 @@ public class PageListJob extends AbstractListJob<Page, PageListTask> {
     }
 
     Object categoriesObject = null;
-    PageUpdateTaskModel pageModel = new PageUpdateTaskModel();
-    
+    Long categoryId = null;
     
     if (pageData.getAdditionalProperties().containsKey("categories")) {
       categoriesObject = pageData.getAdditionalProperties().get("categories");
@@ -56,19 +55,18 @@ public class PageListJob extends AbstractListJob<Page, PageListTask> {
     if (categoriesObject != null && categoriesObject instanceof List) {
       List<Integer> categoriesList = (List<Integer>) categoriesObject;
       if (!categoriesList.isEmpty()) {
-        Long categoryId = categoriesList.get(0).longValue();
-        pageModel.setCategoryId(categoryId);
+        categoryId = categoriesList.get(0).longValue();
       }
     }
     
     String parentOriginId = pageData.getParent() != null && pageData.getParent() > 0 ? pageData.getParent().toString() : null;
+    String title = pageData.getTitle().getRendered();
+    String content = pageData.getContent().getRendered();
+    String slug = pageData.getSlug();
+    String originId = pageData.getId().toString();
+    Long orderIndex = pageData.getMenuOrder();
     
-    pageModel.setOriginId(pageData.getId().toString());
-    pageModel.setSlug(pageData.getSlug());
-    pageModel.setTitle(pageData.getTitle().getRendered());
-    pageModel.setContent(pageData.getContent().getRendered());
-    pageModel.setParentOriginId(parentOriginId);
-    
+    PageUpdateTaskModel pageModel = new PageUpdateTaskModel(title, content, slug, originId, parentOriginId, categoryId, orderIndex);
     PageUpdateTask pageEntityTask = new PageUpdateTask();
     pageEntityTask.setPostUpdateModel(pageModel);
     pageEntityTask.setPriority(Boolean.FALSE);

@@ -64,6 +64,7 @@ public class PostUpdateJob extends AbstractWordpressJob {
     String contentData = postUpdateModel.getContent();
     Long categoryId = postUpdateModel.getCategoryId();
     String categorySlug = null;
+    Long orderIndex = postUpdateModel.getOrderIndex();
     
     if (categoryId != null) {
       Term category = findCategoryById(categoryId);
@@ -72,7 +73,7 @@ public class PostUpdateJob extends AbstractWordpressJob {
       }
     } 
     
-    Content contentEntity = contentController.createContent(originId, slug, ContentType.NEWS, null, categorySlug);
+    Content contentEntity = contentController.createContent(originId, slug, ContentType.NEWS, null, categorySlug, orderIndex);
     
     if (StringUtils.isNotEmpty(contentTitle)) {
       contentController.createContentTitle(WordpressConsts.DEFAULT_LANGUAGE, contentTitle, contentEntity);
@@ -95,7 +96,9 @@ public class PostUpdateJob extends AbstractWordpressJob {
       }
     }
     
-    contentController.updateContent(contentEntity, postUpdateModel.getOriginId(), postUpdateModel.getSlug(), ContentType.NEWS, null, categorySlug);
+    Long orderIndex = postUpdateModel.getOrderIndex();
+    
+    contentController.updateContent(contentEntity, postUpdateModel.getOriginId(), postUpdateModel.getSlug(), null, ContentType.NEWS, categorySlug, orderIndex);
     String contentTitleContent = postUpdateModel.getTitle();
     String contentData = postUpdateModel.getContent();
 

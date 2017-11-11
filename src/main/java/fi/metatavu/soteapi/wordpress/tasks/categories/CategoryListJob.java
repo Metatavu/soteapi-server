@@ -1,5 +1,7 @@
 package fi.metatavu.soteapi.wordpress.tasks.categories;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import com.afrozaar.wordpress.wpapi.v2.Wordpress;
@@ -40,15 +42,16 @@ public class CategoryListJob extends AbstractUpdateJob {
     return WordpressConsts.CATEGORIES_SYNC_ENABLED;
   }
   
-  protected void process(Term categoryData) {
+  protected void process(Term categoryData, Long originIndex) {
     if (categoryData == null) {
       return;
     }
     
-    CategoryUpdateTaskModel categoryModel = new CategoryUpdateTaskModel();
-    categoryModel.setOriginId(categoryData.getId().toString());
-    categoryModel.setTitle(categoryData.getName());
-    categoryModel.setSlug(categoryData.getSlug());
+    String originId = categoryData.getId().toString();
+    String title = categoryData.getName();
+    String slug = categoryData.getSlug();
+        
+    CategoryUpdateTaskModel categoryModel = new CategoryUpdateTaskModel(title, null, slug, originId, null, null, originIndex);
     
     CategoryUpdateTask categoryUpdateTask = new CategoryUpdateTask();
     categoryUpdateTask.setPostUpdateModel(categoryModel);
@@ -61,8 +64,11 @@ public class CategoryListJob extends AbstractUpdateJob {
   protected void execute() {
     CategoryListTask listTask = categoryListQueue.next();
     if (listTask != null) {
-      wordpressClient.getCategories()
-        .forEach(this::process);
+      List<Term> categories = wordpressClient.getCategories();
+      for (int i = 0; i < categories.size(); i++) {
+        Term term = categories.get(i);
+        process(term, (long) i);
+      }
     } else if (categoryListQueue.isEmptyAndLocalNodeResponsible()) {
       createTask();
     }

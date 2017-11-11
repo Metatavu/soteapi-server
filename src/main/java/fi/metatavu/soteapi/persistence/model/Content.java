@@ -21,6 +21,10 @@ public class Content {
   
   @Column(nullable = false)
   @NotNull
+  private Long orderIndex;
+  
+  @Column(nullable = false)
+  @NotNull
   @NotEmpty
   private String originId;
   
@@ -85,6 +89,14 @@ public class Content {
   
   public void setCategory(String category) {
     this.category = category;
+  }
+  
+  public Long getOrderIndex() {
+    return orderIndex;
+  }
+  
+  public void setOrderIndex(Long orderIndex) {
+    this.orderIndex = orderIndex;
   }
   
 }
