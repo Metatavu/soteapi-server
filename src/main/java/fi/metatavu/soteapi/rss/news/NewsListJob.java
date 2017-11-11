@@ -132,6 +132,7 @@ public class NewsListJob extends AbstractUpdateJob {
     String content = null;
     String categorySlug = null;
     String originId = syndEntry.getUri();
+    Long orderIndex = -syndEntry.getPublishedDate().getTime();
     
     if (!entryCategories.isEmpty()) {
       Iterator<SyndCategory> iterator = entryCategories.iterator();
@@ -157,12 +158,7 @@ public class NewsListJob extends AbstractUpdateJob {
       }
     }
     
-    NewsUpdateModel result = new NewsUpdateModel();
-    result.setCategorySlug(categorySlug);
-    result.setContent(content);
-    result.setSlug(slug);
-    result.setTitle(title);
-    result.setOriginId(originId);
+    NewsUpdateModel result = new NewsUpdateModel(title, content, slug, originId, categorySlug, orderIndex);
     
     return result;
   }

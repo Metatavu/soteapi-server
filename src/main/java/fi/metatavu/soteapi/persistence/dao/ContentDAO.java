@@ -30,15 +30,17 @@ public class ContentDAO extends AbstractDAO<Content> {
    * @param contentType content type
    * @param parent parent content
    * @param category category slug
+   * @param orderIndex order index
    * @return created content
    */
-  public Content create(String originId, String slug, ContentType contentType, Content parent, String category) {
+  public Content create(String originId, String slug, ContentType contentType, Content parent, String category, Long orderIndex) {
     Content content = new Content();
     content.setOriginId(originId);
     content.setSlug(slug);
     content.setContentType(contentType);
     content.setParent(parent);
     content.setCategory(category);
+    content.setOrderIndex(orderIndex);
     return persist(content);
   }
 
@@ -63,8 +65,10 @@ public class ContentDAO extends AbstractDAO<Content> {
 
     criteria.select(root);
     criteria.where(
-        root.get(Content_.contentType).in(types)
+      root.get(Content_.contentType).in(types)
     );
+
+    criteria.orderBy(criteriaBuilder.asc(root.get(Content_.orderIndex)));
     
     TypedQuery<Content> query = entityManager.createQuery(criteria);
     
@@ -98,6 +102,8 @@ public class ContentDAO extends AbstractDAO<Content> {
     criteria.where(
       criteriaBuilder.equal(root.get(Content_.parent), parent)
     );
+
+    criteria.orderBy(criteriaBuilder.asc(root.get(Content_.orderIndex)));
     
     TypedQuery<Content> query = entityManager.createQuery(criteria);
     
@@ -130,6 +136,8 @@ public class ContentDAO extends AbstractDAO<Content> {
     criteria.where(
       criteriaBuilder.isNull(root.get(Content_.parent))
     );
+    
+    criteria.orderBy(criteriaBuilder.asc(root.get(Content_.orderIndex)));
     
     TypedQuery<Content> query = entityManager.createQuery(criteria);
     
@@ -171,6 +179,8 @@ public class ContentDAO extends AbstractDAO<Content> {
       )
     );
     
+    criteria.orderBy(criteriaBuilder.asc(root.get(Content_.orderIndex)));
+    
     TypedQuery<Content> query = entityManager.createQuery(criteria);
     
     if (firstResult != null) {
@@ -211,6 +221,8 @@ public class ContentDAO extends AbstractDAO<Content> {
         criteriaBuilder.equal(root.get(Content_.parent), parent)
       )
     );
+    
+    criteria.orderBy(criteriaBuilder.asc(root.get(Content_.orderIndex)));
     
     TypedQuery<Content> query = entityManager.createQuery(criteria);
     
@@ -307,4 +319,15 @@ public class ContentDAO extends AbstractDAO<Content> {
       content.setCategory(category);
       return persist(content);
     }
+    
+    /**
+     * Updates orderIndex
+     *
+     * @param orderIndex orderIndex
+     * @return updated content
+     */
+     public Content updateOrderIndex(Content content, Long orderIndex) {
+       content.setOrderIndex(orderIndex);
+       return persist(content);
+     }
 }

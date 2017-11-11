@@ -51,8 +51,8 @@ public class ContentController {
    * @param category category slug
    * @return created content
    */
-  public Content createContent(String originId, String slug, ContentType contentType, Content parent, String category) {
-    return contentDAO.create(originId, slug, contentType, parent, category);
+  public Content createContent(String originId, String slug, ContentType contentType, Content parent, String category, Long orderIndex) {
+    return contentDAO.create(originId, slug, contentType, parent, category, orderIndex);
   }
   
   /**
@@ -82,21 +82,22 @@ public class ContentController {
   /**
    * Update content
    *
-   * @param content content to update
    * @param originId originId
    * @param slug slug
-   * @param contentType content type
-   * @param parent content parent
-   * @param category category slug
+   * @param parent parent
+   * @param contentType contentType
+   * @param category category
+   * @param orderIndex orderIndex
+   * @param modifier modifier
    * @return updated content
    */
-  public Content updateContent(Content content, String originId, String slug, ContentType contentType, Content parent, String category) {
+  public Content updateContent(Content content, String originId, String slug, Content parent, ContentType contentType, String category, Long orderIndex) {
     contentDAO.updateOriginId(content, originId);
     contentDAO.updateSlug(content, slug);
-    contentDAO.updateContentType(content, contentType);
     contentDAO.updateParent(content, parent);
+    contentDAO.updateContentType(content, contentType);
     contentDAO.updateCategory(content, category);
-
+    contentDAO.updateOrderIndex(content, orderIndex);
     return content;
   }
 
