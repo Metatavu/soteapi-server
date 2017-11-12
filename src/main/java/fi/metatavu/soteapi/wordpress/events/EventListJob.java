@@ -97,7 +97,7 @@ public class EventListJob extends AbstractListJob<Event, EventListTask> {
 
   private Events listEvents(int page) {
     try {
-      ResponseEntity<String> responseEntity = getWordpressClient().doCustomExchange(String.format("%s&%d", getEndPointUri(), page), HttpMethod.GET, String.class, new Object[0], null, null, null);
+      ResponseEntity<String> responseEntity = getWordpressClient().doCustomExchange(String.format("%s&page=%d", getEndPointUri(), page), HttpMethod.GET, String.class, new Object[0], null, null, null);
       ObjectMapper objectMapper = new ObjectMapper();
       return objectMapper.readValue(responseEntity.getBody(), Events.class);
     } catch (IOException e) {
