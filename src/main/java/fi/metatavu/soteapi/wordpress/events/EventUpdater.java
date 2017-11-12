@@ -1,4 +1,4 @@
-package fi.metatavu.soteapi.rss.news;
+package fi.metatavu.soteapi.wordpress.events;
 
 import java.util.concurrent.TimeUnit;
 
@@ -13,10 +13,10 @@ import javax.inject.Inject;
 @Singleton
 @ApplicationScoped
 @Startup
-public class NewsUpdater {
+public class EventUpdater {
 
   @Inject
-  private NewsUpdateJob newsUpdateJob;
+  private EventUpdateJob eventUpdateJob;
   
   @Resource
   private ManagedScheduledExecutorService managedScheduledExecutorService;
@@ -27,7 +27,7 @@ public class NewsUpdater {
   }
   
   private void startTimer(long warmup, long delay) {
-    managedScheduledExecutorService.scheduleWithFixedDelay(newsUpdateJob, warmup, delay, TimeUnit.MILLISECONDS);
+    managedScheduledExecutorService.scheduleWithFixedDelay(eventUpdateJob, warmup, delay, TimeUnit.MILLISECONDS);
   }
 
 }

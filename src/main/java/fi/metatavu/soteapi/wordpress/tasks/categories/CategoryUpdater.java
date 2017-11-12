@@ -23,7 +23,7 @@ public class CategoryUpdater {
   
   @PostConstruct
   public void categoryConstruct() {
-    startTimer(1000, 1000);
+    startTimer(60000, 1000);
   }
   
   private void startTimer(long warmup, long delay) {

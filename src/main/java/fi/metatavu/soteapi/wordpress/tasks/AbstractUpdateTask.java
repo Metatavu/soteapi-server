@@ -1,8 +1,10 @@
 package fi.metatavu.soteapi.wordpress.tasks;
 
+import java.io.Serializable;
+
 import fi.metatavu.metaflow.tasks.Task;
 
-public class AbstractUpdateTask<M extends AbstractPostUpdateModel> implements Task {
+public class AbstractUpdateTask<M extends Serializable> implements Task {
 
   private static final long serialVersionUID = 4725085938716681192L;
 

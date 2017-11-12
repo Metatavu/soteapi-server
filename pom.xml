@@ -49,7 +49,7 @@
     
     <!-- Spec -->
     
-    <soteapi-spec.version>0.0.13</soteapi-spec.version>
+    <soteapi-spec.version>0.0.15</soteapi-spec.version>
        
     <!-- Maven -->
 
@@ -83,6 +83,10 @@
     <!-- Slugify -->
     
     <slugify.version>2.1.12</slugify.version>
+    
+    <!-- Swagger -->
+    
+    <swagger-annotations.version>1.5.9</swagger-annotations.version>
     
     <!-- Test -->
     
@@ -301,6 +305,14 @@
       <groupId>org.liquibase</groupId>
       <artifactId>liquibase-cdi</artifactId>
       <version>${liquibase.version}</version>
+    </dependency>
+    
+    <!-- Swagger -->
+
+    <dependency>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-annotations</artifactId>
+      <version>${swagger-annotations.version}</version>
     </dependency>
     
     <!-- WP-API -->
