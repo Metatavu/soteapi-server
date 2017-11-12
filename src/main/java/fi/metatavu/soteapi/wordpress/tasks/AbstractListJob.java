@@ -42,7 +42,7 @@ public abstract class AbstractListJob<W, T extends AbstractListTask> extends Abs
   
   @Override
   protected boolean isEnabled() {
-    if (wordpressClient == null) {
+    if (getWordpressClient() == null) {
       return false;
     }
     
@@ -66,7 +66,7 @@ public abstract class AbstractListJob<W, T extends AbstractListTask> extends Abs
   protected List<W> getDataFromPage(int page) {
 
     @SuppressWarnings("unchecked")
-    PagedResponse<W> searchResponse = (PagedResponse<W>) wordpressClient.search(SearchRequest.Builder
+    PagedResponse<W> searchResponse = (PagedResponse<W>) getWordpressClient().search(SearchRequest.Builder
         .aSearchRequest(getWordpressTypeClass())
         .withPagination(WordpressConsts.PAGE_SIZE, page)
         .withUri(getEndPointUri())
@@ -97,6 +97,10 @@ public abstract class AbstractListJob<W, T extends AbstractListTask> extends Abs
    */
   protected abstract String getEndPointUri();
   
+  protected Wordpress getWordpressClient() {
+    return wordpressClient;
+  }
+  
   private void performTask(T task) {
     getDataFromPage(task.getPage()).forEach(this::process);
   }
@@ -117,8 +121,8 @@ public abstract class AbstractListJob<W, T extends AbstractListTask> extends Abs
    * @param postType type of wordpress post
    * @return total number of pages for post type
    */
-  private int getNumberOfPages() {
-    PagedResponse<?> searchResponse = wordpressClient.search(SearchRequest.Builder
+  protected int getNumberOfPages() {
+    PagedResponse<?> searchResponse = getWordpressClient().search(SearchRequest.Builder
         .aSearchRequest(getWordpressTypeClass())
         .withPagination(WordpressConsts.PAGE_SIZE, 1)
         .withUri(getEndPointUri())
