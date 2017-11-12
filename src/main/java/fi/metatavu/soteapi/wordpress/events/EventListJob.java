@@ -20,6 +20,8 @@ import com.afrozaar.wordpress.wpapi.v2.Client;
 import com.afrozaar.wordpress.wpapi.v2.Wordpress;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fi.metatavu.soteapi.category.CategoryController;
+import fi.metatavu.soteapi.persistence.model.Category;
 import fi.metatavu.soteapi.settings.SystemSettingController;
 import fi.metatavu.soteapi.tasks.AbstractSoteApiTaskQueue;
 import fi.metatavu.soteapi.wordpress.WordpressConsts;
@@ -44,6 +46,9 @@ public class EventListJob extends AbstractListJob<Event, EventListTask> {
 
   @Inject
   private SystemSettingController systemSettingController;
+
+  @Inject
+  private CategoryController categoryController;
   
   @Override
   protected AbstractSoteApiTaskQueue<EventListTask> getQueue() {
@@ -130,12 +135,19 @@ public class EventListJob extends AbstractListJob<Event, EventListTask> {
     String description = eventData.getDescription();
     String slug = extractSlug(eventData.getUrl());
     String originId = eventData.getId().toString();
-    String category = getCategorySlug(eventData.getCategories());
+    Term category = getCategory(eventData.getCategories());
+    String categorySlug = getCategorySlug(category);
+    String categoryOriginId = getCategoryOriginId(category);
     OffsetDateTime startTime = getDateTime(eventData.getStartDateDetails(), timeZone);
     OffsetDateTime endTime = getDateTime(eventData.getEndDateDetails(), timeZone);
     Boolean allDay = eventData.isAllDay();
     
-    EventUpdateTaskModel updateTaskModel = new EventUpdateTaskModel(originId, title, description, slug, category, formatTime(startTime), formatTime(endTime), allDay);
+    if (categoryOriginId != null && categoryController.findCategoryByOriginId(categoryOriginId) == null) {
+      Category createdCategory = categoryController.createCategory(categoryOriginId, categorySlug);
+      categoryController.createCategoryTitle(createdCategory, "FI", getCategoryName(category));
+    }
+    
+    EventUpdateTaskModel updateTaskModel = new EventUpdateTaskModel(originId, title, description, slug, categorySlug, formatTime(startTime), formatTime(endTime), allDay);
     
     EventUpdateTask task = new EventUpdateTask();
     task.setPostUpdateModel(updateTaskModel);
@@ -175,13 +187,38 @@ public class EventListJob extends AbstractListJob<Event, EventListTask> {
   protected String getEndPointUri() {
     return "/events";
   }
-
-  private String getCategorySlug(List<Term> categories) {
+  
+  private Term getCategory(List<Term> categories) {
     if (categories == null || categories.isEmpty()) {
       return null;
     }
     
-    return categories.get(0).getSlug();
+    return categories.get(0);
+  }
+  
+  private String getCategoryOriginId(Term term) {
+    if (term == null) {
+      return null;
+    }
+    
+    return term.getId().toString();
+    
+  }
+
+  private String getCategorySlug(Term term) {
+    if (term == null) {
+      return null;
+    }
+    
+    return term.getSlug();
+  }
+  
+  private String getCategoryName(Term term) {
+    if (term == null) {
+      return null;
+    }
+    
+    return term.getName();
   }
   
   /**
