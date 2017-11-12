@@ -23,7 +23,7 @@ public class PageUpdater {
   
   @PostConstruct
   public void postConstruct() {
-    startTimer(1000, 1000);
+    startTimer(60000, 1000);
   }
   
   private void startTimer(long warmup, long delay) {
