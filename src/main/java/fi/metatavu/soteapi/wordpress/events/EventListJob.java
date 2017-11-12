@@ -97,7 +97,7 @@ public class EventListJob extends AbstractListJob<Event, EventListTask> {
       return objectMapper.readValue(responseEntity.getBody(), Events.class);
     } catch (IOException e) {
       logger.error("Failed to list events", e);
-    };
+    }
     
     return null;
   }

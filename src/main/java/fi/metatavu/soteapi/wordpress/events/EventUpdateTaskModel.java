@@ -25,6 +25,7 @@ public class EventUpdateTaskModel implements Serializable {
   public EventUpdateTaskModel() {
   }
 
+  @SuppressWarnings ("squid:S00107")
   public EventUpdateTaskModel(String originId, String title, String description, String slug, String category, String startTime, String endTime, Boolean allDay) {
     super();
     this.title = title;

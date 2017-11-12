@@ -13,6 +13,7 @@ public class Events {
   @JsonProperty ("total_pages")
   private Integer totalPages;
   
+  @SuppressWarnings ("squid:S1700")
   private List<Event> events;
   
   public List<Event> getEvents() {
