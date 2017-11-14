@@ -84,6 +84,10 @@
     
     <slugify.version>2.1.12</slugify.version>
     
+    <!-- Push Raven -->
+    
+    <pushraven.version>1.0.2</pushraven.version>
+    
     <!-- Swagger -->
     
     <swagger-annotations.version>1.5.9</swagger-annotations.version>
@@ -247,6 +251,12 @@
       <groupId>fi.metatavu.metaflow</groupId>
       <artifactId>metaflow</artifactId>
       <version>${metaflow.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>us.raudi.pushraven</groupId>
+      <artifactId>Pushraven</artifactId>
+      <version>${pushraven.version}</version>
     </dependency>
     
     <!-- Jackson -->

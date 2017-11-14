@@ -7,14 +7,19 @@ import org.apache.commons.lang3.StringUtils;
 import com.afrozaar.wordpress.wpapi.v2.model.Term;
 
 import fi.metatavu.soteapi.content.ContentController;
+import fi.metatavu.soteapi.firebase.FirebaseController;
 import fi.metatavu.soteapi.persistence.model.Content;
 import fi.metatavu.soteapi.persistence.model.ContentData;
 import fi.metatavu.soteapi.persistence.model.ContentTitle;
 import fi.metatavu.soteapi.persistence.model.ContentType;
+import fi.metatavu.soteapi.utils.HtmlUtils;
 import fi.metatavu.soteapi.wordpress.WordpressConsts;
 import fi.metatavu.soteapi.wordpress.tasks.AbstractWordpressJob;
 
 public class PostUpdateJob extends AbstractWordpressJob {
+
+  @Inject
+  private FirebaseController firebaseController;
   
   @Inject
   private PostUpdateQueue postUpdateQueue;
@@ -71,7 +76,7 @@ public class PostUpdateJob extends AbstractWordpressJob {
       if (category != null) {
         categorySlug = category.getSlug();
       }
-    } 
+    }
     
     Content contentEntity = contentController.createContent(WordpressConsts.ORIGIN, originId, slug, ContentType.NEWS, null, categorySlug, orderIndex);
     
@@ -83,6 +88,7 @@ public class PostUpdateJob extends AbstractWordpressJob {
       contentController.createContentData(WordpressConsts.DEFAULT_LANGUAGE, contentData, contentEntity);
     }
     
+    sendPushNotification(contentTitle, contentData);
   }
   
   private void updateExistingPage(Content contentEntity, PostUpdateTaskModel postUpdateModel) {
@@ -132,6 +138,11 @@ public class PostUpdateJob extends AbstractWordpressJob {
         contentController.createContentData(WordpressConsts.DEFAULT_LANGUAGE, contentData, contentEntity);
       } 
     }
+  }
+  
+  private void sendPushNotification(String title, String content) {
+    String body = StringUtils.abbreviate(HtmlUtils.html2text(content), 200);
+    firebaseController.sendNotifcationToTopic("news", title, body);
   }
   
 }
