@@ -78,6 +78,10 @@ public class NewsUpdateJob extends AbstractUpdateJob {
     contentController.updateContent(contentEntity, newsUpdateModel.getOriginId(), newsUpdateModel.getSlug(), null, ContentType.NEWS, categorySlug, newsUpdateModel.getOrderIndex());
     String contentTitleContent = newsUpdateModel.getTitle();
     String contentData = newsUpdateModel.getContent();
+    
+    if (contentEntity.getArchived()) {
+      contentController.updateContentArchived(contentEntity, false);
+    }
 
     if (StringUtils.isNotEmpty(contentTitleContent)) {
       ContentTitle contentTitleEntity = contentController.listContentTitlesByContent(contentEntity)

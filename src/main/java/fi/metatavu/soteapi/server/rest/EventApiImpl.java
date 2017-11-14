@@ -36,6 +36,10 @@ public class EventApiImpl implements EventsApi {
     if (event == null) {
       return responseController.respondNotFound();
     }
+
+    if (event.getArchived()) {
+      return responseController.responseGone();
+    }
     
     List<EventTitle> eventTitles = eventController.listEventTitlesByEvent(event);
     List<EventDescription> eventDatas = eventController.listEventDescriptionByEvent(event);

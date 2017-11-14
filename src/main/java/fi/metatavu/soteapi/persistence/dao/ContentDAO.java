@@ -1,6 +1,6 @@
 package fi.metatavu.soteapi.persistence.dao;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import fi.metatavu.soteapi.persistence.model.Content;
@@ -33,7 +34,7 @@ public class ContentDAO extends AbstractDAO<Content> {
    * @param orderIndex order index
    * @return created content
    */
-  public Content create(String originId, String slug, ContentType contentType, Content parent, String category, Long orderIndex) {
+  public Content create(String originId, String slug, ContentType contentType, Content parent, String category, Long orderIndex, Boolean archived) {
     Content content = new Content();
     content.setOriginId(originId);
     content.setSlug(slug);
@@ -41,200 +42,8 @@ public class ContentDAO extends AbstractDAO<Content> {
     content.setParent(parent);
     content.setCategory(category);
     content.setOrderIndex(orderIndex);
+    content.setArchived(archived);
     return persist(content);
-  }
-
-  /**
-   * List content by type, optionally filtered by first result and max results
-   * 
-   * @param types content type
-   * @param firstResult first result
-   * @param maxResults max results
-   * @return list of contents
-   */
-  public List<Content> listByTypes(List<ContentType> types, Integer firstResult, Integer maxResults) {
-    if (types == null || types.isEmpty()) {
-      return Collections.emptyList();
-    }
-    
-    EntityManager entityManager = getEntityManager();
-
-    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<Content> criteria = criteriaBuilder.createQuery(Content.class);
-    Root<Content> root = criteria.from(Content.class);
-
-    criteria.select(root);
-    criteria.where(
-      root.get(Content_.contentType).in(types)
-    );
-
-    criteria.orderBy(criteriaBuilder.asc(root.get(Content_.orderIndex)));
-    
-    TypedQuery<Content> query = entityManager.createQuery(criteria);
-    
-    if (firstResult != null) {
-      query.setFirstResult(firstResult);
-    }
-    
-    if (maxResults != null) {
-      query.setMaxResults(maxResults);
-    }
-
-    return query.getResultList();
-  }
-  
-  /**
-   * Lists contents by parent, optionally filtered by first result and max results
-   * 
-   * @param parent parent content
-   * @param firstResult first result
-   * @param maxResults max results
-   * @return list of contents
-   */
-  public List<Content> listByParent(Content parent, Integer firstResult, Integer maxResults) {
-    EntityManager entityManager = getEntityManager();
-
-    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<Content> criteria = criteriaBuilder.createQuery(Content.class);
-    Root<Content> root = criteria.from(Content.class);
-
-    criteria.select(root);
-    criteria.where(
-      criteriaBuilder.equal(root.get(Content_.parent), parent)
-    );
-
-    criteria.orderBy(criteriaBuilder.asc(root.get(Content_.orderIndex)));
-    
-    TypedQuery<Content> query = entityManager.createQuery(criteria);
-    
-    if (firstResult != null) {
-      query.setFirstResult(firstResult);
-    }
-    
-    if (maxResults != null) {
-      query.setMaxResults(maxResults);
-    }
-
-    return query.getResultList();
-  }
-  
-  /**
-   * Lists root contents optionally filtered by first result and max results
-   * 
-   * @param firstResult first result
-   * @param maxResults max results
-   * @return list of contents
-   */
-  public List<Content> listRootContents(Integer firstResult, Integer maxResults) {
-    EntityManager entityManager = getEntityManager();
-
-    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<Content> criteria = criteriaBuilder.createQuery(Content.class);
-    Root<Content> root = criteria.from(Content.class);
-
-    criteria.select(root);
-    criteria.where(
-      criteriaBuilder.isNull(root.get(Content_.parent))
-    );
-    
-    criteria.orderBy(criteriaBuilder.asc(root.get(Content_.orderIndex)));
-    
-    TypedQuery<Content> query = entityManager.createQuery(criteria);
-    
-    if (firstResult != null) {
-      query.setFirstResult(firstResult);
-    }
-    
-    if (maxResults != null) {
-      query.setMaxResults(maxResults);
-    }
-
-    return query.getResultList();
-  }
-  
-  /**
-   * Lists root contents by type optionally filtered by first result and max results
-   * 
-   * @param types content types
-   * @param firstResult first result
-   * @param maxResults max results
-   * @return list of contents
-   */
-  public List<Content> listRootContentsByType(List<ContentType> types, Integer firstResult, Integer maxResults) {
-    if (types == null || types.isEmpty()) {
-      return Collections.emptyList();
-    }
-    
-    EntityManager entityManager = getEntityManager();
-
-    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<Content> criteria = criteriaBuilder.createQuery(Content.class);
-    Root<Content> root = criteria.from(Content.class);
-
-    criteria.select(root);
-    criteria.where(
-      criteriaBuilder.and(
-        criteriaBuilder.isNull(root.get(Content_.parent)),
-        root.get(Content_.contentType).in(types)
-      )
-    );
-    
-    criteria.orderBy(criteriaBuilder.asc(root.get(Content_.orderIndex)));
-    
-    TypedQuery<Content> query = entityManager.createQuery(criteria);
-    
-    if (firstResult != null) {
-      query.setFirstResult(firstResult);
-    }
-    
-    if (maxResults != null) {
-      query.setMaxResults(maxResults);
-    }
-
-    return query.getResultList();
-  }
-
-  /**
-   * Lists contents by type and parent, optionally filtered by first result and max results
-   * 
-   * @param parent parent content
-   * @param types content types
-   * @param firstResult first result
-   * @param maxResults max results
-   * @return list of contents
-   */
-  public List<Content> listByParentAndType(Content parent, List<ContentType> types, Integer firstResult, Integer maxResults) {
-    if (types == null || types.isEmpty()) {
-      return Collections.emptyList();
-    }
-    
-    EntityManager entityManager = getEntityManager();
-
-    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<Content> criteria = criteriaBuilder.createQuery(Content.class);
-    Root<Content> root = criteria.from(Content.class);
-
-    criteria.select(root);
-    criteria.where(
-      criteriaBuilder.and(
-        root.get(Content_.contentType).in(types),
-        criteriaBuilder.equal(root.get(Content_.parent), parent)
-      )
-    );
-    
-    criteria.orderBy(criteriaBuilder.asc(root.get(Content_.orderIndex)));
-    
-    TypedQuery<Content> query = entityManager.createQuery(criteria);
-    
-    if (firstResult != null) {
-      query.setFirstResult(firstResult);
-    }
-    
-    if (maxResults != null) {
-      query.setMaxResults(maxResults);
-    }
-
-    return query.getResultList();
   }
 
   /**
@@ -258,6 +67,106 @@ public class ContentDAO extends AbstractDAO<Content> {
     TypedQuery<Content> query = entityManager.createQuery(criteria);
     
     return getSingleResult(query);
+  }
+  
+  /**
+   * Lists contents by type and parent, filtered by first result and max results.
+   * 
+   * All parameters can be nulled. Nulled parameters will be ignored.
+   *
+   * @param parent parent content
+   * @param types content types
+   * @param firstResult first result
+   * @param maxResults max results
+   * @return list of contents
+   */
+  public List<Content> listByParentAndTypesAndArchived(Content parent, List<ContentType> types, Boolean archived, Integer firstResult, Integer maxResults) {
+    EntityManager entityManager = getEntityManager();
+
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Content> criteria = criteriaBuilder.createQuery(Content.class);
+    Root<Content> root = criteria.from(Content.class);
+
+    List<Predicate> restrictions = new ArrayList<>();
+    
+    if (archived != null) {
+      restrictions.add(criteriaBuilder.equal(root.get(Content_.archived), archived));
+    }
+    
+    if (parent != null) {
+      restrictions.add(criteriaBuilder.equal(root.get(Content_.parent), parent)); 
+    }
+    
+    if (types != null && !types.isEmpty()) {
+      restrictions.add(root.get(Content_.contentType).in(types));
+    }
+
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(restrictions.toArray(new Predicate[0]))
+    );
+    
+    criteria.orderBy(criteriaBuilder.asc(root.get(Content_.orderIndex)));
+    
+    TypedQuery<Content> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+    
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+
+    return query.getResultList();
+  }
+  
+
+  /**
+   * Lists contents by type and null parent, filtered by first result and max results.
+   * 
+   * All parameters can be nulled. Nulled parameters will be ignored.
+   *
+   * @param parent parent content
+   * @param types content types
+   * @param firstResult first result
+   * @param maxResults max results
+   * @return list of contents
+   */
+  public List<Content> listByNullParentAndTypesAndArchived(List<ContentType> types, Boolean archived, Integer firstResult, Integer maxResults) {
+    EntityManager entityManager = getEntityManager();
+
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Content> criteria = criteriaBuilder.createQuery(Content.class);
+    Root<Content> root = criteria.from(Content.class);
+
+    List<Predicate> restrictions = new ArrayList<>();
+    
+    restrictions.add(criteriaBuilder.equal(root.get(Content_.archived), archived));
+    restrictions.add(criteriaBuilder.isNull(root.get(Content_.parent))); 
+    
+    if (types != null && !types.isEmpty()) {
+      restrictions.add(root.get(Content_.contentType).in(types));
+    }
+
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(restrictions.toArray(new Predicate[0]))
+    );
+    
+    criteria.orderBy(criteriaBuilder.asc(root.get(Content_.orderIndex)));
+    
+    TypedQuery<Content> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+    
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+
+    return query.getResultList();
   }
   
   /**
@@ -308,26 +217,37 @@ public class ContentDAO extends AbstractDAO<Content> {
      return persist(content);
    }
   
-   /**
-    * Updates category
-    *
-    * @param content content to update
-    * @param category category
-    * @return updated content
-    */
-    public Content updateCategory(Content content, String category) {
-      content.setCategory(category);
-      return persist(content);
-    }
+  /**
+   * Updates category
+   *
+   * @param content content to update
+   * @param category category
+   * @return updated content
+   */
+   public Content updateCategory(Content content, String category) {
+     content.setCategory(category);
+     return persist(content);
+   }
+   
+  /**
+   * Updates orderIndex
+   *
+   * @param orderIndex orderIndex
+   * @return updated content
+   */
+  public Content updateOrderIndex(Content content, Long orderIndex) {
+    content.setOrderIndex(orderIndex);
+    return persist(content);
+  }
     
-    /**
-     * Updates orderIndex
-     *
-     * @param orderIndex orderIndex
-     * @return updated content
-     */
-     public Content updateOrderIndex(Content content, Long orderIndex) {
-       content.setOrderIndex(orderIndex);
-       return persist(content);
-     }
+  /**
+   * Updates orderIndex
+   *
+   * @param orderIndex orderIndex
+   * @return updated content
+   */
+   public Content updateArchived(Content content, Boolean archived) {
+     content.setArchived(archived);
+     return persist(content);
+  }
 }

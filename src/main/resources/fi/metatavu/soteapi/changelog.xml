@@ -304,5 +304,21 @@
     </createIndex>
     
   </changeSet>
+  
+  <changeSet id="archived" author="Antti Leppa">
+    <addColumn tableName="Event">
+      <column name="archived" type="BIT(1)"/>
+    </addColumn>
+
+    <addColumn tableName="Content">
+      <column name="archived" type="BIT(1)"/>
+    </addColumn>
+
+    <sql>UPDATE Event SET archived = false</sql>
+    <sql>UPDATE Content SET archived = false</sql>
+
+    <addNotNullConstraint tableName="Event" columnName="archived" columnDataType="BIT(1)"/>
+    <addNotNullConstraint tableName="Content" columnName="archived" columnDataType="BIT(1)"/>
+  </changeSet>
 
 </databaseChangeLog>

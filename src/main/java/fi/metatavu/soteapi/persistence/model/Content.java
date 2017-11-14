@@ -42,6 +42,10 @@ public class Content {
 
   @ManyToOne(optional = true)
   private Content parent;
+
+  @NotNull
+  @Column(nullable = true)
+  private Boolean archived;
   
   public Long getId() {
     return id;
@@ -97,6 +101,14 @@ public class Content {
   
   public void setOrderIndex(Long orderIndex) {
     this.orderIndex = orderIndex;
+  }
+  
+  public void setArchived(Boolean archived) {
+    this.archived = archived;
+  }
+  
+  public Boolean getArchived() {
+    return archived;
   }
   
 }

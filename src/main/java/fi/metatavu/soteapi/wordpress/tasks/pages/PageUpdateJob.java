@@ -119,6 +119,10 @@ public class PageUpdateJob extends AbstractWordpressJob {
         return;
       }
     }
+
+    if (contentEntity.getArchived()) {
+      contentController.updateContentArchived(contentEntity, false);
+    }
     
     Long categoryId = pageUpdateModel.getCategoryId();
     String categorySlug = null;

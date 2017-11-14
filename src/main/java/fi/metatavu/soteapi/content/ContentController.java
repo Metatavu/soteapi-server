@@ -52,7 +52,7 @@ public class ContentController {
    * @return created content
    */
   public Content createContent(String originId, String slug, ContentType contentType, Content parent, String category, Long orderIndex) {
-    return contentDAO.create(originId, slug, contentType, parent, category, orderIndex);
+    return contentDAO.create(originId, slug, contentType, parent, category, orderIndex, false);
   }
   
   /**
@@ -134,6 +134,17 @@ public class ContentController {
   }
   
   /**
+   * Updates content archived
+   * 
+   * @param contentEntity content entity
+   * @param archived archived
+   * @return updated content
+   */
+  public Content updateContentArchived(Content contentEntity, Boolean archived) {
+    return contentDAO.updateArchived(contentEntity, archived);
+  }
+
+  /**
    * Finds content with contentId
    * 
    * @param contentId Contents id
@@ -163,19 +174,7 @@ public class ContentController {
    * @return list of contents
    */
   public List<Content> listContents(Content parent, List<ContentType> types, Integer firstResult, Integer maxResults) {
-    if (parent != null && types != null) {
-      return contentDAO.listByParentAndType(parent, types, firstResult, maxResults);
-    }
-    
-    if (types != null) {
-      return contentDAO.listByTypes(types, firstResult, maxResults);
-    }
-    
-    if (parent != null) {
-      return contentDAO.listByParent(parent, firstResult, maxResults);
-    }
-    
-    return contentDAO.listAll(firstResult, maxResults);
+    return contentDAO.listByParentAndTypesAndArchived(parent, types, Boolean.FALSE, firstResult, maxResults);
   }
   
   /**
@@ -187,11 +186,7 @@ public class ContentController {
    * @return list of contents
    */
   public List<Content> listRootContents(List<ContentType> types, Integer firstResult, Integer maxResults) { 
-    if (types != null) {
-      return contentDAO.listRootContentsByType(types, firstResult, maxResults);
-    }
-
-    return contentDAO.listRootContents(firstResult, maxResults);
+    return contentDAO.listByNullParentAndTypesAndArchived(types, Boolean.FALSE, firstResult, maxResults);
   }
   
   /**

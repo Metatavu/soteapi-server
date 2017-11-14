@@ -97,6 +97,9 @@ public class PostUpdateJob extends AbstractWordpressJob {
     }
     
     Long orderIndex = postUpdateModel.getOrderIndex();
+    if (contentEntity.getArchived()) {
+      contentController.updateContentArchived(contentEntity, false);
+    }
     
     contentController.updateContent(contentEntity, postUpdateModel.getOriginId(), postUpdateModel.getSlug(), null, ContentType.NEWS, categorySlug, orderIndex);
     String contentTitleContent = postUpdateModel.getTitle();
