@@ -3,6 +3,7 @@ package fi.metatavu.soteapi.wordpress.tasks.posts;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.slf4j.Logger;
 
 import com.afrozaar.wordpress.wpapi.v2.exception.PostNotFoundException;
 import com.afrozaar.wordpress.wpapi.v2.model.Post;
@@ -11,7 +12,10 @@ import fi.metatavu.soteapi.wordpress.WordpressConsts;
 import fi.metatavu.soteapi.wordpress.tasks.AbstractRemoveJob;
 
 public class PostRemoveJob extends AbstractRemoveJob<PostRemoveTask, PostRemoveQueue> {
-  
+
+  @Inject
+  private Logger logger;
+
   @Inject
   private PostRemoveQueue postRemoveQueue;
 
@@ -36,10 +40,20 @@ public class PostRemoveJob extends AbstractRemoveJob<PostRemoveTask, PostRemoveQ
     
     try {
       Post post = getWordpressClient().getPost(pageId);
-      if (post == null || !"publish".equals(post.getStatus())) {
-        return true;        
+      if (post == null) {
+        if (logger.isWarnEnabled()) {
+          logger.warn(String.format("Could not check whether page %d was removed because of null response", pageId));
+        }
+        
+        return false;
+      }
+      
+      if (!"publish".equals(post.getStatus()) && logger.isWarnEnabled()) {
+        logger.warn(String.format("Page %d status was %s", pageId, post.getStatus()));
+        return false;
       }
     } catch (PostNotFoundException e) {
+      logger.info(String.format("Page %d was removed", pageId));
       return true;
     }
     
