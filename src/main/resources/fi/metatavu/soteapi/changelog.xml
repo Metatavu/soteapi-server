@@ -337,5 +337,21 @@
     <addNotNullConstraint tableName="Event" columnName="origin" columnDataType="VARCHAR(191)"/>
     <addNotNullConstraint tableName="Content" columnName="origin" columnDataType="VARCHAR(191)"/>
   </changeSet>
+  
+   <changeSet id="content-created" author="Antti Leppa">
+    <addColumn tableName="Content">
+      <column name="created" type="datetime(6)"/>
+      <column name="modified" type="datetime(6)"/>
+    </addColumn>
+
+    <sql>UPDATE Content SET created = NOW(), modified = NOW()</sql>
+
+    <addNotNullConstraint tableName="Content" columnName="created" columnDataType="datetime(6)"/>
+    <addNotNullConstraint tableName="Content" columnName="modified" columnDataType="datetime(6)"/>
+  </changeSet>
+  
+  <changeSet id="content-change-task-drop" author="Antti Leppa">
+    <delete tableName="TaskModel"></delete>
+  </changeSet>
 
 </databaseChangeLog>

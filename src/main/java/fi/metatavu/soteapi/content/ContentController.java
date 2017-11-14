@@ -1,5 +1,6 @@
 package fi.metatavu.soteapi.content;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,8 +52,9 @@ public class ContentController {
    * @param category category slug
    * @return created content
    */
-  public Content createContent(String origin, String originId, String slug, ContentType contentType, Content parent, String category, Long orderIndex) {
-    return contentDAO.create(origin, originId, slug, contentType, parent, category, orderIndex, false);
+  @SuppressWarnings ("squid:S00107")
+  public Content createContent(String origin, String originId, String slug, ContentType contentType, Content parent, String category, OffsetDateTime created, OffsetDateTime modified, Long orderIndex) {
+    return contentDAO.create(origin, originId, slug, contentType, parent, category, created, modified, orderIndex, false);
   }
   
   /**
@@ -91,12 +93,15 @@ public class ContentController {
    * @param modifier modifier
    * @return updated content
    */
-  public Content updateContent(Content content, String originId, String slug, Content parent, ContentType contentType, String category, Long orderIndex) {
+  @SuppressWarnings ("squid:S00107")
+  public Content updateContent(Content content, String originId, String slug, Content parent, ContentType contentType, String category, OffsetDateTime created, OffsetDateTime modified, Long orderIndex) {
     contentDAO.updateOriginId(content, originId);
     contentDAO.updateSlug(content, slug);
     contentDAO.updateParent(content, parent);
     contentDAO.updateContentType(content, contentType);
     contentDAO.updateCategory(content, category);
+    contentDAO.updateCreated(content, created);
+    contentDAO.updateModified(content, modified);
     contentDAO.updateOrderIndex(content, orderIndex);
     return content;
   }

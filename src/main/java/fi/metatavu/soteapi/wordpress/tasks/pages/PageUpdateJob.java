@@ -1,5 +1,7 @@
 package fi.metatavu.soteapi.wordpress.tasks.pages;
 
+import java.time.OffsetDateTime;
+
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
@@ -16,6 +18,7 @@ import fi.metatavu.soteapi.persistence.model.Content;
 import fi.metatavu.soteapi.persistence.model.ContentData;
 import fi.metatavu.soteapi.persistence.model.ContentTitle;
 import fi.metatavu.soteapi.persistence.model.ContentType;
+import fi.metatavu.soteapi.utils.TimeUtils;
 import fi.metatavu.soteapi.wordpress.WordpressConsts;
 import fi.metatavu.soteapi.wordpress.tasks.AbstractWordpressJob;
 
@@ -97,8 +100,11 @@ public class PageUpdateJob extends AbstractWordpressJob {
         contentType = ContentType.LINK;
       }
     }
+
+    OffsetDateTime created = TimeUtils.parseOffsetDateTime(pageUpdateModel.getCreated());
+    OffsetDateTime modified = TimeUtils.parseOffsetDateTime(pageUpdateModel.getModified());
     
-    Content contentEntity = contentController.createContent(WordpressConsts.ORIGIN, originId, slug, contentType, parent, categorySlug, orderIndex);
+    Content contentEntity = contentController.createContent(WordpressConsts.ORIGIN, originId, slug, contentType, parent, categorySlug, created, modified, orderIndex);
     
     if (StringUtils.isNotEmpty(contentTitle)) {
       contentController.createContentTitle(WordpressConsts.DEFAULT_LANGUAGE, contentTitle, contentEntity);
@@ -161,8 +167,11 @@ public class PageUpdateJob extends AbstractWordpressJob {
     if (StringUtils.isNotEmpty(contentTitleContent)) {
       updateExistingPageTitle(contentEntity, contentTitleContent);
     }
+
+    OffsetDateTime created = TimeUtils.parseOffsetDateTime(pageUpdateModel.getCreated());
+    OffsetDateTime modified = TimeUtils.parseOffsetDateTime(pageUpdateModel.getModified());
     
-    contentController.updateContent(contentEntity, pageUpdateModel.getOriginId(), pageUpdateModel.getSlug(), parent, contentType, categorySlug, orderIndex);
+    contentController.updateContent(contentEntity, pageUpdateModel.getOriginId(), pageUpdateModel.getSlug(), parent, contentType, categorySlug, created, modified, orderIndex);
   }
 
   private void updateExistingPageTitle(Content contentEntity, String contentTitleContent) {

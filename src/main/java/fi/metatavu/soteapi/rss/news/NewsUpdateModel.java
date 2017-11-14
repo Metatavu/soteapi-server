@@ -11,19 +11,24 @@ public class NewsUpdateModel implements Serializable{
   private String slug;
   private String originId;
   private String categorySlug;
+  private String created;
+  private String modified;
   private Long orderIndex;
   
   public NewsUpdateModel() {
   }
-  
+
+  @SuppressWarnings ("squid:S00107")
   public NewsUpdateModel(String title, String content, String slug, String originId, String categorySlug,
-      Long orderIndex) {
+      String created, String modified, Long orderIndex) {
     super();
     this.title = title;
     this.content = content;
     this.slug = slug;
     this.originId = originId;
     this.categorySlug = categorySlug;
+    this.created = created;
+    this.modified = modified;
     this.orderIndex = orderIndex;
   }
 
@@ -45,6 +50,14 @@ public class NewsUpdateModel implements Serializable{
 
   public String getCategorySlug() {
     return categorySlug;
+  }
+  
+  public String getCreated() {
+    return created;
+  }
+  
+  public String getModified() {
+    return modified;
   }
   
   public Long getOrderIndex() {

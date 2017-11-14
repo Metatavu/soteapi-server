@@ -50,7 +50,7 @@ public class CategoryListJob extends AbstractUpdateJob {
     String originId = categoryData.getId().toString();
     String title = categoryData.getName();
     String slug = categoryData.getSlug();
-        
+    
     CategoryUpdateTaskModel categoryModel = new CategoryUpdateTaskModel(title, null, slug, originId, null, null, originIndex);
     
     CategoryUpdateTask categoryUpdateTask = new CategoryUpdateTask();

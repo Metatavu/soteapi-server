@@ -12,13 +12,16 @@ public abstract class AbstractPostUpdateModel implements Serializable {
   private String originId;
   private String parentOriginId;
   private Long categoryId;
+  private String created;
+  private String modified;
   private Long orderIndex;
 
   public AbstractPostUpdateModel() {
   }
 
+  @SuppressWarnings ("squid:S00107")
   public AbstractPostUpdateModel(String title, String content, String slug, String originId, String parentOriginId,
-      Long categoryId, Long orderIndex) {
+      Long categoryId, String created, String modified, Long orderIndex) {
     super();
     this.title = title;
     this.content = content;
@@ -26,6 +29,8 @@ public abstract class AbstractPostUpdateModel implements Serializable {
     this.originId = originId;
     this.parentOriginId = parentOriginId;
     this.categoryId = categoryId;
+    this.created = created;
+    this.modified = modified;
     this.orderIndex = orderIndex;
   }
 
@@ -55,6 +60,14 @@ public abstract class AbstractPostUpdateModel implements Serializable {
 
   public Long getOrderIndex() {
     return orderIndex;
+  }
+  
+  public String getCreated() {
+    return created;
+  }
+  
+  public String getModified() {
+    return modified;
   }
 
 }

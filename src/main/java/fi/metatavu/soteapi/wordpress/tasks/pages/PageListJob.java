@@ -8,6 +8,7 @@ import com.afrozaar.wordpress.wpapi.v2.model.Page;
 import com.afrozaar.wordpress.wpapi.v2.request.Request;
 
 import fi.metatavu.soteapi.tasks.AbstractSoteApiTaskQueue;
+import fi.metatavu.soteapi.utils.TimeUtils;
 import fi.metatavu.soteapi.wordpress.WordpressConsts;
 import fi.metatavu.soteapi.wordpress.tasks.AbstractListJob;
 
@@ -65,8 +66,10 @@ public class PageListJob extends AbstractListJob<Page, PageListTask> {
     String slug = pageData.getSlug();
     String originId = pageData.getId().toString();
     Long orderIndex = pageData.getMenuOrder();
+    String created = TimeUtils.toIsoString(TimeUtils.parseOffsetDateTimeLocal(pageData.getDateGmt()));
+    String modified = TimeUtils.toIsoString(TimeUtils.parseOffsetDateTimeLocal(pageData.getModifiedGmt()));
     
-    PageUpdateTaskModel pageModel = new PageUpdateTaskModel(title, content, slug, originId, parentOriginId, categoryId, orderIndex);
+    PageUpdateTaskModel pageModel = new PageUpdateTaskModel(title, content, slug, originId, parentOriginId, categoryId, created, modified, orderIndex);
     PageUpdateTask pageEntityTask = new PageUpdateTask();
     pageEntityTask.setPostUpdateModel(pageModel);
     pageEntityTask.setPriority(Boolean.FALSE);
