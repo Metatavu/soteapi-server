@@ -44,6 +44,8 @@ public class ContentTranslator extends AbstractTranslator {
     content.setParentId(parentId);
     content.setCategory(contentEntity.getCategory());
     content.setLevel(getContentLevel(contentEntity));
+    content.setCreated(contentEntity.getCreated());
+    content.setModified(contentEntity.getModified());
 
     return content;
   }
