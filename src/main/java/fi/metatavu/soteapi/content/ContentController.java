@@ -51,8 +51,8 @@ public class ContentController {
    * @param category category slug
    * @return created content
    */
-  public Content createContent(String originId, String slug, ContentType contentType, Content parent, String category, Long orderIndex) {
-    return contentDAO.create(originId, slug, contentType, parent, category, orderIndex, false);
+  public Content createContent(String origin, String originId, String slug, ContentType contentType, Content parent, String category, Long orderIndex) {
+    return contentDAO.create(origin, originId, slug, contentType, parent, category, orderIndex, false);
   }
   
   /**
@@ -257,6 +257,16 @@ public class ContentController {
     }
     
     return contentImageMetaDAO.listByContentAndType(content, type);
+  }
+
+  /**
+   * Lists non archived origin ids by origin
+   * 
+   * @param origin origin
+   * @return origin ids
+   */
+  public List<String> listOriginIds(String origin) {
+    return contentDAO.listOriginIdsByOriginAndArchived(origin, Boolean.FALSE);
   }
   
 }

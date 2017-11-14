@@ -97,6 +97,11 @@ public abstract class AbstractListJob<W, T extends AbstractListTask> extends Abs
    */
   protected abstract String getEndPointUri();
   
+  /**
+   * Returns Wordpress client
+   * 
+   * @return Wordpress client
+   */
   protected Wordpress getWordpressClient() {
     return wordpressClient;
   }

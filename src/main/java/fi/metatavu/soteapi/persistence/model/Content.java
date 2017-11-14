@@ -27,6 +27,11 @@ public class Content {
   @NotNull
   @NotEmpty
   private String originId;
+
+  @Column(nullable = false)
+  @NotNull
+  @NotEmpty
+  private String origin;
   
   @Column(nullable = false)
   @NotNull
@@ -53,6 +58,14 @@ public class Content {
 
   public void setId(Long id) {
     this.id = id;
+  }
+  
+  public String getOrigin() {
+    return origin;
+  }
+  
+  public void setOrigin(String origin) {
+    this.origin = origin;
   }
 
   public String getOriginId() {

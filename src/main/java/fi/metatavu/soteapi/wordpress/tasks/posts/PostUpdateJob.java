@@ -73,7 +73,7 @@ public class PostUpdateJob extends AbstractWordpressJob {
       }
     } 
     
-    Content contentEntity = contentController.createContent(originId, slug, ContentType.NEWS, null, categorySlug, orderIndex);
+    Content contentEntity = contentController.createContent(WordpressConsts.ORIGIN, originId, slug, ContentType.NEWS, null, categorySlug, orderIndex);
     
     if (StringUtils.isNotEmpty(contentTitle)) {
       contentController.createContentTitle(WordpressConsts.DEFAULT_LANGUAGE, contentTitle, contentEntity);

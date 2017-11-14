@@ -320,5 +320,22 @@
     <addNotNullConstraint tableName="Event" columnName="archived" columnDataType="BIT(1)"/>
     <addNotNullConstraint tableName="Content" columnName="archived" columnDataType="BIT(1)"/>
   </changeSet>
+  
+  <changeSet id="origin" author="Antti Leppa">
+    <addColumn tableName="Content">
+      <column name="origin" type="VARCHAR(191)"/>
+    </addColumn>
+
+    <addColumn tableName="Event">
+      <column name="origin" type="VARCHAR(191)"/>
+    </addColumn>
+
+    <sql>UPDATE Content SET origin = 'WORDPRESS'</sql>
+    <sql>UPDATE Content SET origin = 'RSS' WHERE contentType = 'NEWS'</sql>
+    <sql>UPDATE Event SET origin = 'WORDPRESS'</sql>
+
+    <addNotNullConstraint tableName="Event" columnName="origin" columnDataType="VARCHAR(191)"/>
+    <addNotNullConstraint tableName="Content" columnName="origin" columnDataType="VARCHAR(191)"/>
+  </changeSet>
 
 </databaseChangeLog>

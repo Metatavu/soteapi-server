@@ -6,7 +6,8 @@ public class NewsConsts {
   public static final String RSS_URL_SETTING = "rss.url";
   public static final String RSS_PAGES_SETTING = "rss.pages";
   public static final String NEWS_SYNC_ENABLED = "rss.news-sync-enabled";
- 
+  public static final String ORIGIN = "RSS";
+  
   private NewsConsts() {
   }
   

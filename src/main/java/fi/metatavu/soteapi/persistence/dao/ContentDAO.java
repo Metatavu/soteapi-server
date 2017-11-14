@@ -26,6 +26,7 @@ public class ContentDAO extends AbstractDAO<Content> {
   /**
    * Creates new content entity
    * 
+   * @param origin Contents origin
    * @param originId Contents origin Id
    * @param slug Contents slug
    * @param contentType content type
@@ -34,8 +35,9 @@ public class ContentDAO extends AbstractDAO<Content> {
    * @param orderIndex order index
    * @return created content
    */
-  public Content create(String originId, String slug, ContentType contentType, Content parent, String category, Long orderIndex, Boolean archived) {
+  public Content create(String origin, String originId, String slug, ContentType contentType, Content parent, String category, Long orderIndex, Boolean archived) {
     Content content = new Content();
+    content.setOrigin(origin);
     content.setOriginId(originId);
     content.setSlug(slug);
     content.setContentType(contentType);
@@ -168,6 +170,39 @@ public class ContentDAO extends AbstractDAO<Content> {
 
     return query.getResultList();
   }
+
+  /**
+   * Lists origin ids by origin and archived
+   *
+   * @param origin origin
+   * @return list of origin ids
+   */
+  public List<String> listOriginIdsByOriginAndArchived(String origin, Boolean archived) {
+    EntityManager entityManager = getEntityManager();
+
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<String> criteria = criteriaBuilder.createQuery(String.class);
+    Root<Content> root = criteria.from(Content.class);
+    
+    criteria.select(root.get(Content_.originId));
+    criteria.where(
+      criteriaBuilder.equal(root.get(Content_.archived), archived),
+      criteriaBuilder.equal(root.get(Content_.origin), origin)
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+  /**
+   * Updates origin
+   * 
+   * @param content content to update
+   * @param origin origin
+   * @return updated content
+   */
+   public Content updateOrigin(Content content, String origin) {
+     content.setOrigin(origin);
+     return persist(content);
+   }
   
   /**
    * Updates originId

@@ -16,6 +16,15 @@ public abstract class AbstractWordpressJob extends AbstractUpdateJob {
     return wordpressClient.getCategory(categoryId);
   }
   
+  /**
+   * Returns Wordpress client
+   * 
+   * @return Wordpress client
+   */
+  protected Wordpress getWordpressClient() {
+    return wordpressClient;
+  }
+  
   @Override
   protected boolean isEnabled() {
     if (wordpressClient == null) {
