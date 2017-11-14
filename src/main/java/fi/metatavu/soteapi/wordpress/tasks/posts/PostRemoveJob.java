@@ -53,7 +53,7 @@ public class PostRemoveJob extends AbstractRemoveJob<PostRemoveTask, PostRemoveQ
         return false;
       }
     } catch (PostNotFoundException e) {
-      logger.info(String.format("Page %d was removed", pageId));
+      logger.info(String.format("Page %d was removed with status %s (%s)", pageId, e.getCode(), e.getErrorMessage()));
       return true;
     }
     
