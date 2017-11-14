@@ -1,5 +1,6 @@
 package fi.metatavu.soteapi.persistence.dao;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,10 +33,13 @@ public class ContentDAO extends AbstractDAO<Content> {
    * @param contentType content type
    * @param parent parent content
    * @param category category slug
+   * @param created created
+   * @param modified modified
    * @param orderIndex order index
+   * @param archived archived
    * @return created content
    */
-  public Content create(String origin, String originId, String slug, ContentType contentType, Content parent, String category, Long orderIndex, Boolean archived) {
+  public Content create(String origin, String originId, String slug, ContentType contentType, Content parent, String category, OffsetDateTime created, OffsetDateTime modified, Long orderIndex, Boolean archived) {
     Content content = new Content();
     content.setOrigin(origin);
     content.setOriginId(originId);
@@ -43,6 +47,8 @@ public class ContentDAO extends AbstractDAO<Content> {
     content.setContentType(contentType);
     content.setParent(parent);
     content.setCategory(category);
+    content.setCreated(created);
+    content.setModified(modified);
     content.setOrderIndex(orderIndex);
     content.setArchived(archived);
     return persist(content);
@@ -285,4 +291,26 @@ public class ContentDAO extends AbstractDAO<Content> {
      content.setArchived(archived);
      return persist(content);
   }
+   
+  /**
+   * Updates created
+   *
+   * @param created created
+   * @return updated content
+   */
+   public Content updateCreated(Content content, OffsetDateTime created) {
+     content.setCreated(created);
+     return persist(content);
+   }
+   
+  /**
+   * Updates modified
+   *
+   * @param modified modified
+   * @return updated content
+   */
+   public Content updateModified(Content content, OffsetDateTime modified) {
+     content.setModified(modified);
+     return persist(content);
+   }
 }

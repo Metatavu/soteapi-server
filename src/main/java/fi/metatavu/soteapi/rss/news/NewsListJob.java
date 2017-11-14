@@ -25,6 +25,7 @@ import com.rometools.rome.io.XmlReader;
 
 import fi.metatavu.soteapi.settings.SystemSettingController;
 import fi.metatavu.soteapi.tasks.AbstractUpdateJob;
+import fi.metatavu.soteapi.utils.TimeUtils;
 
 public class NewsListJob extends AbstractUpdateJob {
   
@@ -133,6 +134,7 @@ public class NewsListJob extends AbstractUpdateJob {
     String categorySlug = null;
     String originId = syndEntry.getUri();
     Long orderIndex = -syndEntry.getPublishedDate().getTime();
+    String created = TimeUtils.toIsoString(TimeUtils.fromDate(syndEntry.getPublishedDate()));
     
     if (!entryCategories.isEmpty()) {
       Iterator<SyndCategory> iterator = entryCategories.iterator();
@@ -158,9 +160,7 @@ public class NewsListJob extends AbstractUpdateJob {
       }
     }
     
-    NewsUpdateModel result = new NewsUpdateModel(title, content, slug, originId, categorySlug, orderIndex);
-    
-    return result;
+    return new NewsUpdateModel(title, content, slug, originId, categorySlug, created, created, orderIndex);
   }
 
   /**

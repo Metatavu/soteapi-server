@@ -9,6 +9,7 @@ import com.afrozaar.wordpress.wpapi.v2.model.Post;
 import com.afrozaar.wordpress.wpapi.v2.request.Request;
 
 import fi.metatavu.soteapi.tasks.AbstractSoteApiTaskQueue;
+import fi.metatavu.soteapi.utils.TimeUtils;
 import fi.metatavu.soteapi.wordpress.WordpressConsts;
 import fi.metatavu.soteapi.wordpress.tasks.AbstractListJob;
 
@@ -57,8 +58,10 @@ public class PostListJob extends AbstractListJob<Post, PostListTask> {
     String slug = postData.getSlug();
     String originId = postData.getId().toString();
     Long orderIndex = -OffsetDateTime.parse(postData.getDateGmt()).toEpochSecond();
+    String created = TimeUtils.toIsoString(TimeUtils.parseOffsetDateTimeLocal(postData.getDateGmt()));
+    String modified = TimeUtils.toIsoString(TimeUtils.parseOffsetDateTimeLocal(postData.getModifiedGmt()));
     
-    PostUpdateTaskModel postModel = new PostUpdateTaskModel(title, content, slug, originId, parentOriginId, categoryId, orderIndex);
+    PostUpdateTaskModel postModel = new PostUpdateTaskModel(title, content, slug, originId, parentOriginId, categoryId, created, modified, orderIndex);
     PostUpdateTask postUpdateTask = new PostUpdateTask();
     postUpdateTask.setPostUpdateModel(postModel);
     postUpdateTask.setPriority(Boolean.FALSE);

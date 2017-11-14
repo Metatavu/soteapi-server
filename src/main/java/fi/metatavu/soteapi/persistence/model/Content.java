@@ -1,5 +1,7 @@
 package fi.metatavu.soteapi.persistence.model;
 
+import java.time.OffsetDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -51,6 +53,14 @@ public class Content {
   @NotNull
   @Column(nullable = true)
   private Boolean archived;
+
+  @NotNull
+  @Column(nullable = true)
+  private OffsetDateTime created;
+
+  @NotNull
+  @Column(nullable = true)
+  private OffsetDateTime modified;
   
   public Long getId() {
     return id;
@@ -122,6 +132,22 @@ public class Content {
   
   public Boolean getArchived() {
     return archived;
+  }
+  
+  public OffsetDateTime getCreated() {
+    return created;
+  }
+  
+  public void setCreated(OffsetDateTime created) {
+    this.created = created;
+  }
+  
+  public OffsetDateTime getModified() {
+    return modified;
+  }
+  
+  public void setModified(OffsetDateTime modified) {
+    this.modified = modified;
   }
   
 }
