@@ -42,7 +42,7 @@ public class EventController {
    * @return created event
    */
    public Event createEvent(String originId, String slug, String category, OffsetDateTime startTime, OffsetDateTime endTime, Boolean allDay) {
-     return eventDAO.create(originId, slug, category, startTime, endTime, allDay);
+     return eventDAO.create(originId, slug, category, startTime, endTime, allDay, false);
    }
   
   /**
@@ -102,7 +102,7 @@ public class EventController {
    * @return List of events that have end time greater or equal to specified time
    */
   public List<Event> listEventsByStartLessThanOrEqualToEndGreaterThanOrEqualToAndCategory(OffsetDateTime startTime, OffsetDateTime endTime, String category, Long firstResult, Long maxResults) {
-    return eventDAO.listByStartLessThanOrEqualToEndGreaterThanOrEqualToAndCategory(startTime, endTime, category, firstResult, maxResults);
+    return eventDAO.listByStartLessThanOrEqualToEndGreaterThanOrEqualToCategoryAndArchived(startTime, endTime, category, Boolean.FALSE, firstResult, maxResults);
   }
 
   /**
@@ -145,6 +145,17 @@ public class EventController {
     eventDAO.updateEndTime(event, endTime);
     eventDAO.updateAllDay(event, allDay);
     return event;
+  }
+
+  /**
+   * Updates event archived
+   * 
+   * @param eventEntity event
+   * @param archived archived
+   * @return updated event
+   */
+  public Event updateEventArchived(Event eventEntity, Boolean archived) {
+    return eventDAO.updateArchived(eventEntity, archived);
   }
 
   /**

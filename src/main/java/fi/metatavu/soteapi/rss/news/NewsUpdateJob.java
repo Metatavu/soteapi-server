@@ -61,7 +61,7 @@ public class NewsUpdateJob extends AbstractUpdateJob {
     String categorySlug = newsUpdateModel.getCategorySlug();
     Long orderIndex = newsUpdateModel.getOrderIndex();
     
-    Content contentEntity = contentController.createContent(originId, slug, ContentType.NEWS, null, categorySlug, orderIndex);
+    Content contentEntity = contentController.createContent(NewsConsts.ORIGIN, originId, slug, ContentType.NEWS, null, categorySlug, orderIndex);
     
     if (StringUtils.isNotEmpty(contentTitle)) {
       contentController.createContentTitle(NewsConsts.DEFAULT_LANGUAGE, contentTitle, contentEntity);
@@ -78,6 +78,10 @@ public class NewsUpdateJob extends AbstractUpdateJob {
     contentController.updateContent(contentEntity, newsUpdateModel.getOriginId(), newsUpdateModel.getSlug(), null, ContentType.NEWS, categorySlug, newsUpdateModel.getOrderIndex());
     String contentTitleContent = newsUpdateModel.getTitle();
     String contentData = newsUpdateModel.getContent();
+    
+    if (contentEntity.getArchived()) {
+      contentController.updateContentArchived(contentEntity, false);
+    }
 
     if (StringUtils.isNotEmpty(contentTitleContent)) {
       ContentTitle contentTitleEntity = contentController.listContentTitlesByContent(contentEntity)

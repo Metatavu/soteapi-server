@@ -68,6 +68,10 @@ public class EventUpdateJob extends AbstractWordpressJob {
 
     Event eventEntity = eventController.createEvent(originId, slug, category, startTime, endTime, allDay);
     
+    if (eventEntity.getArchived()) {
+      eventController.updateEventArchived(eventEntity, false);
+    }
+    
     if (StringUtils.isNotEmpty(eventTitle)) {
       eventController.createEventTitle(WordpressConsts.DEFAULT_LANGUAGE, eventTitle, eventEntity);
     }

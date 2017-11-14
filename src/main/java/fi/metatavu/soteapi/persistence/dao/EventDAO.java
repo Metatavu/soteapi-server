@@ -32,9 +32,10 @@ public class EventDAO extends AbstractDAO<Event> {
   * @param startTime startTime
   * @param endTime endTime
   * @param allDay allDay
+  * @param archived
   * @return created event
   */
-  public Event create(String originId, String slug, String category, OffsetDateTime startTime, OffsetDateTime endTime, Boolean allDay) {
+  public Event create(String originId, String slug, String category, OffsetDateTime startTime, OffsetDateTime endTime, Boolean allDay, Boolean archived) {
    Event event = new Event();
    event.setOriginId(originId);
    event.setSlug(slug);
@@ -42,6 +43,7 @@ public class EventDAO extends AbstractDAO<Event> {
    event.setStartTime(startTime);
    event.setEndTime(endTime);
    event.setAllDay(allDay);
+   event.setArchived(archived);
    return persist(event);
   }
 
@@ -53,11 +55,12 @@ public class EventDAO extends AbstractDAO<Event> {
    * @param startTime start date. If null is specified the criteria is ignored
    * @param endTime end date. If null is specified the criteria is ignored
    * @param category catogory slug. If null is specified the criteria is ignored
+   * @param archived show only archived or unarchived events
    * @param firstResult first result
    * @param maxResults max results
    * @return List of events that have end time greater or equal to specified time
    */
-  public List<Event> listByStartLessThanOrEqualToEndGreaterThanOrEqualToAndCategory(OffsetDateTime startTime, OffsetDateTime endTime, String category, Long firstResult, Long maxResults) {
+  public List<Event> listByStartLessThanOrEqualToEndGreaterThanOrEqualToCategoryAndArchived(OffsetDateTime startTime, OffsetDateTime endTime, String category, Boolean archived, Long firstResult, Long maxResults) {
     EntityManager entityManager = getEntityManager();
   
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -65,7 +68,11 @@ public class EventDAO extends AbstractDAO<Event> {
     Root<Event> root = criteria.from(Event.class);
     
     List<Predicate> restrictions = new ArrayList<>();
-  
+    
+    if (archived != null) {
+      restrictions.add(criteriaBuilder.equal(root.get(Event_.archived), archived));
+    }
+    
     if (startTime != null) {
       restrictions.add(criteriaBuilder.lessThanOrEqualTo(root.get(Event_.startTime), startTime));
     }
@@ -185,6 +192,18 @@ public class EventDAO extends AbstractDAO<Event> {
   public Event updateAllDay(Event event, Boolean allDay) {
     event.setAllDay(allDay);
     return persist(event);
+  }
+  
+  /**
+   * Updates event archived
+   *
+   * @param event event
+   * @param archived archived
+   * @return updated event
+   */
+   public Event updateArchived(Event event, Boolean archived) {
+     event.setArchived(archived);
+     return persist(event);
   }
 
 }

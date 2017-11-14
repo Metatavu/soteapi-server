@@ -142,6 +142,15 @@ public class ResponseController {
   }
 
   /**
+   * Responds with not found 410
+   * 
+   * @return response
+   */
+  public Response responseGone() {
+    return Response.status(Response.Status.GONE).build();
+  }
+  
+  /**
    * Responds with no content 204
    * 
    * @return response
@@ -159,5 +168,5 @@ public class ResponseController {
   public Response respondBadRequest(String message) {
     return Response.status(Response.Status.BAD_REQUEST).entity(message).build();
   }
-  
+
 }
