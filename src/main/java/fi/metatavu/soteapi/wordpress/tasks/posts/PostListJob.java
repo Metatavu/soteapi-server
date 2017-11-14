@@ -57,8 +57,9 @@ public class PostListJob extends AbstractListJob<Post, PostListTask> {
     String content = postData.getContent().getRendered();
     String slug = postData.getSlug();
     String originId = postData.getId().toString();
-    Long orderIndex = -OffsetDateTime.parse(postData.getDateGmt()).toEpochSecond();
-    String created = TimeUtils.toIsoString(TimeUtils.parseOffsetDateTimeLocal(postData.getDateGmt()));
+    OffsetDateTime createdDate = TimeUtils.parseOffsetDateTimeLocal(postData.getDateGmt());
+    Long orderIndex = -createdDate.toEpochSecond();
+    String created = TimeUtils.toIsoString(createdDate);
     String modified = TimeUtils.toIsoString(TimeUtils.parseOffsetDateTimeLocal(postData.getModifiedGmt()));
     
     PostUpdateTaskModel postModel = new PostUpdateTaskModel(title, content, slug, originId, parentOriginId, categoryId, created, modified, orderIndex);
