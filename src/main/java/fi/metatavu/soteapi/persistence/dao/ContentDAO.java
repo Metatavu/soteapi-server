@@ -39,6 +39,7 @@ public class ContentDAO extends AbstractDAO<Content> {
    * @param archived archived
    * @return created content
    */
+  @SuppressWarnings ("squid:S00107")
   public Content create(String origin, String originId, String slug, ContentType contentType, Content parent, String category, OffsetDateTime created, OffsetDateTime modified, Long orderIndex, Boolean archived) {
     Content content = new Content();
     content.setOrigin(origin);

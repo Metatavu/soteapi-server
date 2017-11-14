@@ -52,6 +52,7 @@ public class ContentController {
    * @param category category slug
    * @return created content
    */
+  @SuppressWarnings ("squid:S00107")
   public Content createContent(String origin, String originId, String slug, ContentType contentType, Content parent, String category, OffsetDateTime created, OffsetDateTime modified, Long orderIndex) {
     return contentDAO.create(origin, originId, slug, contentType, parent, category, created, modified, orderIndex, false);
   }
@@ -92,6 +93,7 @@ public class ContentController {
    * @param modifier modifier
    * @return updated content
    */
+  @SuppressWarnings ("squid:S00107")
   public Content updateContent(Content content, String originId, String slug, Content parent, ContentType contentType, String category, OffsetDateTime created, OffsetDateTime modified, Long orderIndex) {
     contentDAO.updateOriginId(content, originId);
     contentDAO.updateSlug(content, slug);

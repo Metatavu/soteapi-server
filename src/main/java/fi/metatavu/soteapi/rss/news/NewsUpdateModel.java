@@ -17,7 +17,8 @@ public class NewsUpdateModel implements Serializable{
   
   public NewsUpdateModel() {
   }
-  
+
+  @SuppressWarnings ("squid:S00107")
   public NewsUpdateModel(String title, String content, String slug, String originId, String categorySlug,
       String created, String modified, Long orderIndex) {
     super();

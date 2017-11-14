@@ -18,7 +18,8 @@ public abstract class AbstractPostUpdateModel implements Serializable {
 
   public AbstractPostUpdateModel() {
   }
-  
+
+  @SuppressWarnings ("squid:S00107")
   public AbstractPostUpdateModel(String title, String content, String slug, String originId, String parentOriginId,
       Long categoryId, String created, String modified, Long orderIndex) {
     super();
