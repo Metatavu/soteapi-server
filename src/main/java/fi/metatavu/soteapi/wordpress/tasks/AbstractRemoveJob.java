@@ -48,6 +48,13 @@ public abstract class AbstractRemoveJob<T extends AbstractRemoveTask, Q extends 
    * @return whether entity is archived or not
    */
   protected abstract boolean isArchived(String originId);
+
+  /**
+   * Returns content's content type
+   * 
+   * @return content's content type
+   */
+  protected abstract String getContentType();
   
   private void performTask(AbstractRemoveTask task) {
     String originId = task.getOriginId();
@@ -58,11 +65,12 @@ public abstract class AbstractRemoveJob<T extends AbstractRemoveTask, Q extends 
   }
 
   private void fillQueue() {
-    List<String> originIds = contentController.listOriginIds(WordpressConsts.ORIGIN);
+    List<String> originIds = contentController.listOriginIds(getContentType(), WordpressConsts.ORIGIN);
     for (String originId : originIds) {
       getQueue().enqueueTask(createTask(originId));
     }
   }
+
 
   
 }

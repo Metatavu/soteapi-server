@@ -33,6 +33,11 @@ public class PostRemoveJob extends AbstractRemoveJob<PostRemoveTask, PostRemoveQ
   protected String getEnabledSetting() {
     return WordpressConsts.POSTS_SYNC_ENABLED;
   }
+  
+  @Override
+  protected String getContentType() {
+    return "NEWS";
+  }
 
   @SuppressWarnings ("squid:S1166")
   protected boolean isArchived(String originId) {

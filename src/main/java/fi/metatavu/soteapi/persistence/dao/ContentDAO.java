@@ -184,7 +184,7 @@ public class ContentDAO extends AbstractDAO<Content> {
    * @param origin origin
    * @return list of origin ids
    */
-  public List<String> listOriginIdsByOriginAndArchived(String origin, Boolean archived) {
+  public List<String> listOriginIdsByContentTypeOriginAndArchived(String contentType, String origin, Boolean archived) {
     EntityManager entityManager = getEntityManager();
 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -193,8 +193,11 @@ public class ContentDAO extends AbstractDAO<Content> {
     
     criteria.select(root.get(Content_.originId));
     criteria.where(
-      criteriaBuilder.equal(root.get(Content_.archived), archived),
-      criteriaBuilder.equal(root.get(Content_.origin), origin)
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(Content_.archived), archived),
+        criteriaBuilder.equal(root.get(Content_.contentType), contentType),
+        criteriaBuilder.equal(root.get(Content_.origin), origin)
+      )
     );
     
     return entityManager.createQuery(criteria).getResultList();

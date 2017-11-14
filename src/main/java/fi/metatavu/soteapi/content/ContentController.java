@@ -265,13 +265,13 @@ public class ContentController {
   }
 
   /**
-   * Lists non archived origin ids by origin
+   * Lists non archived origin ids by contentType and origin
    * 
    * @param origin origin
    * @return origin ids
    */
-  public List<String> listOriginIds(String origin) {
-    return contentDAO.listOriginIdsByOriginAndArchived(origin, Boolean.FALSE);
+  public List<String> listOriginIds(String contentType, String origin) {
+    return contentDAO.listOriginIdsByContentTypeOriginAndArchived(contentType, origin, Boolean.FALSE);
   }
   
 }
