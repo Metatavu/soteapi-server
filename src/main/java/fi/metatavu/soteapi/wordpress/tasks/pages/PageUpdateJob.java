@@ -98,7 +98,7 @@ public class PageUpdateJob extends AbstractWordpressJob {
       }
     }
     
-    Content contentEntity = contentController.createContent(originId, slug, contentType, parent, categorySlug, orderIndex);
+    Content contentEntity = contentController.createContent(WordpressConsts.ORIGIN, originId, slug, contentType, parent, categorySlug, orderIndex);
     
     if (StringUtils.isNotEmpty(contentTitle)) {
       contentController.createContentTitle(WordpressConsts.DEFAULT_LANGUAGE, contentTitle, contentEntity);
@@ -118,6 +118,10 @@ public class PageUpdateJob extends AbstractWordpressJob {
       if (parent == null) {
         return;
       }
+    }
+
+    if (contentEntity.getArchived()) {
+      contentController.updateContentArchived(contentEntity, false);
     }
     
     Long categoryId = pageUpdateModel.getCategoryId();

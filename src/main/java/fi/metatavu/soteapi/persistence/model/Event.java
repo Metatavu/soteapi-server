@@ -43,6 +43,10 @@ public class Event {
   @Column(nullable = false)
   private Boolean allDay;
 
+  @NotNull
+  @Column(nullable = true)
+  private Boolean archived;
+  
   public Long getId() {
     return id;
   }
@@ -97,6 +101,14 @@ public class Event {
 
   public void setAllDay(Boolean allDay) {
     this.allDay = allDay;
+  }
+  
+  public Boolean getArchived() {
+    return archived;
+  }
+  
+  public void setArchived(Boolean archived) {
+    this.archived = archived;
   }
 
 }

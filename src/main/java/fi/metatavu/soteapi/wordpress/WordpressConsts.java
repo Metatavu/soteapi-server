@@ -11,6 +11,7 @@ public class WordpressConsts {
   public static final boolean USE_PERMALINK_ENDPOINT = false;
   public static final boolean DEBUG_CLIENT = false;
   public static final int PAGE_SIZE = 3;
+  public static final String ORIGIN = "WORDPRESS";
   
   private WordpressConsts() {
   }

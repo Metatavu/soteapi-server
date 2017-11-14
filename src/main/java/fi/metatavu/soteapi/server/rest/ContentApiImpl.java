@@ -42,6 +42,10 @@ public class ContentApiImpl implements ContentsApi {
       return responseController.respondNotFound();
     }
     
+    if (content.getArchived()) {
+      return responseController.responseGone();
+    }
+    
     List<ContentTitle> contentTitles = contentController.listContentTitlesByContent(content);
     List<ContentData> contentDatas = contentController.listContentDataByContent(content);
 
