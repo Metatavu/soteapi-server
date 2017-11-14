@@ -1,5 +1,7 @@
 package fi.metatavu.soteapi.wordpress.tasks.posts;
 
+import java.time.OffsetDateTime;
+
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
@@ -7,14 +9,20 @@ import org.apache.commons.lang3.StringUtils;
 import com.afrozaar.wordpress.wpapi.v2.model.Term;
 
 import fi.metatavu.soteapi.content.ContentController;
+import fi.metatavu.soteapi.firebase.FirebaseController;
 import fi.metatavu.soteapi.persistence.model.Content;
 import fi.metatavu.soteapi.persistence.model.ContentData;
 import fi.metatavu.soteapi.persistence.model.ContentTitle;
 import fi.metatavu.soteapi.persistence.model.ContentType;
+import fi.metatavu.soteapi.utils.HtmlUtils;
+import fi.metatavu.soteapi.utils.TimeUtils;
 import fi.metatavu.soteapi.wordpress.WordpressConsts;
 import fi.metatavu.soteapi.wordpress.tasks.AbstractWordpressJob;
 
 public class PostUpdateJob extends AbstractWordpressJob {
+
+  @Inject
+  private FirebaseController firebaseController;
   
   @Inject
   private PostUpdateQueue postUpdateQueue;
@@ -65,15 +73,17 @@ public class PostUpdateJob extends AbstractWordpressJob {
     Long categoryId = postUpdateModel.getCategoryId();
     String categorySlug = null;
     Long orderIndex = postUpdateModel.getOrderIndex();
+    OffsetDateTime created = TimeUtils.parseOffsetDateTime(postUpdateModel.getCreated());
+    OffsetDateTime modified = TimeUtils.parseOffsetDateTime(postUpdateModel.getModified());
     
     if (categoryId != null) {
       Term category = findCategoryById(categoryId);
       if (category != null) {
         categorySlug = category.getSlug();
       }
-    } 
+    }
     
-    Content contentEntity = contentController.createContent(WordpressConsts.ORIGIN, originId, slug, ContentType.NEWS, null, categorySlug, orderIndex);
+    Content contentEntity = contentController.createContent(WordpressConsts.ORIGIN, originId, slug, ContentType.NEWS, null, categorySlug, created, modified, orderIndex);
     
     if (StringUtils.isNotEmpty(contentTitle)) {
       contentController.createContentTitle(WordpressConsts.DEFAULT_LANGUAGE, contentTitle, contentEntity);
@@ -83,6 +93,7 @@ public class PostUpdateJob extends AbstractWordpressJob {
       contentController.createContentData(WordpressConsts.DEFAULT_LANGUAGE, contentData, contentEntity);
     }
     
+    sendPushNotification(contentTitle, contentData);
   }
   
   private void updateExistingPage(Content contentEntity, PostUpdateTaskModel postUpdateModel) {
@@ -101,7 +112,10 @@ public class PostUpdateJob extends AbstractWordpressJob {
       contentController.updateContentArchived(contentEntity, false);
     }
     
-    contentController.updateContent(contentEntity, postUpdateModel.getOriginId(), postUpdateModel.getSlug(), null, ContentType.NEWS, categorySlug, orderIndex);
+    OffsetDateTime created = TimeUtils.parseOffsetDateTime(postUpdateModel.getCreated());
+    OffsetDateTime modified = TimeUtils.parseOffsetDateTime(postUpdateModel.getModified());
+    
+    contentController.updateContent(contentEntity, postUpdateModel.getOriginId(), postUpdateModel.getSlug(), null, ContentType.NEWS, categorySlug, created, modified, orderIndex);
     String contentTitleContent = postUpdateModel.getTitle();
     String contentData = postUpdateModel.getContent();
 
@@ -132,6 +146,11 @@ public class PostUpdateJob extends AbstractWordpressJob {
         contentController.createContentData(WordpressConsts.DEFAULT_LANGUAGE, contentData, contentEntity);
       } 
     }
+  }
+  
+  private void sendPushNotification(String title, String content) {
+    String body = StringUtils.abbreviate(HtmlUtils.html2text(content), 200);
+    firebaseController.sendNotifcationToTopic("news", title, body);
   }
   
 }

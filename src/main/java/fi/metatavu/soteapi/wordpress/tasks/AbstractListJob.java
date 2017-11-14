@@ -3,11 +3,14 @@ package fi.metatavu.soteapi.wordpress.tasks;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.web.client.HttpClientErrorException;
 
 import com.afrozaar.wordpress.wpapi.v2.Wordpress;
 import com.afrozaar.wordpress.wpapi.v2.request.SearchRequest;
@@ -26,7 +29,10 @@ import fi.metatavu.soteapi.wordpress.WordpressConsts;
  * @param <W> Wordpress post type
  */
 public abstract class AbstractListJob<W, T extends AbstractListTask> extends AbstractUpdateJob {
-  
+
+  @Inject
+  private Logger logger;
+
   @Inject
   private Wordpress wordpressClient;
 
@@ -64,15 +70,20 @@ public abstract class AbstractListJob<W, T extends AbstractListTask> extends Abs
    * @return list of posts
    */
   protected List<W> getDataFromPage(int page) {
-
-    @SuppressWarnings("unchecked")
-    PagedResponse<W> searchResponse = (PagedResponse<W>) getWordpressClient().search(SearchRequest.Builder
-        .aSearchRequest(getWordpressTypeClass())
-        .withPagination(WordpressConsts.PAGE_SIZE, page)
-        .withUri(getEndPointUri())
-        .build());
-
-    return searchResponse.getList();
+    try {
+      @SuppressWarnings("unchecked")
+      PagedResponse<W> searchResponse = (PagedResponse<W>) getWordpressClient().search(SearchRequest.Builder
+          .aSearchRequest(getWordpressTypeClass())
+          .withPagination(WordpressConsts.PAGE_SIZE, page)
+          .withUri(getEndPointUri())
+          .build());
+  
+      return searchResponse.getList();
+    } catch (HttpClientErrorException e) {
+      logger.warn("Http request failed", e);
+    }
+    
+    return Collections.emptyList();
   }
   
   /**

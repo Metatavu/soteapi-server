@@ -1,17 +1,25 @@
 package fi.metatavu.soteapi.rss.news;
 
+import java.time.OffsetDateTime;
+
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 
 import fi.metatavu.soteapi.content.ContentController;
+import fi.metatavu.soteapi.firebase.FirebaseController;
 import fi.metatavu.soteapi.persistence.model.Content;
 import fi.metatavu.soteapi.persistence.model.ContentData;
 import fi.metatavu.soteapi.persistence.model.ContentTitle;
 import fi.metatavu.soteapi.persistence.model.ContentType;
 import fi.metatavu.soteapi.tasks.AbstractUpdateJob;
+import fi.metatavu.soteapi.utils.HtmlUtils;
+import fi.metatavu.soteapi.utils.TimeUtils;
 
 public class NewsUpdateJob extends AbstractUpdateJob {
+  
+  @Inject
+  private FirebaseController firebaseController;
   
   @Inject
   private NewsUpdateQueue newsUpdateQueue;
@@ -60,8 +68,10 @@ public class NewsUpdateJob extends AbstractUpdateJob {
     String contentData = newsUpdateModel.getContent();
     String categorySlug = newsUpdateModel.getCategorySlug();
     Long orderIndex = newsUpdateModel.getOrderIndex();
+    OffsetDateTime created = TimeUtils.parseOffsetDateTime(newsUpdateModel.getCreated());
+    OffsetDateTime modified = TimeUtils.parseOffsetDateTime(newsUpdateModel.getModified());
     
-    Content contentEntity = contentController.createContent(NewsConsts.ORIGIN, originId, slug, ContentType.NEWS, null, categorySlug, orderIndex);
+    Content contentEntity = contentController.createContent(NewsConsts.ORIGIN, originId, slug, ContentType.NEWS, null, categorySlug, created, modified, orderIndex);
     
     if (StringUtils.isNotEmpty(contentTitle)) {
       contentController.createContentTitle(NewsConsts.DEFAULT_LANGUAGE, contentTitle, contentEntity);
@@ -71,11 +81,14 @@ public class NewsUpdateJob extends AbstractUpdateJob {
       contentController.createContentData(NewsConsts.DEFAULT_LANGUAGE, contentData, contentEntity);
     }
     
+    sendPushNotification(contentTitle, contentData);
   }
   
   private void updateExistingPage(Content contentEntity, NewsUpdateModel newsUpdateModel) {
     String categorySlug = newsUpdateModel.getCategorySlug();
-    contentController.updateContent(contentEntity, newsUpdateModel.getOriginId(), newsUpdateModel.getSlug(), null, ContentType.NEWS, categorySlug, newsUpdateModel.getOrderIndex());
+    OffsetDateTime created = TimeUtils.parseOffsetDateTime(newsUpdateModel.getCreated());
+    OffsetDateTime modified = TimeUtils.parseOffsetDateTime(newsUpdateModel.getModified());
+    contentController.updateContent(contentEntity, newsUpdateModel.getOriginId(), newsUpdateModel.getSlug(), null, ContentType.NEWS, categorySlug, created, modified, newsUpdateModel.getOrderIndex());
     String contentTitleContent = newsUpdateModel.getTitle();
     String contentData = newsUpdateModel.getContent();
     
@@ -110,6 +123,11 @@ public class NewsUpdateJob extends AbstractUpdateJob {
         contentController.createContentData(NewsConsts.DEFAULT_LANGUAGE, contentData, contentEntity);
       } 
     }
+  }
+  
+  private void sendPushNotification(String title, String content) {
+    String body = StringUtils.abbreviate(HtmlUtils.html2text(content), 200);
+    firebaseController.sendNotifcationToTopic("news", title, body);
   }
   
 }

@@ -10,7 +10,7 @@ public class CategoryUpdateTaskModel extends AbstractPostUpdateModel {
   }
 
   public CategoryUpdateTaskModel(String title, String content, String slug, String originId, String parentOriginId, Long categoryId, Long orderIndex) {
-    super(title, content, slug, originId, parentOriginId, categoryId, orderIndex);
+    super(title, content, slug, originId, parentOriginId, categoryId, null, null, orderIndex);
   }
 
 }

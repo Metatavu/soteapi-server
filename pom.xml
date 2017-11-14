@@ -49,7 +49,7 @@
     
     <!-- Spec -->
     
-    <soteapi-spec.version>0.0.15</soteapi-spec.version>
+    <soteapi-spec.version>0.0.16</soteapi-spec.version>
        
     <!-- Maven -->
 
@@ -83,6 +83,10 @@
     <!-- Slugify -->
     
     <slugify.version>2.1.12</slugify.version>
+    
+    <!-- Push Raven -->
+    
+    <pushraven.version>1.0.2</pushraven.version>
     
     <!-- Swagger -->
     
@@ -247,6 +251,12 @@
       <groupId>fi.metatavu.metaflow</groupId>
       <artifactId>metaflow</artifactId>
       <version>${metaflow.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>us.raudi.pushraven</groupId>
+      <artifactId>Pushraven</artifactId>
+      <version>${pushraven.version}</version>
     </dependency>
     
     <!-- Jackson -->
