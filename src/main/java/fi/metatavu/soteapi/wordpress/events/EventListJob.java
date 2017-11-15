@@ -2,8 +2,11 @@ package fi.metatavu.soteapi.wordpress.events;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
@@ -130,7 +133,6 @@ public class EventListJob extends AbstractListJob<Event, EventListTask> {
       return;
     }
 
-    ZoneOffset timeZone = getTimeZone(eventData.getTimezone());
     String title = eventData.getTitle();
     String description = eventData.getDescription();
     String slug = extractSlug(eventData.getUrl());
@@ -138,8 +140,8 @@ public class EventListJob extends AbstractListJob<Event, EventListTask> {
     Term category = getCategory(eventData.getCategories());
     String categorySlug = getCategorySlug(category);
     String categoryOriginId = getCategoryOriginId(category);
-    OffsetDateTime startTime = getDateTime(eventData.getStartDateDetails(), timeZone);
-    OffsetDateTime endTime = getDateTime(eventData.getEndDateDetails(), timeZone);
+    OffsetDateTime startTime = getDateTime(eventData.getStartDateDetails(), eventData.getTimezone());
+    OffsetDateTime endTime = getDateTime(eventData.getEndDateDetails(), eventData.getTimezone());
     Boolean allDay = eventData.isAllDay();
     
     if (categoryOriginId != null && categoryController.findCategoryByOriginId(categoryOriginId) == null) {
@@ -165,22 +167,23 @@ public class EventListJob extends AbstractListJob<Event, EventListTask> {
     return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(time);
   }
 
-  private ZoneOffset getTimeZone(String timezone) {
-    if (StringUtils.isBlank(timezone)) {
-      return ZoneOffset.UTC;
-    }
-
-    return ZoneOffset.of(timezone);
-  }
-
-  private OffsetDateTime getDateTime(DateDetails startDateDetails, ZoneOffset timeZone) {
+  private OffsetDateTime getDateTime(DateDetails startDateDetails, String timeZone) {
     Integer year = startDateDetails.getYear();
     Integer month = startDateDetails.getMonth();
     Integer dayOfMonth = startDateDetails.getDay();
     Integer hour = startDateDetails.getHour();
     Integer minute = startDateDetails.getMinutes();
     
-    return OffsetDateTime.of(year, month, dayOfMonth, hour, minute, 0, 0, timeZone);
+    LocalDateTime localDateTime = LocalDateTime.of(year, month, dayOfMonth, hour, minute);
+    if (StringUtils.isNotBlank(timeZone)) {
+      ZoneId zoneId = ZoneId.of(timeZone);
+      if (zoneId != null) {
+        ZonedDateTime zonedDateTime = localDateTime.atZone(zoneId);
+        return zonedDateTime.toOffsetDateTime();
+      }
+    }
+
+    return OffsetDateTime.of(year, month, dayOfMonth, hour, minute, 0, 0, ZoneOffset.UTC);
   }
 
   @Override

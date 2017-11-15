@@ -270,7 +270,7 @@ public class ContentController {
    * @param origin origin
    * @return origin ids
    */
-  public List<String> listOriginIds(String contentType, String origin) {
+  public List<String> listOriginIds(ContentType contentType, String origin) {
     return contentDAO.listOriginIdsByContentTypeOriginAndArchived(contentType, origin, Boolean.FALSE);
   }
   

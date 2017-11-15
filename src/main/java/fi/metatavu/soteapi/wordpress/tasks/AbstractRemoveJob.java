@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import fi.metatavu.soteapi.content.ContentController;
 import fi.metatavu.soteapi.persistence.model.Content;
+import fi.metatavu.soteapi.persistence.model.ContentType;
 import fi.metatavu.soteapi.tasks.AbstractSoteApiTaskQueue;
 import fi.metatavu.soteapi.wordpress.WordpressConsts;
 
@@ -54,7 +55,7 @@ public abstract class AbstractRemoveJob<T extends AbstractRemoveTask, Q extends 
    * 
    * @return content's content type
    */
-  protected abstract String getContentType();
+  protected abstract ContentType getContentType();
   
   private void performTask(AbstractRemoveTask task) {
     String originId = task.getOriginId();

@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import com.afrozaar.wordpress.wpapi.v2.exception.PageNotFoundException;
 import com.afrozaar.wordpress.wpapi.v2.model.Page;
 
+import fi.metatavu.soteapi.persistence.model.ContentType;
 import fi.metatavu.soteapi.wordpress.WordpressConsts;
 import fi.metatavu.soteapi.wordpress.tasks.AbstractRemoveJob;
 
@@ -35,8 +36,8 @@ public class PageRemoveJob extends AbstractRemoveJob<PageRemoveTask, PageRemoveQ
   }
   
   @Override
-  protected String getContentType() {
-    return "PAGE";
+  protected ContentType getContentType() {
+    return ContentType.PAGE;
   }
   
   @SuppressWarnings ("squid:S1166")

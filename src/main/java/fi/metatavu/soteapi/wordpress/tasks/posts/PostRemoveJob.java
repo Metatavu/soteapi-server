@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import com.afrozaar.wordpress.wpapi.v2.exception.PostNotFoundException;
 import com.afrozaar.wordpress.wpapi.v2.model.Post;
 
+import fi.metatavu.soteapi.persistence.model.ContentType;
 import fi.metatavu.soteapi.wordpress.WordpressConsts;
 import fi.metatavu.soteapi.wordpress.tasks.AbstractRemoveJob;
 
@@ -33,10 +34,10 @@ public class PostRemoveJob extends AbstractRemoveJob<PostRemoveTask, PostRemoveQ
   protected String getEnabledSetting() {
     return WordpressConsts.POSTS_SYNC_ENABLED;
   }
-  
+
   @Override
-  protected String getContentType() {
-    return "NEWS";
+  protected ContentType getContentType() {
+    return ContentType.NEWS;
   }
 
   @SuppressWarnings ("squid:S1166")
