@@ -19,6 +19,7 @@ public class SystemHealthCheck {
   @Inject
   private SystemSettingController systemSettingController;
 
+  @SuppressWarnings ("squid:S1172")
   public void init(@Observes @Initialized(ApplicationScoped.class) Object init) {
     RunMode runMode = systemSettingController.getRunMode();
     switch (runMode) {
