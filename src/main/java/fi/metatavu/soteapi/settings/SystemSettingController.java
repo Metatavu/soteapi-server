@@ -8,6 +8,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
@@ -235,5 +236,28 @@ public class SystemSettingController {
     
     return result;
   }
+  
+  /**
+   * Returns system's run mode
+   * 
+   * @return system's run mode
+   */
+  public RunMode getRunMode() {
+    RunMode result = EnumUtils.getEnum(RunMode.class, System.getProperty("soteapi.runmode"));
+    if (result == null) {
+      return RunMode.DEVELOPMENT;
+    }
+    
+    return result;
+  }
 
+  /**
+   * Returns whether the system is running in production environment
+   * 
+   * @return whether the system is running in production environment
+   */
+  public boolean getProduction() {
+    return getRunMode() == RunMode.PRODUCTION;
+  }
+  
 }
