@@ -1,6 +1,8 @@
 package fi.metatavu.soteapi.wordpress.tasks.posts;
 
 import java.time.OffsetDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -26,7 +28,7 @@ public class PostUpdateJob extends AbstractWordpressJob {
   
   @Inject
   private PostUpdateQueue postUpdateQueue;
-  
+
   @Inject
   private ContentController contentController;
   
@@ -93,7 +95,7 @@ public class PostUpdateJob extends AbstractWordpressJob {
       contentController.createContentData(WordpressConsts.DEFAULT_LANGUAGE, contentData, contentEntity);
     }
     
-    sendPushNotification(contentTitle, contentData);
+    sendPushNotification(contentEntity.getId(), contentTitle, contentData);
   }
   
   private void updateExistingPage(Content contentEntity, PostUpdateTaskModel postUpdateModel) {
@@ -147,10 +149,15 @@ public class PostUpdateJob extends AbstractWordpressJob {
       } 
     }
   }
-  
-  private void sendPushNotification(String title, String content) {
+
+  private void sendPushNotification(Long id, String title, String content) {
+    Map<String, Object> data = new HashMap<>();
+    data.put("soteApiEvent", "ITEM-CREATED");
+    data.put("itemId", String.valueOf(id));
+    data.put("itemType", "NEWS");
+    
     String body = StringUtils.abbreviate(HtmlUtils.html2text(content), 200);
-    firebaseController.sendNotifcationToTopic("news", title, body);
+    firebaseController.sendNotifcationToTopic("news", title, body, data);
   }
   
 }
