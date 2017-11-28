@@ -1,6 +1,8 @@
 package fi.metatavu.soteapi.rss.news;
 
 import java.time.OffsetDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -23,10 +25,10 @@ public class NewsUpdateJob extends AbstractUpdateJob {
   
   @Inject
   private NewsUpdateQueue newsUpdateQueue;
-  
+
   @Inject
   private ContentController contentController;
-  
+
   @Override
   protected void execute() {
     NewsUpdateTask newsUpdateTask = newsUpdateQueue.next();
@@ -81,7 +83,7 @@ public class NewsUpdateJob extends AbstractUpdateJob {
       contentController.createContentData(NewsConsts.DEFAULT_LANGUAGE, contentData, contentEntity);
     }
     
-    sendPushNotification(contentTitle, contentData);
+    sendPushNotification(contentEntity.getId(), contentTitle, contentData);
   }
   
   private void updateExistingPage(Content contentEntity, NewsUpdateModel newsUpdateModel) {
@@ -125,9 +127,14 @@ public class NewsUpdateJob extends AbstractUpdateJob {
     }
   }
   
-  private void sendPushNotification(String title, String content) {
+  private void sendPushNotification(Long id, String title, String content) {
+    Map<String, Object> data = new HashMap<>();
+    data.put("soteApiEvent", "ITEM-CREATED");
+    data.put("itemId", String.valueOf(id));
+    data.put("itemType", "NEWS");
+    
     String body = StringUtils.abbreviate(HtmlUtils.html2text(content), 200);
-    firebaseController.sendNotifcationToTopic("news", title, body);
+    firebaseController.sendNotifcationToTopic("news", title, body, data);
   }
   
 }

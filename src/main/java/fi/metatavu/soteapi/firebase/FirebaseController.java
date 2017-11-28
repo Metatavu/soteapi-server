@@ -1,5 +1,7 @@
 package fi.metatavu.soteapi.firebase;
 
+import java.util.Map;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -19,20 +21,56 @@ public class FirebaseController {
    * @param topic target topic
    * @param title title
    * @param message message
+   * @param data message data
    */
-  public void sendNotifcationToTopic(String topic, String title, String message) {
-    sendNotification(String.format("/topics/%s", topic), title, message);
+  public void sendNotifcationToTopic(String topic, String title, String message, Map<String, Object> data) {
+    sendNotification(String.format("/topics/%s", getTopicName(topic)), title, message, data);
   }
 
-  private void sendNotification(String to, String title, String message) {
+  /**
+   * Sends push notification
+   * 
+   * @param topic target topic
+   * @param title title
+   * @param message message
+   */
+  public void sendNotifcationToTopic(String topic, String title, String message) {
+    sendNotification(String.format("/topics/%s", getTopicName(topic)), title, message, null);
+  }
+
+  private void sendNotification(String to, String title, String message, Map<String, Object> data) {
     Pushraven.setKey(systemSettingController.getSettingValue(FirebaseConsts.SERVER_KEY_SETTING));
-    
-    Pushraven.push(new Notification()
+
+    Notification notification = new Notification()
       .title(title)
       .text(message)
       .icon("push")
       .color("#005eb8")
-      .to(to));
+      .to(to);
+    
+    if (data != null) {
+      notification.data(data);
+    }
+    
+    Pushraven.push(notification);
+  }
+
+  private String getTopicName(String topic) {
+    return String.format("%s%s", getPrefix(), topic);
+  }
+  
+  @SuppressWarnings ("squid:S1301")
+  private String getPrefix() {
+    switch (systemSettingController.getRunMode()) {
+      case DEVELOPMENT:
+        return "dev";
+      case TEST:
+        return "test";
+      case PRODUCTION:
+        return "";
+    }
+    
+    return "";
   }
   
 }
