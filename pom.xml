@@ -98,6 +98,10 @@
     <weld-se.version>2.3.5.Final</weld-se.version>
     <reflections.version>0.9.10</reflections.version>
     <rest-assured.version>3.0.3</rest-assured.version>
+    
+    <!-- Azure push notification for Windows phones -->
+    <azure.NotificationHubs.version>0.0.5</azure.NotificationHubs.version>
+
   </properties>
   
   <dependencyManagement>
@@ -384,11 +388,16 @@
     </dependency>
     
     <dependency>
-     <groupId>org.jsoup</groupId>
-     <artifactId>jsoup</artifactId>
-     <scope>provided</scope>
-   </dependency>
-    
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Azure push notification for Windows phones -->
+    <dependency>
+      <groupId>com.windowsazure</groupId>
+      <artifactId>NotificationHubs</artifactId>
+      <version>${azure.NotificationHubs.version}</version>
+    </dependency>
   </dependencies>
-  
 </project>

@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import fi.metatavu.soteapi.firebase.FirebaseConsts;
 import fi.metatavu.soteapi.settings.SystemSettingController;
 import us.raudi.pushraven.Notification;
 import us.raudi.pushraven.Pushraven;
