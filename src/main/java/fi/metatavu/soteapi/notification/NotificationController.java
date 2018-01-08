@@ -5,13 +5,13 @@ import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import fi.metatavu.soteapi.firebase.FirebaseController;
+import fi.metatavu.soteapi.firebase.FirebaseNotificationController;
 
 @ApplicationScoped
 public class NotificationController {
   
   @Inject
-  private FirebaseController firebaseController;
+  private FirebaseNotificationController firebaseController;
 
   /**
    * Sends push notification

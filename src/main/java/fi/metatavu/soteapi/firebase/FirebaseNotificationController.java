@@ -11,7 +11,7 @@ import us.raudi.pushraven.Notification;
 import us.raudi.pushraven.Pushraven;
 
 @ApplicationScoped
-public class FirebaseController {
+public class FirebaseNotificationController {
   
   @Inject
   private SystemSettingController systemSettingController;
