@@ -57,10 +57,12 @@ public class AzureNotificationController {
     String connectionString = systemSettingController.getSettingValue(AzureNotificationConsts.CONNECTION_STRING_SETTING);
     if (connectionString == null) {
       logger.warn("Azure notification hub connection string not set");
+      return;
     }
     String hubName = systemSettingController.getSettingValue(AzureNotificationConsts.HUB_NAME_SETTING);
     if (hubName == null) {
       logger.warn("Azure notification hub name not set");
+      return;
     }
     
     try {
