@@ -1,7 +1,8 @@
-package fi.metatavu.soteapi.azure.xml;
+package fi.metatavu.soteapi.wnspusher.xml;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -12,9 +13,10 @@ public class Toast {
     super();
   }
 
-  public Toast(Visual visual) {
+  public Toast(Visual visual, String launch) {
     super();
     this.visual = visual;
+    this.launch = launch;
   }
 
   @XmlElement
@@ -26,5 +28,15 @@ public class Toast {
     this.visual = visual;
   }
   
+  @XmlAttribute
+  public String getLaunch() {
+    return launch;
+  }
+  
+  public void setLaunch(String launch) {
+    this.launch = launch;
+  }
+  
   private Visual visual;
+  private String launch;
 }

@@ -10,6 +10,11 @@ import javax.xml.bind.Marshaller;
 
 import org.junit.Test;
 
+import fi.metatavu.soteapi.wnspusher.xml.Binding;
+import fi.metatavu.soteapi.wnspusher.xml.Text;
+import fi.metatavu.soteapi.wnspusher.xml.Toast;
+import fi.metatavu.soteapi.wnspusher.xml.Visual;
+
 public class ToastXmlSerializationTest {
   
   @Test

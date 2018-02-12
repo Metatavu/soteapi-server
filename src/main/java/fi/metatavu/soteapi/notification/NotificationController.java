@@ -5,8 +5,8 @@ import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import fi.metatavu.soteapi.azure.AzureNotificationController;
 import fi.metatavu.soteapi.firebase.FirebaseNotificationController;
+import fi.metatavu.soteapi.wnspusher.WnsPusherNotificationController;
 
 @ApplicationScoped
 public class NotificationController {
@@ -15,7 +15,7 @@ public class NotificationController {
   private FirebaseNotificationController firebaseController;
 
   @Inject
-  private AzureNotificationController azureController;
+  private WnsPusherNotificationController azureController;
 
   /**
    * Sends push notification
@@ -26,8 +26,8 @@ public class NotificationController {
    * @param data message data
    */
   public void sendNotificationToTopic(String topic, String title, String message, Map<String, Object> data) {
-    firebaseController.sendNotifcationToTopic(topic, title, message, data);
-    azureController.sendNotifcationToTopic(topic, title, message, data);
+    firebaseController.sendNotificationToTopic(topic, title, message, data);
+    azureController.sendNotificationToTopic(topic, title, message, data);
   }
 
   /**
@@ -38,7 +38,7 @@ public class NotificationController {
    * @param message message
    */
   public void sendNotificationToTopic(String topic, String title, String message) {
-    firebaseController.sendNotifcationToTopic(topic, title, message);
-    azureController.sendNotifcationToTopic(topic, title, message);
+    firebaseController.sendNotificationToTopic(topic, title, message);
+    azureController.sendNotificationToTopic(topic, title, message);
   }
 }

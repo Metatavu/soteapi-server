@@ -24,7 +24,7 @@ public class FirebaseNotificationController {
    * @param message message
    * @param data message data
    */
-  public void sendNotifcationToTopic(String topic, String title, String message, Map<String, Object> data) {
+  public void sendNotificationToTopic(String topic, String title, String message, Map<String, Object> data) {
     sendNotification(String.format("/topics/%s", getTopicName(topic)), title, message, data);
   }
 
@@ -35,7 +35,7 @@ public class FirebaseNotificationController {
    * @param title title
    * @param message message
    */
-  public void sendNotifcationToTopic(String topic, String title, String message) {
+  public void sendNotificationToTopic(String topic, String title, String message) {
     sendNotification(String.format("/topics/%s", getTopicName(topic)), title, message, null);
   }
 

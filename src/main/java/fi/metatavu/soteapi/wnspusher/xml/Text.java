@@ -1,4 +1,4 @@
-package fi.metatavu.soteapi.azure.xml;
+package fi.metatavu.soteapi.wnspusher.xml;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
