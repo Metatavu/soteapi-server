@@ -1,6 +1,9 @@
 package fi.metatavu.soteapi.wnspusher;
 
 public class WnsPusherNotification {
+  public WnsPusherNotification() {
+  }
+  
   public WnsPusherNotification(String app,
                                String content,
                                String contentType,

@@ -113,7 +113,7 @@ public class WnsPusherNotificationController {
       try (CloseableHttpClient client = httpClientSupplier.get();
            CloseableHttpResponse response = client.execute(httpPost)) {
         int statusCode = response.getStatusLine().getStatusCode();
-        if (200 <= statusCode && statusCode < 300) {
+        if (!(200 <= statusCode && statusCode < 300)) {
           logger.warn(String.format("Failure when sending to wnspusher (status %d): %s",
               statusCode,
               EntityUtils.toString(response.getEntity())));
