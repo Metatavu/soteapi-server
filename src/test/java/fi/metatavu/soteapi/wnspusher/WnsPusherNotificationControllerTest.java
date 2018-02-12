@@ -1,5 +1,7 @@
 package fi.metatavu.soteapi.wnspusher;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.util.function.Supplier;
 
@@ -12,13 +14,13 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.metatavu.soteapi.settings.SystemSettingController;
@@ -91,10 +93,8 @@ public class WnsPusherNotificationControllerTest {
     subject.sendNotificationToTopic("TEST_TOPIC", "TEST_TITLE", "TEST_MESSAGE");
     ObjectMapper objectMapper = new ObjectMapper();
     HttpPost httpPost = httpClientArguments.getValue();
-    WnsPusherNotification notification = objectMapper.readValue(
-        EntityUtils.toString(httpPost.getEntity()),
-        WnsPusherNotification.class);
-    assertEquals(notification.getApp(), "TEST_APP");
+    JsonNode notification = objectMapper.readTree(EntityUtils.toString(httpPost.getEntity()));
+    assertEquals(notification.get("app").asText(), "TEST_APP");
   }
 
   @Test
@@ -103,10 +103,8 @@ public class WnsPusherNotificationControllerTest {
     subject.sendNotificationToTopic("TEST_TOPIC", "TEST_TITLE", "TEST_MESSAGE");
     ObjectMapper objectMapper = new ObjectMapper();
     HttpPost httpPost = httpClientArguments.getValue();
-    WnsPusherNotification notification = objectMapper.readValue(
-        EntityUtils.toString(httpPost.getEntity()),
-        WnsPusherNotification.class);
-    assertEquals(notification.getContentType(), "application/xml");
+    JsonNode notification = objectMapper.readTree(EntityUtils.toString(httpPost.getEntity()));
+    assertEquals(notification.get("contentType").asText(), "application/xml");
   }
 
   @Test
@@ -115,9 +113,22 @@ public class WnsPusherNotificationControllerTest {
     subject.sendNotificationToTopic("TEST_TOPIC", "TEST_TITLE", "TEST_MESSAGE");
     ObjectMapper objectMapper = new ObjectMapper();
     HttpPost httpPost = httpClientArguments.getValue();
-    WnsPusherNotification notification = objectMapper.readValue(
-        EntityUtils.toString(httpPost.getEntity()),
-        WnsPusherNotification.class);
-    assertEquals(notification.getWnsType(), "wns/toast");
+    JsonNode notification = objectMapper.readTree(EntityUtils.toString(httpPost.getEntity()));
+    assertEquals(notification.get("wnsType").asText(), "wns/toast");
+  }
+
+  @Test
+  public void testSendNotificationContent()
+      throws JsonParseException, JsonMappingException, ParseException, IOException {
+    subject.sendNotificationToTopic("TEST_TOPIC", "TEST_TITLE", "TEST_MESSAGE");
+    ObjectMapper objectMapper = new ObjectMapper();
+    HttpPost httpPost = httpClientArguments.getValue();
+    JsonNode notification = objectMapper.readTree(EntityUtils.toString(httpPost.getEntity()));
+
+    String expectedXml = "<toast launch=\"null\"><visual>" +
+                         "<binding template=\"ToastText01\">" + 
+                         "<text id=\"1\">TEST_MESSAGE</text></binding>" + 
+                         "</visual></toast>";
+    assertEquals(notification.get("content").asText(), expectedXml);
   }
 }
