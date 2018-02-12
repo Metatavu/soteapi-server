@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -30,11 +31,28 @@ import fi.metatavu.soteapi.wnspusher.xml.Visual;
 @ApplicationScoped
 public class WnsPusherNotificationController {
   
+  @SuppressWarnings("cdi-ambiguous-dependency")
   @Inject
   private SystemSettingController systemSettingController;
   
+  @SuppressWarnings("cdi-ambiguous-dependency")
   @Inject
   private Logger logger;
+  
+  private Supplier<CloseableHttpClient> httpClientSupplier = HttpClients::createDefault;
+  
+  public WnsPusherNotificationController() {
+  }
+  
+  public WnsPusherNotificationController(
+      SystemSettingController systemSettingController,
+      Logger logger,
+      Supplier<CloseableHttpClient> httpClientSupplier
+  ) {
+    this.systemSettingController = systemSettingController;
+    this.logger = logger;
+    this.httpClientSupplier = httpClientSupplier;
+  }
 
   /**
    * Sends push notification
@@ -92,7 +110,7 @@ public class WnsPusherNotificationController {
       HttpPost httpPost = new HttpPost(endpoint);
       httpPost.setHeader("Authorization", "APIKEY " + apiKey);
       httpPost.setEntity(new StringEntity(notificationString, StandardCharsets.UTF_8));
-      try (CloseableHttpClient client = HttpClients.createDefault();
+      try (CloseableHttpClient client = httpClientSupplier.get();
            CloseableHttpResponse response = client.execute(httpPost)) {
         int statusCode = response.getStatusLine().getStatusCode();
         if (200 <= statusCode && statusCode < 300) {

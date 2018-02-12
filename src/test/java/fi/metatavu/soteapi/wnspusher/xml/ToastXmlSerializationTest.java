@@ -1,4 +1,4 @@
-package fi.metatavu.soteapi.azure.xml;
+package fi.metatavu.soteapi.wnspusher.xml;
 
 import static org.junit.Assert.assertEquals;
 
@@ -20,13 +20,15 @@ public class ToastXmlSerializationTest {
   @Test
   public void testToastXmlSerialization()
       throws JAXBException {
-    String expected = "<toast><visual><binding template=\"ToastText01\">" + 
+    String expected = "<toast launch=\"launchArgs\"><visual>" +
+                      "<binding template=\"ToastText01\">" + 
                       "<text id=\"1\">Toast text</text></binding>" + 
                       "</visual></toast>";
     Toast subject = new Toast(
         new Visual(
             new Binding("ToastText01",
-                new Text("1", "Toast text"))));
+                new Text("1", "Toast text"))),
+        "launchArgs");
     
     JAXBContext jaxbContext = JAXBContext.newInstance(
         Toast.class,
