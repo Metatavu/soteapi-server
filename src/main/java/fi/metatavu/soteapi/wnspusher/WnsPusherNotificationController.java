@@ -90,7 +90,7 @@ public class WnsPusherNotificationController {
           "wns/toast");
       String notificationString = objectMapper.writeValueAsString(notification);
       HttpPost httpPost = new HttpPost(endpoint);
-      httpPost.addHeader("Authorization", "APIKEY " + apiKey);
+      httpPost.setHeader("Authorization", "APIKEY " + apiKey);
       httpPost.setEntity(new StringEntity(notificationString, StandardCharsets.UTF_8));
       try (CloseableHttpClient client = HttpClients.createDefault();
            CloseableHttpResponse response = client.execute(httpPost)) {
