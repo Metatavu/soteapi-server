@@ -98,6 +98,14 @@ public class WnsPusherNotificationControllerTest {
   }
 
   @Test
+  public void testSendNotificationUrl()
+      throws JsonParseException, JsonMappingException, ParseException, IOException {
+    subject.sendNotificationToTopic("TEST_TOPIC", "TEST_TITLE", "TEST_MESSAGE");
+    HttpPost httpPost = httpClientArguments.getValue();
+    assertEquals(httpPost.getURI().toString(), "TEST_ENDPOINT");
+  }
+
+  @Test
   public void testSendNotificationContentType()
       throws JsonParseException, JsonMappingException, ParseException, IOException {
     subject.sendNotificationToTopic("TEST_TOPIC", "TEST_TITLE", "TEST_MESSAGE");
@@ -126,8 +134,9 @@ public class WnsPusherNotificationControllerTest {
     JsonNode notification = objectMapper.readTree(EntityUtils.toString(httpPost.getEntity()));
 
     String expectedXml = "<toast launch=\"null\"><visual>" +
-                         "<binding template=\"ToastText01\">" + 
-                         "<text id=\"1\">TEST_MESSAGE</text></binding>" + 
+                         "<binding template=\"ToastText02\">" + 
+                         "<text id=\"1\">TEST_TITLE</text>" + 
+                         "<text id=\"2\">TEST_MESSAGE</text></binding>" + 
                          "</visual></toast>";
     assertEquals(notification.get("content").asText(), expectedXml);
   }

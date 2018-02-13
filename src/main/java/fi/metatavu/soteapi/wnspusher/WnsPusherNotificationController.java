@@ -3,6 +3,7 @@ package fi.metatavu.soteapi.wnspusher;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -100,7 +101,7 @@ public class WnsPusherNotificationController {
     try {
       ObjectMapper objectMapper = new ObjectMapper();
       String launchArgs = objectMapper.writeValueAsString(data);
-      String notificationContent = createWindowsToastNotification(message, launchArgs);
+      String notificationContent = createNotification(title, message, launchArgs);
       WnsPusherNotification notification = new WnsPusherNotification(
           app,
           notificationContent,
@@ -124,15 +125,19 @@ public class WnsPusherNotificationController {
     }
   }
   
-  private String createWindowsToastNotification(String message, String launchArgs)
+  private String createNotification(
+      String title,
+      String message,
+      String launchArgs
+  )
       throws JAXBException {
     Toast toast = new Toast(
         new Visual(
             new Binding(
-                "ToastText01",
-                new Text(
-                    "1",
-                    message))),
+                "ToastText02",
+                Arrays.asList(
+                  new Text("1", title),
+                  new Text("2", message)))),
         launchArgs);
     JAXBContext jaxbContext = JAXBContext.newInstance(
         Toast.class,

@@ -1,10 +1,11 @@
 package fi.metatavu.soteapi.wnspusher.xml;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Binding {
@@ -12,19 +13,19 @@ public class Binding {
     super();
   }
   
-  public Binding(String template, Text text) {
+  public Binding(String template, List<Text> texts) {
     super();
     this.template = template;
-    this.text = text;
+    this.texts = texts;
   }
 
-  @XmlElement
-  public Text getText() {
-    return text;
+  @XmlElement(name="text")
+  public List<Text> getTexts() {
+    return texts;
   }
 
-  public void setText(Text text) {
-    this.text = text;
+  public void setText(List<Text> texts) {
+    this.texts = texts;
   }
 
   @XmlAttribute
@@ -37,5 +38,5 @@ public class Binding {
   }
 
   private String template = null;
-  private Text text = null;
+  private List<Text> texts = null;
 }
