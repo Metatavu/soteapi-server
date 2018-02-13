@@ -62,28 +62,24 @@ public class WnsPusherNotificationController {
 
   /**
    * Sends push notification
-   * 
-   * @param topic target topic
    * @param title title
    * @param message message
    * @param data message data
    */
-  public void sendNotificationToTopic(String topic, String title, String message, Map<String, Object> data) {
-    sendNotification(topic, title, message, data);
+  public void sendNotificationToTopic(String title, String message, Map<String, Object> data) {
+    sendNotification(title, message, data);
   }
 
   /**
    * Sends push notification
-   * 
-   * @param topic target topic
    * @param title title
    * @param message message
    */
-  public void sendNotificationToTopic(String topic, String title, String message) {
-    sendNotification(topic, title, message, null);
+  public void sendNotificationToTopic(String title, String message) {
+    sendNotification(title, message, null);
   }
 
-  private void sendNotification(String to, String title, String message, Map<String, Object> data) {
+  private void sendNotification(String title, String message, Map<String, Object> data) {
     String endpoint = systemSettingController.getSettingValue(
         WnsPusherNotificationConsts.ENDPOINT_SETTING);
     if (endpoint == null) {

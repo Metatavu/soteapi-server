@@ -27,7 +27,7 @@ public class NotificationController {
    */
   public void sendNotificationToTopic(String topic, String title, String message, Map<String, Object> data) {
     firebaseController.sendNotificationToTopic(topic, title, message, data);
-    azureController.sendNotificationToTopic(topic, title, message, data);
+    azureController.sendNotificationToTopic(title, message, data);
   }
 
   /**
@@ -39,6 +39,6 @@ public class NotificationController {
    */
   public void sendNotificationToTopic(String topic, String title, String message) {
     firebaseController.sendNotificationToTopic(topic, title, message);
-    azureController.sendNotificationToTopic(topic, title, message);
+    azureController.sendNotificationToTopic(title, message);
   }
 }

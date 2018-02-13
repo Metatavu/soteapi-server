@@ -74,12 +74,12 @@ public class WnsPusherNotificationControllerTest {
 
   @Test
   public void testSendNotificationToTopic() {
-    subject.sendNotificationToTopic("TEST_TOPIC", "TEST_TITLE", "TEST_MESSAGE");
+    subject.sendNotificationToTopic("TEST_TITLE", "TEST_MESSAGE");
   }
 
   @Test
   public void testSendNotificationHeader() {
-    subject.sendNotificationToTopic("TEST_TOPIC", "TEST_TITLE", "TEST_MESSAGE");
+    subject.sendNotificationToTopic("TEST_TITLE", "TEST_MESSAGE");
     assertEquals(httpClientArguments
                   .getValue()
                   .getLastHeader("Authorization")
@@ -90,7 +90,7 @@ public class WnsPusherNotificationControllerTest {
   @Test
   public void testSendNotificationApp()
       throws JsonParseException, JsonMappingException, ParseException, IOException {
-    subject.sendNotificationToTopic("TEST_TOPIC", "TEST_TITLE", "TEST_MESSAGE");
+    subject.sendNotificationToTopic("TEST_TITLE", "TEST_MESSAGE");
     ObjectMapper objectMapper = new ObjectMapper();
     HttpPost httpPost = httpClientArguments.getValue();
     JsonNode notification = objectMapper.readTree(EntityUtils.toString(httpPost.getEntity()));
@@ -100,7 +100,7 @@ public class WnsPusherNotificationControllerTest {
   @Test
   public void testSendNotificationUrl()
       throws JsonParseException, JsonMappingException, ParseException, IOException {
-    subject.sendNotificationToTopic("TEST_TOPIC", "TEST_TITLE", "TEST_MESSAGE");
+    subject.sendNotificationToTopic("TEST_TITLE", "TEST_MESSAGE");
     HttpPost httpPost = httpClientArguments.getValue();
     assertEquals(httpPost.getURI().toString(), "TEST_ENDPOINT");
   }
@@ -108,7 +108,7 @@ public class WnsPusherNotificationControllerTest {
   @Test
   public void testSendNotificationContentType()
       throws JsonParseException, JsonMappingException, ParseException, IOException {
-    subject.sendNotificationToTopic("TEST_TOPIC", "TEST_TITLE", "TEST_MESSAGE");
+    subject.sendNotificationToTopic("TEST_TITLE", "TEST_MESSAGE");
     ObjectMapper objectMapper = new ObjectMapper();
     HttpPost httpPost = httpClientArguments.getValue();
     JsonNode notification = objectMapper.readTree(EntityUtils.toString(httpPost.getEntity()));
@@ -118,7 +118,7 @@ public class WnsPusherNotificationControllerTest {
   @Test
   public void testSendNotificationWnsType()
       throws JsonParseException, JsonMappingException, ParseException, IOException {
-    subject.sendNotificationToTopic("TEST_TOPIC", "TEST_TITLE", "TEST_MESSAGE");
+    subject.sendNotificationToTopic("TEST_TITLE", "TEST_MESSAGE");
     ObjectMapper objectMapper = new ObjectMapper();
     HttpPost httpPost = httpClientArguments.getValue();
     JsonNode notification = objectMapper.readTree(EntityUtils.toString(httpPost.getEntity()));
@@ -128,7 +128,7 @@ public class WnsPusherNotificationControllerTest {
   @Test
   public void testSendNotificationContent()
       throws JsonParseException, JsonMappingException, ParseException, IOException {
-    subject.sendNotificationToTopic("TEST_TOPIC", "TEST_TITLE", "TEST_MESSAGE");
+    subject.sendNotificationToTopic("TEST_TITLE", "TEST_MESSAGE");
     ObjectMapper objectMapper = new ObjectMapper();
     HttpPost httpPost = httpClientArguments.getValue();
     JsonNode notification = objectMapper.readTree(EntityUtils.toString(httpPost.getEntity()));
@@ -144,7 +144,7 @@ public class WnsPusherNotificationControllerTest {
   @Test
   public void testSendNotificationNonAsciiChars()
       throws JsonParseException, JsonMappingException, ParseException, IOException {
-    subject.sendNotificationToTopic("TEST_TOPIC", "ÄÖäö", "ÄÖäö");
+    subject.sendNotificationToTopic("ÄÖäö", "ÄÖäö");
     ObjectMapper objectMapper = new ObjectMapper();
     HttpPost httpPost = httpClientArguments.getValue();
     JsonNode notification = objectMapper.readTree(EntityUtils.toString(httpPost.getEntity()));
