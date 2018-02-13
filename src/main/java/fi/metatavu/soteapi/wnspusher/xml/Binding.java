@@ -9,6 +9,9 @@ import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Binding {
+  private String template = null;
+  private List<Text> texts = null;
+
   public Binding() {
     super();
   }
@@ -36,7 +39,4 @@ public class Binding {
   public void setTemplate(String template) {
     this.template = template;
   }
-
-  private String template = null;
-  private List<Text> texts = null;
 }

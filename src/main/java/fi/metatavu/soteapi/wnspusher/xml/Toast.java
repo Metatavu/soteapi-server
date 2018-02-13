@@ -9,6 +9,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Toast {
+  private Visual visual;
+  private String launch;
+  
   public Toast() {
     super();
   }
@@ -36,7 +39,4 @@ public class Toast {
   public void setLaunch(String launch) {
     this.launch = launch;
   }
-  
-  private Visual visual;
-  private String launch;
 }

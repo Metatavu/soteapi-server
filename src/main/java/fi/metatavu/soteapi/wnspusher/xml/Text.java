@@ -7,6 +7,9 @@ import javax.xml.bind.annotation.XmlValue;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Text {
+  private String id = null;
+  private String content = null;
+
   public Text() {
     super();
   }
@@ -34,7 +37,4 @@ public class Text {
   public void setContent(String content) {
     this.content = content;
   }
-
-  String id = null;
-  String content = null;
 }

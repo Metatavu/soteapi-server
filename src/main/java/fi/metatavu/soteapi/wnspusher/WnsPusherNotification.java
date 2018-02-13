@@ -1,6 +1,11 @@
 package fi.metatavu.soteapi.wnspusher;
 
 public class WnsPusherNotification {
+  private String app;
+  private String content;
+  private String contentType;
+  private String wnsType;
+
   public WnsPusherNotification() {
   }
   
@@ -39,9 +44,4 @@ public class WnsPusherNotification {
   public void setWnsType(String wnsType) {
     this.wnsType = wnsType;
   }
-
-  private String app;
-  private String content;
-  private String contentType;
-  private String wnsType;
 }

@@ -19,7 +19,6 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -33,12 +32,12 @@ public class WnsPusherNotificationControllerTest {
   private static final String TEST_API_KEY = "TEST_API_KEY";
   private static final String TEST_ENDPOINT = "TEST_ENDPOINT";
 
-  SystemSettingController systemSettingController;
-  Logger logger;
-  CloseableHttpClient httpClient;
-  ArgumentCaptor<HttpPost> httpClientArguments;
-  CloseableHttpResponse httpResponse;
-  WnsPusherNotificationController subject;
+  private SystemSettingController systemSettingController;
+  private Logger logger;
+  private CloseableHttpClient httpClient;
+  private ArgumentCaptor<HttpPost> httpClientArguments;
+  private CloseableHttpResponse httpResponse;
+  private WnsPusherNotificationController subject;
 
   @Before
   public void setUp() throws ClientProtocolException, IOException {

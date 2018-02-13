@@ -6,6 +6,8 @@ import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Visual {
+  private Binding binding;
+
   public Visual() {
     super();
   }
@@ -23,6 +25,4 @@ public class Visual {
   public void setBinding(Binding visual) {
     this.binding = visual;
   }
-  
-  private Binding binding;
 }

@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.xml.bind.JAXBContext;
@@ -43,7 +44,12 @@ public class WnsPusherNotificationController {
   @Inject
   private Logger logger;
   
-  private Supplier<CloseableHttpClient> httpClientSupplier = HttpClients::createDefault;
+  private Supplier<CloseableHttpClient> httpClientSupplier;
+  
+  @PostConstruct
+  public void init() {
+    httpClientSupplier = HttpClients::createDefault;
+  }
   
   public WnsPusherNotificationController() {
   }
