@@ -5,12 +5,13 @@ import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import fi.metatavu.soteapi.firebase.FirebaseConsts;
 import fi.metatavu.soteapi.settings.SystemSettingController;
 import us.raudi.pushraven.Notification;
 import us.raudi.pushraven.Pushraven;
 
 @ApplicationScoped
-public class FirebaseController {
+public class FirebaseNotificationController {
   
   @Inject
   private SystemSettingController systemSettingController;
@@ -23,7 +24,7 @@ public class FirebaseController {
    * @param message message
    * @param data message data
    */
-  public void sendNotifcationToTopic(String topic, String title, String message, Map<String, Object> data) {
+  public void sendNotificationToTopic(String topic, String title, String message, Map<String, Object> data) {
     sendNotification(String.format("/topics/%s", getTopicName(topic)), title, message, data);
   }
 
@@ -34,7 +35,7 @@ public class FirebaseController {
    * @param title title
    * @param message message
    */
-  public void sendNotifcationToTopic(String topic, String title, String message) {
+  public void sendNotificationToTopic(String topic, String title, String message) {
     sendNotification(String.format("/topics/%s", getTopicName(topic)), title, message, null);
   }
 

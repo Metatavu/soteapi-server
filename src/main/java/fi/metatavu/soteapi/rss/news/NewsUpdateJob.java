@@ -9,7 +9,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.metatavu.soteapi.content.ContentController;
-import fi.metatavu.soteapi.firebase.FirebaseController;
+import fi.metatavu.soteapi.notification.NotificationController;
 import fi.metatavu.soteapi.persistence.model.Content;
 import fi.metatavu.soteapi.persistence.model.ContentData;
 import fi.metatavu.soteapi.persistence.model.ContentTitle;
@@ -21,7 +21,7 @@ import fi.metatavu.soteapi.utils.TimeUtils;
 public class NewsUpdateJob extends AbstractUpdateJob {
   
   @Inject
-  private FirebaseController firebaseController;
+  private NotificationController firebaseController;
   
   @Inject
   private NewsUpdateQueue newsUpdateQueue;
@@ -134,7 +134,7 @@ public class NewsUpdateJob extends AbstractUpdateJob {
     data.put("itemType", "NEWS");
     
     String body = StringUtils.abbreviate(HtmlUtils.html2text(content), 200);
-    firebaseController.sendNotifcationToTopic("news", title, body, data);
+    firebaseController.sendNotificationToTopic("news", title, body, data);
   }
   
 }
