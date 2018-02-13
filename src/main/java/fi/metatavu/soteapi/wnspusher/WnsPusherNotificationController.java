@@ -13,6 +13,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
+import org.apache.commons.text.translate.CharSequenceTranslator;
+import org.apache.commons.text.translate.NumericEntityEscaper;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -31,6 +33,9 @@ import fi.metatavu.soteapi.wnspusher.xml.Visual;
 
 @ApplicationScoped
 public class WnsPusherNotificationController {
+  
+  private static final CharSequenceTranslator ESCAPE_NON_ASCII =
+      NumericEntityEscaper.between(0x80, 0xffff);
   
   @SuppressWarnings("cdi-ambiguous-dependency")
   @Inject
@@ -102,6 +107,8 @@ public class WnsPusherNotificationController {
       ObjectMapper objectMapper = new ObjectMapper();
       String launchArgs = objectMapper.writeValueAsString(data);
       String notificationContent = createNotification(title, message, launchArgs);
+      // WNS doesn't like non-ASCII characters even with the correct content-type
+      notificationContent = ESCAPE_NON_ASCII.translate(notificationContent);
       WnsPusherNotification notification = new WnsPusherNotification(
           app,
           notificationContent,

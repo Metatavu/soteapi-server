@@ -140,4 +140,20 @@ public class WnsPusherNotificationControllerTest {
                          "</visual></toast>";
     assertEquals(notification.get("content").asText(), expectedXml);
   }
+
+  @Test
+  public void testSendNotificationNonAsciiChars()
+      throws JsonParseException, JsonMappingException, ParseException, IOException {
+    subject.sendNotificationToTopic("TEST_TOPIC", "ÄÖäö", "ÄÖäö");
+    ObjectMapper objectMapper = new ObjectMapper();
+    HttpPost httpPost = httpClientArguments.getValue();
+    JsonNode notification = objectMapper.readTree(EntityUtils.toString(httpPost.getEntity()));
+
+    String expectedXml = "<toast launch=\"null\"><visual>" +
+                         "<binding template=\"ToastText02\">" + 
+                         "<text id=\"1\">&#196;&#214;&#228;&#246;</text>" + 
+                         "<text id=\"2\">&#196;&#214;&#228;&#246;</text></binding>" + 
+                         "</visual></toast>";
+    assertEquals(expectedXml, notification.get("content").asText());
+  }
 }
