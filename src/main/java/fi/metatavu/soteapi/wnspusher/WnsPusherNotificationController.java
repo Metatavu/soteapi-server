@@ -37,11 +37,9 @@ public class WnsPusherNotificationController {
   private static final CharSequenceTranslator ESCAPE_NON_ASCII =
       NumericEntityEscaper.between(0x80, 0xffff);
   
-  @SuppressWarnings("cdi-ambiguous-dependency")
   @Inject
   private SystemSettingController systemSettingController;
   
-  @SuppressWarnings("cdi-ambiguous-dependency")
   @Inject
   private Logger logger;
   
