@@ -98,7 +98,6 @@
     <weld-se.version>2.3.5.Final</weld-se.version>
     <reflections.version>0.9.10</reflections.version>
     <rest-assured.version>3.0.3</rest-assured.version>
-    <mockito.version>2.15.0</mockito.version>
 
   </properties>
   
