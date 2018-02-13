@@ -95,7 +95,7 @@ public class WnsPusherNotificationControllerTest {
 
   @Test
   public void testSendNotificationApp()
-      throws JsonParseException, ParseException, IOException {
+      throws ParseException, IOException {
     subject.sendNotificationToTopic(TEST_TITLE, TEST_MESSAGE);
     ObjectMapper objectMapper = new ObjectMapper();
     HttpPost httpPost = httpClientArguments.getValue();
@@ -105,7 +105,7 @@ public class WnsPusherNotificationControllerTest {
 
   @Test
   public void testSendNotificationUrl()
-      throws JsonParseException, ParseException, IOException {
+      throws ParseException, IOException {
     subject.sendNotificationToTopic(TEST_TITLE, TEST_MESSAGE);
     HttpPost httpPost = httpClientArguments.getValue();
     assertEquals(httpPost.getURI().toString(), TEST_ENDPOINT);
@@ -113,7 +113,7 @@ public class WnsPusherNotificationControllerTest {
 
   @Test
   public void testSendNotificationContentType()
-      throws JsonParseException, ParseException, IOException {
+      throws ParseException, IOException {
     subject.sendNotificationToTopic(TEST_TITLE, TEST_MESSAGE);
     ObjectMapper objectMapper = new ObjectMapper();
     HttpPost httpPost = httpClientArguments.getValue();
@@ -123,7 +123,7 @@ public class WnsPusherNotificationControllerTest {
 
   @Test
   public void testSendNotificationWnsType()
-      throws JsonParseException, ParseException, IOException {
+      throws ParseException, IOException {
     subject.sendNotificationToTopic(TEST_TITLE, TEST_MESSAGE);
     ObjectMapper objectMapper = new ObjectMapper();
     HttpPost httpPost = httpClientArguments.getValue();
@@ -133,7 +133,7 @@ public class WnsPusherNotificationControllerTest {
 
   @Test
   public void testSendNotificationContent()
-      throws JsonParseException, ParseException, IOException {
+      throws ParseException, IOException {
     subject.sendNotificationToTopic(TEST_TITLE, TEST_MESSAGE);
     ObjectMapper objectMapper = new ObjectMapper();
     HttpPost httpPost = httpClientArguments.getValue();
@@ -149,7 +149,7 @@ public class WnsPusherNotificationControllerTest {
 
   @Test
   public void testSendNotificationNonAsciiChars()
-      throws JsonParseException, ParseException, IOException {
+      throws ParseException, IOException {
     subject.sendNotificationToTopic("ÄÖäö", "ÄÖäö");
     ObjectMapper objectMapper = new ObjectMapper();
     HttpPost httpPost = httpClientArguments.getValue();
