@@ -38,8 +38,8 @@ public class PostRemoveJob extends AbstractRemoveJob<PostRemoveTask, PostRemoveQ
   }
 
   @Override
-  protected ContentType getContentType() {
-    return ContentType.NEWS;
+  protected ContentType[] getContentTypes() {
+    return new ContentType[] { ContentType.NEWS };
   }
 
   @SuppressWarnings ("squid:S1166")

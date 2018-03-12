@@ -38,8 +38,8 @@ public class PageRemoveJob extends AbstractRemoveJob<PageRemoveTask, PageRemoveQ
   }
   
   @Override
-  protected ContentType getContentType() {
-    return ContentType.PAGE;
+  protected ContentType[] getContentTypes() {
+    return new ContentType[] { ContentType.PAGE, ContentType.LINK };
   }
   
   @SuppressWarnings ("squid:S1166")
