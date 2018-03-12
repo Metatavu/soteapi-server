@@ -3,6 +3,7 @@ package fi.metatavu.soteapi.wordpress.tasks.posts;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import com.afrozaar.wordpress.wpapi.v2.model.Post;
@@ -13,6 +14,7 @@ import fi.metatavu.soteapi.utils.TimeUtils;
 import fi.metatavu.soteapi.wordpress.WordpressConsts;
 import fi.metatavu.soteapi.wordpress.tasks.AbstractListJob;
 
+@ApplicationScoped
 public class PostListJob extends AbstractListJob<Post, PostListTask> {
   
   @Inject

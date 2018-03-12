@@ -2,6 +2,7 @@ package fi.metatavu.soteapi.wordpress.tasks.categories;
 
 import java.util.List;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import com.afrozaar.wordpress.wpapi.v2.Wordpress;
@@ -10,6 +11,7 @@ import com.afrozaar.wordpress.wpapi.v2.model.Term;
 import fi.metatavu.soteapi.tasks.AbstractUpdateJob;
 import fi.metatavu.soteapi.wordpress.WordpressConsts;
 
+@ApplicationScoped
 public class CategoryListJob extends AbstractUpdateJob {
   
   @Inject

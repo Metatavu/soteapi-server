@@ -2,6 +2,7 @@ package fi.metatavu.soteapi.wordpress.events;
 
 import java.time.OffsetDateTime;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +14,7 @@ import fi.metatavu.soteapi.persistence.model.EventTitle;
 import fi.metatavu.soteapi.wordpress.WordpressConsts;
 import fi.metatavu.soteapi.wordpress.tasks.AbstractWordpressJob;
 
+@ApplicationScoped
 public class EventUpdateJob extends AbstractWordpressJob {
   
   @Inject
