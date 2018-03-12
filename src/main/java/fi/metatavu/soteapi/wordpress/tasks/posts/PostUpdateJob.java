@@ -4,6 +4,7 @@ import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.afrozaar.wordpress.wpapi.v2.model.Term;
 
 import fi.metatavu.soteapi.content.ContentController;
-import fi.metatavu.soteapi.firebase.FirebaseController;
+import fi.metatavu.soteapi.notification.NotificationController;
 import fi.metatavu.soteapi.persistence.model.Content;
 import fi.metatavu.soteapi.persistence.model.ContentData;
 import fi.metatavu.soteapi.persistence.model.ContentTitle;
@@ -21,10 +22,11 @@ import fi.metatavu.soteapi.utils.TimeUtils;
 import fi.metatavu.soteapi.wordpress.WordpressConsts;
 import fi.metatavu.soteapi.wordpress.tasks.AbstractWordpressJob;
 
+@ApplicationScoped
 public class PostUpdateJob extends AbstractWordpressJob {
 
   @Inject
-  private FirebaseController firebaseController;
+  private NotificationController firebaseController;
   
   @Inject
   private PostUpdateQueue postUpdateQueue;
@@ -157,7 +159,7 @@ public class PostUpdateJob extends AbstractWordpressJob {
     data.put("itemType", "NEWS");
     
     String body = StringUtils.abbreviate(HtmlUtils.html2text(content), 200);
-    firebaseController.sendNotifcationToTopic("news", title, body, data);
+    firebaseController.sendNotificationToTopic("news", title, body, data);
   }
   
 }

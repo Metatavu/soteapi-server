@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.io.FilenameUtils;
@@ -27,6 +28,7 @@ import fi.metatavu.soteapi.settings.SystemSettingController;
 import fi.metatavu.soteapi.tasks.AbstractUpdateJob;
 import fi.metatavu.soteapi.utils.TimeUtils;
 
+@ApplicationScoped
 public class NewsListJob extends AbstractUpdateJob {
   
   @Inject

@@ -2,6 +2,7 @@ package fi.metatavu.soteapi.wordpress.tasks.pages;
 
 import java.util.List;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import com.afrozaar.wordpress.wpapi.v2.model.Page;
@@ -12,6 +13,7 @@ import fi.metatavu.soteapi.utils.TimeUtils;
 import fi.metatavu.soteapi.wordpress.WordpressConsts;
 import fi.metatavu.soteapi.wordpress.tasks.AbstractListJob;
 
+@ApplicationScoped
 public class PageListJob extends AbstractListJob<Page, PageListTask> {
   
   @Inject

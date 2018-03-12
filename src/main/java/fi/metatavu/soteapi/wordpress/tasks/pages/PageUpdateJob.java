@@ -2,6 +2,7 @@ package fi.metatavu.soteapi.wordpress.tasks.pages;
 
 import java.time.OffsetDateTime;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +23,7 @@ import fi.metatavu.soteapi.utils.TimeUtils;
 import fi.metatavu.soteapi.wordpress.WordpressConsts;
 import fi.metatavu.soteapi.wordpress.tasks.AbstractWordpressJob;
 
+@ApplicationScoped
 public class PageUpdateJob extends AbstractWordpressJob {
   
   @Inject
