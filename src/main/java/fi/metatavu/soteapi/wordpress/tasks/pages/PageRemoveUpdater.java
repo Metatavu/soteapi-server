@@ -23,7 +23,7 @@ public class PageRemoveUpdater {
   
   @PostConstruct
   public void postConstruct() {
-    startTimer(60000, 10000);
+    startTimer(60000, 5000);
   }
   
   private void startTimer(long warmup, long delay) {
