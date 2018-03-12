@@ -17,7 +17,9 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 
 import com.afrozaar.wordpress.wpapi.v2.Client;
 import com.afrozaar.wordpress.wpapi.v2.Wordpress;
@@ -100,12 +102,23 @@ public class EventListJob extends AbstractListJob<Event, EventListTask> {
   }
 
   private Events listEvents(int page) {
-    String url = String.format("%s&page=%d", getEndPointUri(), page);
+    String url = String.format("%s?page=%d", getEndPointUri(), page);
     
     try {
       ResponseEntity<String> responseEntity = getWordpressClient().doCustomExchange(url, HttpMethod.GET, String.class, new Object[0], null, null, null);
       ObjectMapper objectMapper = new ObjectMapper();
       return objectMapper.readValue(responseEntity.getBody(), Events.class);
+    } catch (HttpClientErrorException e) {
+      HttpStatus statusCode = e.getStatusCode();
+      if (statusCode != null && statusCode == HttpStatus.NOT_FOUND) {
+        if (logger.isDebugEnabled()) {
+          logger.debug(String.format("Could not find event's page %d", page));
+        }
+      } else {
+        if (logger.isErrorEnabled()) {
+          logger.error(String.format("Failed to list events from URL %s", url), e);
+        }
+      }
     } catch (Exception e) {
       if (logger.isErrorEnabled()) {
         logger.error(String.format("Failed to list events from URL %s", url), e);
