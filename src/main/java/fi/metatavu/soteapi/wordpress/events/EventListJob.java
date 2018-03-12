@@ -1,6 +1,5 @@
 package fi.metatavu.soteapi.wordpress.events;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -101,12 +100,16 @@ public class EventListJob extends AbstractListJob<Event, EventListTask> {
   }
 
   private Events listEvents(int page) {
+    String url = String.format("%s&page=%d", getEndPointUri(), page);
+    
     try {
-      ResponseEntity<String> responseEntity = getWordpressClient().doCustomExchange(String.format("%s&page=%d", getEndPointUri(), page), HttpMethod.GET, String.class, new Object[0], null, null, null);
+      ResponseEntity<String> responseEntity = getWordpressClient().doCustomExchange(url, HttpMethod.GET, String.class, new Object[0], null, null, null);
       ObjectMapper objectMapper = new ObjectMapper();
       return objectMapper.readValue(responseEntity.getBody(), Events.class);
-    } catch (IOException e) {
-      logger.error("Failed to list events", e);
+    } catch (Exception e) {
+      if (logger.isErrorEnabled()) {
+        logger.error(String.format("Failed to list events from URL %s", url), e);
+      }
     }
     
     return null;

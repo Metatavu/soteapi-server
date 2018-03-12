@@ -44,11 +44,14 @@ public class PageRemoveJob extends AbstractRemoveJob<PageRemoveTask, PageRemoveQ
   
   @SuppressWarnings ("squid:S1166")
   protected boolean isArchived(String originId) {
+    if (logger.isInfoEnabled()) {
+      logger.info(String.format("Checking whether page %s is removed", originId));
+    }
+    
     Long pageId = NumberUtils.createLong(originId);
     
     try {
-      Page page = getWordpressClient()
-          .getPage(pageId);
+      Page page = getWordpressClient().getPage(pageId);
       if (page == null) {
         if (logger.isWarnEnabled()) {
           logger.warn(String.format("Could not check whether page %d was removed because of null response", pageId));

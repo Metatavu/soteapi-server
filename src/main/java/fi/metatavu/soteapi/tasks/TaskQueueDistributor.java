@@ -53,13 +53,19 @@ public class TaskQueueDistributor {
     int myIndex = nodeNames.indexOf(localNodeName);
     int nodeCount = nodeNames.size();
     Long queueCount = taskController.countTaskQueues();
-    logger.info(String.format("Reassigning queues, found %d workers online. My index is %d", nodeCount, myIndex));
+    
+    if (logger.isInfoEnabled()) {
+      logger.info(String.format("Reassigning queues, found %d workers online. My index is %d", nodeCount, myIndex));
+    }
     
     for (int i = 0; i < queueCount; i++) {
       if ((i % nodeCount) == myIndex) {
         TaskQueue taskQueue = taskController.findTaskQueueByIndex(i);
         if (!StringUtils.equals(taskQueue.getResponsibleNode(), localNodeName)) {
-          logger.info(String.format("Worker %s reserved queue %s", localNodeName, taskQueue.getName()));
+          if (logger.isInfoEnabled()) {
+            logger.info(String.format("Worker %s reserved queue %s", localNodeName, taskQueue.getName()));
+          }
+          
           taskController.updateTaskQueueResponsibleNode(taskQueue, localNodeName);
         }
       }
