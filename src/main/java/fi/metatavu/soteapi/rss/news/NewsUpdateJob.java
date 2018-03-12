@@ -4,6 +4,7 @@ import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +19,7 @@ import fi.metatavu.soteapi.tasks.AbstractUpdateJob;
 import fi.metatavu.soteapi.utils.HtmlUtils;
 import fi.metatavu.soteapi.utils.TimeUtils;
 
+@ApplicationScoped
 public class NewsUpdateJob extends AbstractUpdateJob {
   
   @Inject

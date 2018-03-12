@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.io.FilenameUtils;
@@ -34,6 +35,7 @@ import fi.metatavu.soteapi.wordpress.events.model.Events;
 import fi.metatavu.soteapi.wordpress.events.model.Term;
 import fi.metatavu.soteapi.wordpress.tasks.AbstractListJob;
 
+@ApplicationScoped
 public class EventListJob extends AbstractListJob<Event, EventListTask> {
   
   private static final String CONTEXT = "/tribe/events/v1";

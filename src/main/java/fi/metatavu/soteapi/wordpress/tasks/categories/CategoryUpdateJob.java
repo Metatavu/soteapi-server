@@ -1,5 +1,6 @@
 package fi.metatavu.soteapi.wordpress.tasks.categories;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +11,7 @@ import fi.metatavu.soteapi.persistence.model.CategoryTitle;
 import fi.metatavu.soteapi.wordpress.WordpressConsts;
 import fi.metatavu.soteapi.wordpress.tasks.AbstractWordpressJob;
 
+@ApplicationScoped
 public class CategoryUpdateJob extends AbstractWordpressJob {
   
   @Inject

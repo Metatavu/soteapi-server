@@ -1,5 +1,6 @@
 package fi.metatavu.soteapi.wordpress.tasks.pages;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.math.NumberUtils;
@@ -12,6 +13,7 @@ import fi.metatavu.soteapi.persistence.model.ContentType;
 import fi.metatavu.soteapi.wordpress.WordpressConsts;
 import fi.metatavu.soteapi.wordpress.tasks.AbstractRemoveJob;
 
+@ApplicationScoped
 public class PageRemoveJob extends AbstractRemoveJob<PageRemoveTask, PageRemoveQueue> {
 
   @Inject
