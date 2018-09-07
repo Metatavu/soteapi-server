@@ -51,7 +51,7 @@
     
     <!-- Spec -->
     
-    <soteapi-spec.version>0.0.16</soteapi-spec.version>
+    <soteapi-spec.version>0.0.17</soteapi-spec.version>
        
     <!-- Maven -->
 
@@ -288,13 +288,7 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>3.4</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-text</artifactId>
-      <version>1.2</version>
-    </dependency>
+    </dependency> 
     
     <dependency>
       <groupId>fi.metatavu.metaflow</groupId>
