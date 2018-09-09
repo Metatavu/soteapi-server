@@ -13,19 +13,24 @@ import org.springframework.http.ResponseEntity;
 
 import com.afrozaar.wordpress.wpapi.v2.Client;
 import com.afrozaar.wordpress.wpapi.v2.Wordpress;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import fi.metatavu.soteapi.emergency.EmergencyCongestionStatusController;
 import fi.metatavu.soteapi.settings.SystemSettingController;
 import fi.metatavu.soteapi.tasks.AbstractUpdateJob;
 import fi.metatavu.soteapi.wordpress.WordpressConsts;
 
+/**
+ * Emergency congestion status update job
+ * 
+ * @author Antti Leppä
+ */
 @ApplicationScoped
 public class EmergencyCongestionStatusJob extends AbstractUpdateJob {
   
-  private static final String STATUS_ENDPOINT = "/emergency/congestion/status";
+  private static final String CONTEXT = "/emergency";
+  private static final String STATUS_ENDPOINT = "/congestion/status";
 
   @Inject
   private Logger logger;
@@ -39,25 +44,6 @@ public class EmergencyCongestionStatusJob extends AbstractUpdateJob {
   @Inject
   private EmergencyCongestionStatusQueue emergencyCongestionStatusQueue;
   
-  @Inject
-  private Wordpress wordpressClient;
-  
-  protected void createTask() {
-    EmergencyCongestionStatusTask newTask = new EmergencyCongestionStatusTask();
-    newTask.setPriority(Boolean.FALSE);
-    newTask.setUniqueId("wp-emergency-congestion-status");
-    emergencyCongestionStatusQueue.enqueueTask(newTask);
-  }
-
-  @Override
-  protected boolean isEnabled() {
-    if (wordpressClient == null) {
-      return false;
-    }
-    
-    return super.isEnabled();
-  }
-  
   @Override
   protected String getEnabledSetting() {
     return WordpressConsts.EMERGENCY_CONGESTION_STATUS_SYNC_ENABLED;
@@ -69,8 +55,7 @@ public class EmergencyCongestionStatusJob extends AbstractUpdateJob {
     if (task != null) {
       try {
         EmergencyCongestionStatusRestModel model = doRestRequest();
-        
-        OffsetDateTime created = model.getCreated();
+        OffsetDateTime modified = model.getModified();
         Integer value = model.getValue();
         if (value == null) {
           return;
@@ -78,7 +63,7 @@ public class EmergencyCongestionStatusJob extends AbstractUpdateJob {
   
         int currentValue = emergencyCongestionStatusController.getCurrentEmergencyCongestionStatus();
         if (currentValue != value) {
-          emergencyCongestionStatusController.createEmergencyCongestionStatus(value, created);
+          emergencyCongestionStatusController.createEmergencyCongestionStatus(value, modified);
         }
       } catch (IOException e) {
         logger.error("Failed to fetch emergency congestion status", e);
@@ -87,17 +72,39 @@ public class EmergencyCongestionStatusJob extends AbstractUpdateJob {
       createTask();
     }
   }
-  
-  private EmergencyCongestionStatusRestModel doRestRequest() throws JsonParseException, JsonMappingException, IOException {
+
+  /**
+   * Creates new task
+   */
+  protected void createTask() {
+    EmergencyCongestionStatusTask newTask = new EmergencyCongestionStatusTask();
+    newTask.setPriority(Boolean.FALSE);
+    newTask.setUniqueId("wp-emergency-congestion-status");
+    emergencyCongestionStatusQueue.enqueueTask(newTask);
+  }
+
+  /**
+   * Creates and request into status REST endpoint
+   * 
+   * @return response
+   * @throws IOException thrown when request fails
+   */
+  private EmergencyCongestionStatusRestModel doRestRequest() throws IOException {
     ResponseEntity<String> responseEntity = getWordpressClient().doCustomExchange(STATUS_ENDPOINT, HttpMethod.GET, String.class, new Object[0], null, null, null);
     ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.registerModule(new JavaTimeModule());
     return objectMapper.readValue(responseEntity.getBody(), EmergencyCongestionStatusRestModel.class);
   }
   
+  /**
+   * Returns initialized Wordpress client
+   * 
+   * @return initialized Wordpress client
+   */
   private Wordpress getWordpressClient() {
     String url = systemSettingController.getSettingValue(WordpressConsts.URL_SETTING);
     if (StringUtils.isNotBlank(url)) {
-      return new Client(STATUS_ENDPOINT, url, "", "", WordpressConsts.USE_PERMALINK_ENDPOINT, WordpressConsts.DEBUG_CLIENT);
+      return new Client(CONTEXT, url, "", "", WordpressConsts.USE_PERMALINK_ENDPOINT, WordpressConsts.DEBUG_CLIENT);
     }
     
     return null;

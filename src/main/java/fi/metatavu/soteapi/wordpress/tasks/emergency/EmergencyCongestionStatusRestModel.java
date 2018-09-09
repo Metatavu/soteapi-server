@@ -2,17 +2,22 @@ package fi.metatavu.soteapi.wordpress.tasks.emergency;
 
 import java.time.OffsetDateTime;
 
+/**
+ * Rest model for Wordpress emergency congestion status endpoint response
+ * 
+ * @author Antti Leppä
+ */
 public class EmergencyCongestionStatusRestModel {
 
   private Integer value;
-  private OffsetDateTime created;
+  private OffsetDateTime modified;
   
-  public OffsetDateTime getCreated() {
-    return created;
+  public OffsetDateTime getModified() {
+    return modified;
   }
   
-  public void setCreated(OffsetDateTime created) {
-    this.created = created;
+  public void setModified(OffsetDateTime modified) {
+    this.modified = modified;
   }
   
   public Integer getValue() {

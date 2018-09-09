@@ -43,7 +43,7 @@
 
   <properties>
   
-    <skipCoverage>false</skipCoverage>
+    <skipCoverage>true</skipCoverage>
   
     <!-- Project -->
 
@@ -100,7 +100,9 @@
     <weld-se.version>2.3.5.Final</weld-se.version>
     <reflections.version>0.9.10</reflections.version>
     <rest-assured.version>3.0.3</rest-assured.version>
-
+    <wiremock.version>2.18.0</wiremock.version>
+    <awaitility.version>3.1.2</awaitility.version>
+    <mockito.version>2.21.0</mockito.version>
   </properties>
   
   <dependencyManagement>
@@ -204,7 +206,13 @@
       <artifactId>jboss-concurrency-api_1.0_spec</artifactId>
       <scope>provided</scope>
     </dependency>
-
+    
+    <dependency>
+      <groupId>org.jboss.spec.javax.transaction</groupId>
+      <artifactId>jboss-transaction-api_1.2_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
     <dependency>
       <groupId>org.wildfly</groupId>
       <artifactId>wildfly-clustering-api</artifactId>
@@ -436,6 +444,254 @@
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <scope>test</scope>
+      <version>${mockito.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>com.github.tomakehurst</groupId>
+      <artifactId>wiremock</artifactId>
+      <version>${wiremock.version}</version>
+      <type>jar</type>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
+      <version>${awaitility.version}</version>
+    </dependency>
+    
   </dependencies>
+  
+  <profiles>
+    
+    <profile>
+      <id>itests</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      
+       <properties>
+        <h2.version>1.4.192</h2.version>
+        <it.port.http>58080</it.port.http>
+        <it.host>api.soteapi.test</it.host>
+        <it.jdbc.driver>org.h2.jdbcx.JdbcDataSource</it.jdbc.driver>
+        <it.jdbc.url>jdbc:h2:file:${project.build.directory}/h2;AUTO_SERVER=TRUE;DB_CLOSE_ON_EXIT=FALSE</it.jdbc.url>
+        <it.jdbc.properties>URL=jdbc:h2:file:${project.build.directory}/h2\;AUTO_SERVER=TRUE\;DB_CLOSE_ON_EXIT=FALSE</it.jdbc.properties>
+        <it.jdbc.jndi>java:/jboss/datasources/soteapi</it.jdbc.jndi>
+        <it.jdbc.username>sa</it.jdbc.username>
+        <it.jdbc.password>sa</it.jdbc.password>
+        <it.jdbc.type>javax.sql.XADataSource</it.jdbc.type>
+        <it.jdbc.transactionsupport>XA_TRANSACTION</it.jdbc.transactionsupport>
+        <it.skipdatabasedrop>true</it.skipdatabasedrop>
+        <it.hibernate.dialect>org.hibernate.dialect.H2Dialect</it.hibernate.dialect>
+        <jacoco.reportPath>${project.basedir}/target/jacoco.exec</jacoco.reportPath>
+      </properties>
+      
+      <dependencies>
+        <dependency>
+          <groupId>com.h2database</groupId>
+          <artifactId>h2</artifactId>
+          <version>${h2.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+      
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>2.19.1</version>
+            <configuration>
+              <failIfNoTests>true</failIfNoTests>
+              <skipAfterFailureCount>1</skipAfterFailureCount>
+              <argLine>-Xmx2G</argLine>
+              <includes>
+                <include>${it.tests}</include>
+              </includes>
+              <systemPropertyVariables>
+                <java.util.logging.config.file>${project.basedir}/src/test/resources/logging.properties</java.util.logging.config.file>
+                <jboss.home>${wildfly.home}</jboss.home>
+                <module.path>${wildfly.home}/modules</module.path>
+                <it.host>${it.host}</it.host>
+                <it.port.http>${it.port.http}</it.port.http>
+                <it.jdbc.driver>${it.jdbc.driver}</it.jdbc.driver>
+                <it.jdbc.url>${it.jdbc.url}</it.jdbc.url>
+                <it.jdbc.jndi>${it.jdbc.jndi}</it.jdbc.jndi>
+                <it.jdbc.username>${it.jdbc.username}</it.jdbc.username>
+                <it.jdbc.password>${it.jdbc.password}</it.jdbc.password>
+              </systemPropertyVariables>
+            </configuration>
+            <executions>
+              <execution>
+                <id>integration-test</id>
+                <goals>
+                  <goal>integration-test</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>verify</id>
+                <goals>
+                  <goal>verify</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+         
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.8.2</version>
+            <configuration>
+              <destFile>${jacoco.reportPath}</destFile>
+              <dataFile>${jacoco.reportPath}</dataFile>
+              <outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
+              <classDumpDir>${project.reporting.outputDirectory}/jacoco-it/classes</classDumpDir>
+              <excludes>
+                <exclude>**/*_.class</exclude>
+              </excludes>
+            </configuration>
+                
+            <executions>
+              <execution>
+                <id>jacoco-agent</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>prepare-agent</goal>
+                </goals>
+                <configuration>
+                  <destFile>${jacoco.reportPath}</destFile>
+                  <propertyName>jacoco.agent.itArgLine</propertyName>
+                </configuration>
+              </execution>
+              <execution>
+                <id>jacoco-report</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>dump</goal>
+                  <goal>report</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.codehaus.cargo</groupId>
+            <artifactId>cargo-maven2-plugin</artifactId>
+            <version>1.6.8</version>
+            <configuration>
+              <container>
+                <containerId>wildfly11x</containerId>
+                <log>${project.basedir}/target/cargo.log</log>
+                <output>${project.basedir}/target/wildfly.log</output>
+                <zipUrlInstaller>
+                  <url>http://download.jboss.org/wildfly/11.0.0.Final/wildfly-11.0.0.Final.zip</url>
+                  <downloadDir>${project.basedir}/.cargo/downloads</downloadDir>
+                  <extractDir>${project.basedir}/.cargo/extracts</extractDir>
+                </zipUrlInstaller>     
+                <dependencies>
+                  <dependency>
+                    <groupId>com.h2database</groupId>
+                    <artifactId>h2</artifactId>
+                  </dependency>
+                </dependencies>         
+              </container>
+              <configuration>
+                <properties>
+                  <cargo.servlet.port>${it.port.http}</cargo.servlet.port>
+                  <cargo.jboss.configuration>standalone</cargo.jboss.configuration>
+                  <cargo.jvmargs>${jacoco.agent.itArgLine},output=tcpserver,port=6300 -Xmx2G -Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true -Dsoteapi.runmode=TEST</cargo.jvmargs>
+                </properties>    
+              </configuration>
+              <deployer/>
+            </configuration>
+            <executions>
+              <execution>
+                <id>start-cargo</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>start</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>stop-cargo</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>stop</goal>
+                </goals>
+                <configuration>
+                  <skip>${it.skipserverstop}</skip>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          
+           <plugin>
+            <groupId>org.wildfly.plugins</groupId>
+            <artifactId>wildfly-maven-plugin</artifactId>
+            <version>1.2.2.Final</version>
+            <executions>
+              <execution>
+                <id>wildfly-configure</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>execute-commands</goal>
+                </goals>
+                <configuration>
+                  <batch>true</batch>
+                  <commands>
+                    <command>xa-data-source add --name=ci --driver-name=h2 --jndi-name=${it.jdbc.jndi} --user-name=${it.jdbc.username} --password=${it.jdbc.password} --xa-datasource-properties=${it.jdbc.properties}</command>
+                    <command>/subsystem=undertow/server=default-server/host=soteapi:add(alias=["${it.host}"],default-web-module="soteapi.war")</command>
+                    <command>/system-property=it-test:add(value="true")</command>
+                  </commands>
+                </configuration>
+              </execution>
+              <execution>
+                <id>deploy</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>deploy</goal>
+                </goals>
+                <configuration>
+                  <filename>${project.build.finalName}.${project.packaging}</filename>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>wait-maven-plugin</artifactId>
+            <version>1.0</version>
+            <executions>
+              <execution>
+                <id>wait</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>wait</goal>
+                </goals>      
+                <configuration>
+                  <protocol>http</protocol>
+                  <host>${it.host}</host>
+                  <port>${it.port.http}</port>
+                  <file>/v1/system/ping</file>
+                  <maxcount>20</maxcount>
+                  <timeout>10000</timeout>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.eluder.coveralls</groupId>
+            <artifactId>coveralls-maven-plugin</artifactId>
+            <version>4.2.0</version>
+          </plugin>
+        </plugins>
+      </build>
+      
+    </profile>
+  </profiles>
+  
+  
 </project>
