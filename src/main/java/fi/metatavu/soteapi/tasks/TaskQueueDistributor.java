@@ -22,6 +22,11 @@ import fi.metatavu.soteapi.persistence.model.TaskQueue;
 import fi.metatavu.soteapi.settings.RunMode;
 import fi.metatavu.soteapi.settings.SystemSettingController;
 
+/**
+ * Task queue distributor
+ * 
+ * @author Antti Leppä
+ */
 @Startup
 @Singleton
 @ApplicationScoped
