@@ -14,9 +14,6 @@ addons:
           
 install: true
   
-before_script:
-  - scripts/start-keycloak.sh
-  
 script:
   - . travis.sh
 
