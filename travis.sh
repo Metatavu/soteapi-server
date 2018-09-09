@@ -1,3 +1,3 @@
 #!/bin/bash
 
-mvn clean verify jacoco:report coveralls:report -Pitests sonar:sonar -DrepoToken=$COVERALLS_TOKEN
+mvn clean verify jacoco:report coveralls:report -Pitests sonar:sonar -DskipCoverage=false -DrepoToken=$COVERALLS_TOKEN
