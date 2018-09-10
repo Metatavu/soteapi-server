@@ -4,3 +4,4 @@
 .settings
 /nb-configuration.xml
 /.factorypath
+/.cargo

@@ -1,20 +1,18 @@
 language: java
 sudo: required
-jdk: oraclejdk8
+jdk: openjdk8
 cache:
   directories:
   - $HOME/.sonar
   - $HOME/.m2
   
 addons:
-  apt:
-    packages:
-      - oracle-java8-installer
-      
+  hosts:
+    - api.soteapi.test
+  sonarcloud:
+    organization: "metatavu-oy"
+          
 install: true
-
-before_script:
-  - . travis-before-script.sh
   
 script:
   - . travis.sh

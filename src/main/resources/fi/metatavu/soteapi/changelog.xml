@@ -353,5 +353,19 @@
   <changeSet id="content-change-task-drop" author="Antti Leppa">
     <delete tableName="TaskModel"></delete>
   </changeSet>
+  
+  <changeSet author="Antti Lepa" id="emergency-congestion-status">
+    <createTable tableName="EmergencyCongestionStatus">
+      <column autoIncrement="true" name="id" type="BIGINT">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="value" type="int">
+        <constraints nullable="false"/>
+      </column>
+      <column name="created" type="datetime(6)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
 
 </databaseChangeLog>
