@@ -19,22 +19,33 @@ import org.slf4j.Logger;
 
 import fi.metatavu.soteapi.cluster.ClusterController;
 import fi.metatavu.soteapi.persistence.model.TaskQueue;
+import fi.metatavu.soteapi.settings.RunMode;
+import fi.metatavu.soteapi.settings.SystemSettingController;
 
+/**
+ * Task queue distributor
+ * 
+ * @author Antti Leppä
+ */
 @Startup
 @Singleton
 @ApplicationScoped
 public class TaskQueueDistributor {
 
   private static final int UPDATE_INTERVAL = 1000 * 60;
-  
+  private static final int TEST_UPDATE_INTERVAL = 5000;
+
   @Inject
   private Logger logger;
   
   @Inject
   private TaskController taskController;
-  
+
   @Inject
   private ClusterController clusterController;
+
+  @Inject
+  private SystemSettingController systemSettingController;
   
   @Resource
   private ManagedScheduledExecutorService managedScheduledExecutorService;
@@ -73,7 +84,9 @@ public class TaskQueueDistributor {
   }
   
   private void startTimer() {
-    startTimer(UPDATE_INTERVAL, UPDATE_INTERVAL);
+    boolean testMode = systemSettingController.getRunMode() == RunMode.TEST;
+    long interval = testMode ? TEST_UPDATE_INTERVAL : UPDATE_INTERVAL;
+    startTimer(interval, interval);
   }
   
   private void startTimer(long warmup, long delay) {
