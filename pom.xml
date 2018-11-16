@@ -100,7 +100,7 @@
     <weld-se.version>2.3.5.Final</weld-se.version>
     <reflections.version>0.9.10</reflections.version>
     <rest-assured.version>3.0.3</rest-assured.version>
-    <wiremock.version>2.18.0</wiremock.version>
+    <wiremock.version>2.19.0</wiremock.version>
     <awaitility.version>3.1.2</awaitility.version>
     <mockito.version>2.21.0</mockito.version>
   </properties>
