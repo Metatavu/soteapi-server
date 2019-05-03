@@ -16,6 +16,7 @@ import fi.metatavu.soteapi.persistence.model.Event;
 import fi.metatavu.soteapi.persistence.model.EventDescription;
 import fi.metatavu.soteapi.persistence.model.EventTitle;
 import fi.metatavu.soteapi.rest.translate.EventTranslator;
+import fi.metatavu.soteapi.server.rest.api.EventsApi;
 
 @RequestScoped
 @Stateful
@@ -31,7 +32,7 @@ public class EventApiImpl implements EventsApi {
   private ResponseController responseController;
 
   @Override
-  public Response findEvent(Long eventId) throws Exception {
+  public Response findEvent(Long eventId) {
     Event event = eventController.findEventById(eventId);
     if (event == null) {
       return responseController.respondNotFound();
@@ -47,7 +48,7 @@ public class EventApiImpl implements EventsApi {
   }
   
   @Override
-  public Response listEvents(String endsAfter, String startsBefore, String categorySlug, Long firstResult, Long maxResults) throws Exception {
+  public Response listEvents(String endsAfter, String startsBefore, String categorySlug, Long firstResult, Long maxResults) {
     List<Event> eventEntities = eventController.listEventsByStartLessThanOrEqualToEndGreaterThanOrEqualToAndCategory(parseTime(startsBefore), parseTime(endsAfter), categorySlug, firstResult, maxResults);
   
     List<List<EventTitle>> eventTitleEntities = new ArrayList<>(eventEntities.size());

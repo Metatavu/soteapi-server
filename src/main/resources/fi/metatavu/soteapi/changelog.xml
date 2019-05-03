@@ -368,4 +368,30 @@
     </createTable>
   </changeSet>
 
+  <changeSet author="Heikki Kurhinen" id="bisnode-review">
+    <createTable tableName="Review">
+      <column autoIncrement="true" name="id" type="BIGINT">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="originId" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="productId" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="rating" type="int">
+        <constraints nullable="false"/>
+      </column>
+      <column name="review" type="LONGTEXT"></column>
+      <column name="location" type="LONGTEXT"></column>
+      <column name="created" type="datetime(6)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="modified" type="datetime(6)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+
 </databaseChangeLog>
