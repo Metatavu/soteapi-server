@@ -21,6 +21,7 @@ import fi.metatavu.soteapi.persistence.model.ContentImageMeta;
 import fi.metatavu.soteapi.persistence.model.ContentTitle;
 import fi.metatavu.soteapi.persistence.model.ContentType;
 import fi.metatavu.soteapi.rest.translate.ContentTranslator;
+import fi.metatavu.soteapi.server.rest.api.ContentsApi;
 
 @RequestScoped
 @Stateful
@@ -36,7 +37,7 @@ public class ContentApiImpl implements ContentsApi {
   private ResponseController responseController;
   
   @Override
-  public Response findContent(Long contentId) throws Exception {
+  public Response findContent(Long contentId) {
     Content content = contentController.findContentById(contentId);
     if (content == null) {
       return responseController.respondNotFound();
@@ -53,7 +54,7 @@ public class ContentApiImpl implements ContentsApi {
   }
 
   @Override
-  public Response findContentImage(Long contentId, Long imageId) throws Exception {
+  public Response findContentImage(Long contentId, Long imageId) {
     Content content = contentController.findContentById(contentId);
     if (content == null) {
       return responseController.respondNotFound();
@@ -64,7 +65,7 @@ public class ContentApiImpl implements ContentsApi {
   }
 
   @Override
-  public Response getContentImageData(Long contentId, Long imageId, Integer size) throws Exception {
+  public Response getContentImageData(Long contentId, Long imageId, Integer size) {
     //TODO: scale image if size is specified
     
     Content content = contentController.findContentById(contentId);
@@ -86,7 +87,7 @@ public class ContentApiImpl implements ContentsApi {
   }
 
   @Override
-  public Response listContentImages(Long contentId, String type) throws Exception {
+  public Response listContentImages(Long contentId, String type) {
     Content content = contentController.findContentById(contentId);
     if (content == null) {
       return responseController.respondNotFound();
@@ -97,7 +98,7 @@ public class ContentApiImpl implements ContentsApi {
   }
 
   @Override
-  public Response listContents(String parentId, List<String> types, String categorySlug, Long firstResult, Long maxResults) throws Exception {
+  public Response listContents(String parentId, List<String> types, String categorySlug, Long firstResult, Long maxResults) {
     List<ContentType> contentTypes = null;
     if (types != null && !types.isEmpty()) {
       contentTypes = new ArrayList<>();

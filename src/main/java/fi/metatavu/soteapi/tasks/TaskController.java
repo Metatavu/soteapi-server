@@ -55,9 +55,9 @@ public class TaskController {
     String uniqueId = task.getUniqueId();
     if (taskModelDAO.countByQueueAndUniqueId(taskQueue, uniqueId) == 0) {
       byte[] data = serialize(task);
-	    if (data != null) {
-	      return handleNewTask(queueName, task, taskQueue, uniqueId, data);
-	    }
+      if (data != null) {
+        return handleNewTask(queueName, task, taskQueue, uniqueId, data);
+      }
     } else {
       return handleExistingTask(queueName, task, uniqueId);
     }
@@ -226,7 +226,7 @@ public class TaskController {
       }
     } else {
       if (logger.isWarnEnabled()) {
-       logger.warn(String.format("Task %s already found from queue %s. Skipped", uniqueId, queueName));
+        logger.warn(String.format("Task %s already found from queue %s. Skipped", uniqueId, queueName));
       }
     }
     
@@ -249,7 +249,7 @@ public class TaskController {
     }
     
     if (logger.isWarnEnabled()) {
-     logger.warn(String.format("Tried to prioritize already priority task %s from queue %s. Skipped", uniqueId, queueName));
+      logger.warn(String.format("Tried to prioritize already priority task %s from queue %s. Skipped", uniqueId, queueName));
     }
     
     return null;

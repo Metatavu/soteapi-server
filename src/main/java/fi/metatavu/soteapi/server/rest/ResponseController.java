@@ -169,4 +169,14 @@ public class ResponseController {
     return Response.status(Response.Status.BAD_REQUEST).entity(message).build();
   }
 
+  /**
+   * Respond with internal server error 500
+   * 
+   * @param error error
+   * @return response
+   */
+  public Response respondInternalServerError(Throwable error) {
+    return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(error).build();
+  }
+
 }

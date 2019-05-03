@@ -12,6 +12,7 @@ import org.apache.commons.lang3.EnumUtils;
 import fi.metatavu.soteapi.emergency.EmergencyCongestionStatusController;
 import fi.metatavu.soteapi.persistence.model.EmergencyCongestionStatus;
 import fi.metatavu.soteapi.rest.translate.EmergencyCongestionStatusTranslator;
+import fi.metatavu.soteapi.server.rest.api.EmergencyCongestionStatusesApi;
 import fi.metatavu.soteapi.server.rest.model.EmergencyCongestionStatusListSort;
 
 @RequestScoped
@@ -28,7 +29,7 @@ public class EmergencyCongestionStatusesApiImpl implements EmergencyCongestionSt
   private ResponseController responseController;
   
   @Override
-  public Response listEmergencyCongestionStatuses(String sortParam, Long firstResult, Long maxResults) throws Exception {
+  public Response listEmergencyCongestionStatuses(String sortParam, Long firstResult, Long maxResults) {
     EmergencyCongestionStatusListSort sort = EnumUtils.getEnum(EmergencyCongestionStatusListSort.class, sortParam);
     if (sort == null) {
       sort = EmergencyCongestionStatusListSort.DESC;
