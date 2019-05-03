@@ -12,6 +12,7 @@ import fi.metatavu.soteapi.category.CategoryController;
 import fi.metatavu.soteapi.persistence.model.Category;
 import fi.metatavu.soteapi.persistence.model.CategoryTitle;
 import fi.metatavu.soteapi.rest.translate.CategoryTranslator;
+import fi.metatavu.soteapi.server.rest.api.CategoriesApi;
 
 @RequestScoped
 @Stateful
@@ -27,7 +28,7 @@ public class CategoryApiImpl implements CategoriesApi {
   private CategoryTranslator categoryTranslator;
   
   @Override
-  public Response listCategories(Long firstResult, Long maxResults) throws Exception {
+  public Response listCategories(Long firstResult, Long maxResults) {
     
     Integer from = firstResult == null ? null : firstResult.intValue();
     Integer max = maxResults == null ? null : maxResults.intValue();
