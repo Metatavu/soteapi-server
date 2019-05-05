@@ -33,8 +33,9 @@ public class AccessControlAllowOriginFilter implements Filter {
     if (response instanceof HttpServletResponse) { 
       HttpServletResponse httpServletResponse = (HttpServletResponse) response;
       httpServletResponse.setHeader("Access-Control-Allow-Origin", "*");
-      httpServletResponse.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, total-hits, total-unfiltered-hits");
+      httpServletResponse.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
       httpServletResponse.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+      httpServletResponse.setHeader("Access-Control-Expose-Headers", "total-hits,total-unfiltered-hits");
     }
 
     chain.doFilter(request, response);
