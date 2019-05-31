@@ -98,6 +98,10 @@
     
     <swagger-annotations.version>1.5.9</swagger-annotations.version>
     
+    <!-- Apache POI -->
+    
+    <apache-poi.version>4.1.0</apache-poi.version>
+    
     <!-- Test -->
     
     <deltaspike.version>1.7.2</deltaspike.version>
@@ -393,6 +397,20 @@
       <artifactId>wp-api-v2-client-java</artifactId>
       <version>${wp-api-v2-client.version}</version>
     </dependency>
+
+     <!-- Apache POI -->
+
+	<dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi</artifactId>
+      <version>${apache-poi.version}</version>
+	</dependency>
+	
+	<dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-ooxml</artifactId>
+      <version>${apache-poi.version}</version>
+	</dependency>
 
     <!-- Test -->
 
