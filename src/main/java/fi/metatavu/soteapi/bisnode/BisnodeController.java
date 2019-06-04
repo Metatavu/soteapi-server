@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import fi.metatavu.soteapi.bisnode.model.BisnodeReview;
 import fi.metatavu.soteapi.bisnode.model.BisnodeReviewContainer;
 import fi.metatavu.soteapi.bisnode.model.BisnodeSurveySummary;
-import fi.metatavu.soteapi.server.rest.model.SurveyQuestion;
 import fi.metatavu.soteapi.server.rest.model.SurveyQuestionSummary;
 
 /**
@@ -49,8 +48,8 @@ public class BisnodeController {
    * @param surveyQuestion survey question to get the summary for
    * @return Summary for provided survey question or null if not available
    */
-  public SurveyQuestionSummary getSurveyQuestionSummary(SurveyQuestion surveyQuestion) {
-    BisnodeResponse response = doRequest(String.format("https://%s/api/v%s/yes-no/%s", getHost(), getApiVersion(), surveyQuestion.getName()));
+  public SurveyQuestionSummary getSurveyQuestionSummary(String surveyName, long questionNumber) {
+    BisnodeResponse response = doRequest(String.format("https://%s/api/v%s/yes-no/%s/%d", getHost(), getApiVersion(), surveyName, questionNumber));
     if (response == null) {
       return null;
     }
