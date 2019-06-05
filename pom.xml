@@ -97,7 +97,11 @@
     <!-- Swagger -->
     
     <swagger-annotations.version>1.5.9</swagger-annotations.version>
+
+    <!-- Emoji Java -->
     
+    <emoji-java.version>4.0.0</emoji-java.version>
+
     <!-- Test -->
     
     <deltaspike.version>1.7.2</deltaspike.version>
@@ -392,6 +396,14 @@
       <groupId>com.afrozaar.wordpress</groupId>
       <artifactId>wp-api-v2-client-java</artifactId>
       <version>${wp-api-v2-client.version}</version>
+    </dependency>
+
+    <!-- Emoji Java -->
+
+    <dependency>
+      <groupId>com.vdurmont</groupId>
+      <artifactId>emoji-java</artifactId>
+      <version>${emoji-java.version}</version>
     </dependency>
 
     <!-- Test -->
