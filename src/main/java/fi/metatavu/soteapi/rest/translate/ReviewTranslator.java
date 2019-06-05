@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import com.vdurmont.emoji.EmojiParser;
+
 import fi.metatavu.soteapi.server.rest.model.Review;
 
 /**
@@ -27,6 +29,8 @@ public class ReviewTranslator extends AbstractTranslator {
       return null;
     }
 
+    String reviewContent = reviewEntity.getReview() != null ? EmojiParser.parseToUnicode(reviewEntity.getReview()) : null;
+
     Review review = new Review();
     review.setId(reviewEntity.getId());
     review.setCreated(reviewEntity.getCreated());
@@ -34,7 +38,7 @@ public class ReviewTranslator extends AbstractTranslator {
     review.setModified(reviewEntity.getModified());
     review.setProductId(reviewEntity.getProductId());
     review.setRating(reviewEntity.getRating());
-    review.setReview(reviewEntity.getReview());
+    review.setReview(reviewContent);
 
     return review;
   }

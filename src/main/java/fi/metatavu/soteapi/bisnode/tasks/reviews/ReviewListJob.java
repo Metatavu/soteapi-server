@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import com.vdurmont.emoji.EmojiParser;
+
 import org.slf4j.Logger;
 
 import fi.metatavu.soteapi.bisnode.BisnodeConsts;
@@ -88,10 +90,11 @@ public class ReviewListJob extends AbstractUpdateJob {
    */
   private void updateOrCreateReview(BisnodeReview bisnodeReview, long reviewProductId) {
     Review existingReview = reviewController.findReviewByOriginId(bisnodeReview.getId());
+    String reviewContent = bisnodeReview.getReview() != null ? EmojiParser.parseToAliases(bisnodeReview.getReview()) : null;
     if (existingReview == null) {
-      reviewController.createReview(bisnodeReview.getId(), reviewProductId, bisnodeReview.getRating(), bisnodeReview.getReview(), bisnodeReview.getCreated(), bisnodeReview.getLocation());
+      reviewController.createReview(bisnodeReview.getId(), reviewProductId, bisnodeReview.getRating(), reviewContent, bisnodeReview.getCreated(), bisnodeReview.getLocation());
     } else {
-      reviewController.updateReview(existingReview, bisnodeReview.getId(), reviewProductId, bisnodeReview.getRating(), bisnodeReview.getReview(), bisnodeReview.getCreated(), bisnodeReview.getLocation());
+      reviewController.updateReview(existingReview, bisnodeReview.getId(), reviewProductId, bisnodeReview.getRating(), reviewContent, bisnodeReview.getCreated(), bisnodeReview.getLocation());
     }
   }
 
