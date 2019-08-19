@@ -122,7 +122,7 @@ public class BisnodeController {
             }
             return bisnodeResponse;
           } else {
-            logger.error("Received an error [{}] {} while communicating with Bisnode", statusLine.getStatusCode(), statusLine.getReasonPhrase());
+            logger.error("Received an error [{}] {} while communicating with Bisnode. Customer secret was {}, issuer {}, audience: {}", statusLine.getStatusCode(), statusLine.getReasonPhrase(), getCustomerSecret(),  getIssuer(), getAudience());
           }
         }
       }
