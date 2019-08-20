@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpStatus;
@@ -157,7 +158,7 @@ public class BisnodeController {
    * @return customer secret
    */
   private String getCustomerSecret() {
-    return System.getProperty("bisnode.customerSecret");
+    return StringEscapeUtils.unescapeHtml4(System.getProperty("bisnode.customerSecret"));
   }
 
   /**
