@@ -24,7 +24,9 @@ RUN /opt/jboss/wildfly/bin/jboss-cli.sh --file=/opt/docker/kubernets-jgroups.cli
 RUN /opt/jboss/wildfly/bin/jboss-cli.sh --file=/opt/docker/interfaces.cli
 RUN /opt/jboss/wildfly/bin/jboss-cli.sh --file=/opt/docker/env.cli
 
+USER root
 RUN ln -snf /usr/share/zoneinfo/$timezone /etc/localtime && echo $timezone > /etc/timezone
+USER jboss
 
 RUN rm /tmp/*.zip
 
