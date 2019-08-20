@@ -3,6 +3,8 @@ FROM jboss/wildfly:17.0.1.Final
 ARG WILDFLY_VERSION=17.0.1.Final
 ARG MYSQL_MODULE_VERSION=8.0.17
 
+ENV timezone=Europe/Helsinki
+
 ADD --chown=jboss target/*.war /opt/jboss/wildfly/standalone/deployments/app.war
 ADD --chown=jboss ./docker/entrypoint.sh /opt/docker/entrypoint.sh 
 ADD --chown=jboss ./docker/jboss-cli.properties /opt/docker/jboss-cli.properties
@@ -21,6 +23,8 @@ RUN /opt/jboss/wildfly/bin/jboss-cli.sh --file=/opt/docker/jdbc.cli
 RUN /opt/jboss/wildfly/bin/jboss-cli.sh --file=/opt/docker/kubernets-jgroups.cli
 RUN /opt/jboss/wildfly/bin/jboss-cli.sh --file=/opt/docker/interfaces.cli
 RUN /opt/jboss/wildfly/bin/jboss-cli.sh --file=/opt/docker/env.cli
+
+RUN ln -snf /usr/share/zoneinfo/$timezone /etc/localtime && echo $timezone > /etc/timezone
 
 RUN rm /tmp/*.zip
 
