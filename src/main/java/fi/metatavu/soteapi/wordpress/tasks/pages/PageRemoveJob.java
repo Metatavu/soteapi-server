@@ -44,8 +44,8 @@ public class PageRemoveJob extends AbstractRemoveJob<PageRemoveTask, PageRemoveQ
   
   @SuppressWarnings ("squid:S1166")
   protected boolean isArchived(String originId) {
-    if (logger.isInfoEnabled()) {
-      logger.info(String.format("Checking whether page %s is removed", originId));
+    if (logger.isDebugEnabled()) {
+      logger.debug(String.format("Checking whether page %s is removed", originId));
     }
     
     Long pageId = NumberUtils.createLong(originId);

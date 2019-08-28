@@ -11,9 +11,8 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * JPA entity representing queued task
@@ -38,8 +37,6 @@ public class TaskModel {
   private TaskQueue queue;
   
   @Column(nullable = false)
-  @NotNull
-  @NotEmpty
   @Lob
   private byte[] data;
 

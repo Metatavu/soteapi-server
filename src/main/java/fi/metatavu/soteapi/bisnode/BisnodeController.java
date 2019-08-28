@@ -13,9 +13,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -109,7 +111,9 @@ public class BisnodeController {
     
       try (CloseableHttpClient httpclient = HttpClients.custom().setSSLSocketFactory(sslsf).build()) {
         try (CloseableHttpResponse response = httpclient.execute(httpGet)) {
-          if (HttpStatus.SC_OK == response.getStatusLine().getStatusCode()) {
+          StatusLine statusLine = response.getStatusLine();
+          
+          if (HttpStatus.SC_OK == statusLine.getStatusCode()) {
             BisnodeResponse bisnodeResponse = new BisnodeResponse();
             bisnodeResponse.setContent(EntityUtils.toString(response.getEntity()));
             
@@ -118,6 +122,8 @@ public class BisnodeController {
               bisnodeResponse.setTotalCount(NumberUtils.createLong(totalCountHeader.getValue()));
             }
             return bisnodeResponse;
+          } else {
+            logger.error("Received an error [{}] {} while communicating with Bisnode. Customer secret was {}, issuer {}, audience: {}", statusLine.getStatusCode(), statusLine.getReasonPhrase(), getCustomerSecret(),  getIssuer(), getAudience());
           }
         }
       }
@@ -152,7 +158,7 @@ public class BisnodeController {
    * @return customer secret
    */
   private String getCustomerSecret() {
-    return System.getProperty("bisnode.customerSecret");
+    return StringEscapeUtils.unescapeHtml4(System.getProperty("bisnode.customerSecret"));
   }
 
   /**
