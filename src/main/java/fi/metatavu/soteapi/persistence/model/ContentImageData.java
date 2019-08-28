@@ -7,7 +7,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
-import javax.validation.constraints.NotNull;
 
 @Entity
 public class ContentImageData {
@@ -17,7 +16,6 @@ public class ContentImageData {
   private Long id;
   
   @Column(nullable = false)
-  @NotNull
   @Lob
   private byte[] data;
   
