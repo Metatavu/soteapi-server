@@ -64,14 +64,15 @@ public class ReviewController {
    * @param productId product id
    * @param maxRating max rating
    * @param minRating min rating
+   * @param minReviewLength return only reviews containing at least given amount of characters
    * @param sort sort 
    * @param firstResult first result
    * @param maxResults max results
    * 
    * @return list of reviews
    */
-  public List<Review> listReviews(Long productId, Integer maxRating, Integer minRating, ReviewListSort sort, Long firstResult, Long maxResults) {
-    return reviewDAO.listReviews(productId, maxRating, minRating, sort, firstResult, maxResults);
+  public List<Review> listReviews(Long productId, Integer maxRating, Integer minRating, Integer minReviewLength, ReviewListSort sort, Long firstResult, Long maxResults) {
+    return reviewDAO.listReviews(productId, maxRating, minRating, minReviewLength, sort, firstResult, maxResults);
   }
 
   /**
@@ -80,10 +81,12 @@ public class ReviewController {
    * @param productId product id
    * @param maxRating max rating
    * @param minRating min rating
-   * @return
+   * @param minReviewLength return only reviews containing at least given amount of characters
+   * 
+   * @return count of reviews with given filters
    */
-  public Long countReviews(Long productId, Integer maxRating, Integer minRating) {
-    return reviewDAO.countReviews(productId, maxRating, minRating);
+  public Long countReviews(Long productId, Integer maxRating, Integer minRating, Integer minReviewLength) {
+    return reviewDAO.countReviews(productId, maxRating, minRating, minReviewLength);
   }
 
   /**
