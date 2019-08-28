@@ -38,10 +38,10 @@ public class ReviewsApiImpl implements ReviewsApi {
   }
 
   @Override
-  public Response listReviews(Long productId, Integer minRating, Integer maxRating, Long firstResult, Long maxResults, ReviewListSort sort) {
+  public Response listReviews(Long productId, Integer minRating, Integer maxRating, Integer minReviewLength, Long firstResult, Long maxResults, ReviewListSort sort) {
     ReviewListSort sortOrder = sort == null ? ReviewListSort.DESC : sort;
-    List<Review> reviews = reviewController.listReviews(productId, maxRating, minRating, sortOrder, firstResult, maxResults);
-    Long reviewCount = reviewController.countReviews(productId, maxRating, minRating);
+    List<Review> reviews = reviewController.listReviews(productId, maxRating, minRating, minReviewLength, sortOrder, firstResult, maxResults);
+    Long reviewCount = reviewController.countReviews(productId, maxRating, minRating, minReviewLength);
     Long unfilteredCount = reviewController.countAllReviews();
 
     Response response = responseController.respondOk(reviewTranslator.translateReviews(reviews));

@@ -55,19 +55,20 @@ public class ReviewDAO extends AbstractDAO<Review> {
    * @param productId product id
    * @param maxRating max rating
    * @param minRating min rating
+   * @param minReviewLength return only reviews containing at least given amount of characters
    * @param sort sort
    * @param firstResult first result
    * @param maxResults max results
    * @return list of reviews
    */
-  public List<Review> listReviews(Long productId, Integer maxRating, Integer minRating, ReviewListSort sort, Long firstResult, Long maxResults) {
+  public List<Review> listReviews(Long productId, Integer maxRating, Integer minRating, Integer minReviewLength, ReviewListSort sort, Long firstResult, Long maxResults) {
     EntityManager entityManager = getEntityManager();
 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Review> criteria = criteriaBuilder.createQuery(Review.class);
     Root<Review> root = criteria.from(Review.class);
 
-    List<Predicate> restrictions = buildRestrictions(root, criteriaBuilder, productId, maxRating, minRating);
+    List<Predicate> restrictions = buildRestrictions(root, criteriaBuilder, productId, maxRating, minRating, minReviewLength);
 
     criteria.select(root);
     criteria.where(
@@ -98,16 +99,17 @@ public class ReviewDAO extends AbstractDAO<Review> {
    * @param productId product id
    * @param maxRating max rating
    * @param minRating min rating
+   * @param minReviewLength return only reviews containing at least given amount of characters
    * @return count of filtered reviews
    */
-  public Long countReviews(Long productId, Integer maxRating, Integer minRating) {
+  public Long countReviews(Long productId, Integer maxRating, Integer minRating, Integer minReviewLength) {
     EntityManager entityManager = getEntityManager();
 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Long> criteria = criteriaBuilder.createQuery(Long.class);
     Root<Review> root = criteria.from(Review.class);
 
-    List<Predicate> restrictions = buildRestrictions(root, criteriaBuilder, productId, maxRating, minRating);
+    List<Predicate> restrictions = buildRestrictions(root, criteriaBuilder, productId, maxRating, minRating, minReviewLength);
 
     criteria.select(criteriaBuilder.count(root.get(Review_.id)));
     criteria.where(
@@ -250,9 +252,10 @@ public class ReviewDAO extends AbstractDAO<Review> {
    * @param productId product id
    * @param maxRating max rating
    * @param minRating min rating
+   * @param minReviewLength return only reviews containing at least given amount of characters
    * @return list of filters
    */
-  private List<Predicate> buildRestrictions(Root<Review> root, CriteriaBuilder criteriaBuilder, Long productId, Integer maxRating, Integer minRating) {
+  private List<Predicate> buildRestrictions(Root<Review> root, CriteriaBuilder criteriaBuilder, Long productId, Integer maxRating, Integer minRating, Integer minReviewLength) {
     List<Predicate> restrictions = new ArrayList<>();
     
     if (productId != null) {
@@ -265,6 +268,10 @@ public class ReviewDAO extends AbstractDAO<Review> {
   
     if (minRating != null) {
       restrictions.add(criteriaBuilder.greaterThanOrEqualTo(root.get(Review_.rating), minRating));
+    }
+    
+    if (minReviewLength != null) {
+      restrictions.add(criteriaBuilder.greaterThanOrEqualTo(criteriaBuilder.length(root.get(Review_.review)), minReviewLength));
     }
 
     return restrictions;

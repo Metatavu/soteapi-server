@@ -51,7 +51,7 @@
     
     <!-- Spec -->
     
-    <soteapi-spec.version>0.0.23</soteapi-spec.version>
+    <soteapi-spec.version>0.0.24</soteapi-spec.version>
     
     <!-- Maven -->
 
@@ -60,7 +60,7 @@
     
     <!-- Wildfly -->
     
-    <wildfly-spec-api.version>11.0.0.Final</wildfly-spec-api.version>
+    <wildfly.version>17.0.1.Final</wildfly.version>
     
     <!--  slf4j-api -->
     
@@ -118,7 +118,7 @@
       <dependency>
         <groupId>org.wildfly</groupId>
         <artifactId>wildfly-spec-api</artifactId>
-        <version>${wildfly-spec-api.version}</version>
+        <version>${wildfly.version}</version>
         <type>pom</type>
         <scope>import</scope>
         <exclusions>
@@ -205,7 +205,7 @@
   <dependencies>
     <dependency>
       <groupId>org.jboss.spec.javax.servlet</groupId>
-      <artifactId>jboss-servlet-api_3.1_spec</artifactId>
+      <artifactId>jboss-servlet-api_4.0_spec</artifactId>
       <scope>provided</scope>
     </dependency>
     
@@ -242,7 +242,7 @@
 
     <dependency>
       <groupId>org.jboss.spec.javax.ws.rs</groupId>
-      <artifactId>jboss-jaxrs-api_2.0_spec</artifactId>
+      <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
       <scope>provided</scope>
     </dependency>
 
@@ -371,7 +371,7 @@
     </dependency>
 
     <dependency>
-      <groupId>org.hibernate</groupId>
+      <groupId>org.hibernate.validator</groupId>
       <artifactId>hibernate-validator</artifactId>
       <scope>provided</scope>
     </dependency>
@@ -600,14 +600,14 @@
           <plugin>
             <groupId>org.codehaus.cargo</groupId>
             <artifactId>cargo-maven2-plugin</artifactId>
-            <version>1.6.8</version>
+            <version>1.7.6</version>
             <configuration>
               <container>
                 <containerId>wildfly11x</containerId>
                 <log>${project.basedir}/target/cargo.log</log>
                 <output>${project.basedir}/target/wildfly.log</output>
                 <zipUrlInstaller>
-                  <url>http://download.jboss.org/wildfly/11.0.0.Final/wildfly-11.0.0.Final.zip</url>
+                  <url>https://download.jboss.org/wildfly/${wildfly.version}/wildfly-${wildfly.version}.zip</url>
                   <downloadDir>${project.basedir}/.cargo/downloads</downloadDir>
                   <extractDir>${project.basedir}/.cargo/extracts</extractDir>
                 </zipUrlInstaller>     
