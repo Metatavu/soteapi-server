@@ -28,6 +28,17 @@ import fi.metatavu.soteapi.settings.SystemSettingController;
 import fi.metatavu.soteapi.tasks.AbstractUpdateJob;
 import fi.metatavu.soteapi.utils.TimeUtils;
 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
 @ApplicationScoped
 public class NewsListJob extends AbstractUpdateJob {
   
@@ -99,14 +110,22 @@ public class NewsListJob extends AbstractUpdateJob {
       URIBuilder uriBuilder = new URIBuilder(url);
       uriBuilder.addParameter("paged", String.valueOf(page));
       
+      HttpsURLConnection.setDefaultSSLSocketFactory(buildSocketFactory());
+     
       return input.build(new XmlReader(uriBuilder.build().toURL()));
-    } catch (IllegalArgumentException | FeedException | IOException | URISyntaxException e) {
+    } catch (IllegalArgumentException | FeedException | IOException | URISyntaxException | KeyManagementException | NoSuchAlgorithmException e) {
       logger.warn(String.format("Failed to load feed entries from %s page %d", url, page), e);
     }
     
     return null;
   }
 
+  private SSLSocketFactory buildSocketFactory() throws KeyManagementException, NoSuchAlgorithmException {
+    SSLContext ctx = SSLContext.getInstance("TLS");
+    ctx.init(null, new TrustManager[] { new BlindTrustManager() }, null);
+    return ctx.getSocketFactory();
+  }
+  
   /**
    * Processes a feed entry
    * 
@@ -210,4 +229,22 @@ public class NewsListJob extends AbstractUpdateJob {
     return systemSettingController.getSettingValue(NewsConsts.RSS_URL_SETTING);
   }
 
+  private class BlindTrustManager implements X509TrustManager {
+
+    public X509Certificate[] getAcceptedIssuers() {
+      return null;
+    }
+
+    public void checkClientTrusted(X509Certificate[] chain, String authType)
+        throws CertificateException {
+
+    }
+
+    public void checkServerTrusted(X509Certificate[] chain, String authType)
+        throws CertificateException {
+      
+
+    }
+  }
 }
+
