@@ -92,7 +92,7 @@
     
     <!-- Java JWT -->
 
-    <java-jwt.version>3.8.0</java-jwt.version>
+    <java-jwt.version>3.12.0</java-jwt.version>
 
     <!-- Swagger -->
     
