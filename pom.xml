@@ -68,7 +68,7 @@
     
     <!-- Liquibase -->
     
-    <liquibase.version>3.5.3</liquibase.version>
+    <liquibase.version>3.8.2</liquibase.version>
     
     <!-- Metaflow -->
     
@@ -108,8 +108,8 @@
     <weld-se.version>2.3.5.Final</weld-se.version>
     <reflections.version>0.9.10</reflections.version>
     <rest-assured.version>3.0.3</rest-assured.version>
-    <wiremock.version>2.18.0</wiremock.version>
-    <awaitility.version>3.1.2</awaitility.version>
+    <wiremock.version>2.25.0</wiremock.version>
+    <awaitility.version>4.0.3</awaitility.version>
     <mockito.version>2.21.0</mockito.version>
   </properties>
   
